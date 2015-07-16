@@ -81,7 +81,7 @@ class cancel_picking_done(osv.osv_memory):
         if len(ids)>1:
             result['domain'] = "[('id','in',["+','.join(map(str, ids))+"])]"
         else:
-            res = mod_obj.get_object_reference(cr, uid, 'stock', 'view_picking_out_form')
+            res = mod_obj.get_object_reference(cr, uid, 'stock', 'view_picking_form')
             result['views'] = [(res and res[1] or False, 'form')]
             result['res_id'] = ids and ids[0] or False
         return result
