@@ -43,7 +43,7 @@
                        <field name="amount_untaxed" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                    </field>
                    <xpath expr="//field[@name='tax_line']/tree/field[@name='name']" position="after">
-                        <field name="tax_id" domain="[('tax_group','=','other'), ('type_tax_use','in',['sale','all'])]" on_change="tax_id_change(tax_id,parent.type)"/>
+                        <field name="tax_id" domain="[('tax_group','in',['other','vat']), ('type_tax_use','in',['sale','all'])]" on_change="tax_id_change(tax_id,parent.type)"/>
                         <field name="base_code_id" invisible="1"/>
                         <field name="tax_code_id" invisible="1"/>
                    </xpath>
@@ -89,6 +89,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                     <field name="number" position="replace"/>
+                    <field name="internal_number" position="replace"/>
                     <xpath expr="//form/sheet/div[@class='oe_title']" position="replace">
                         <h1>
                             <label string="Draft Invoice" attrs="{'invisible': ['|',('state','&lt;&gt;','draft'), ('type','&lt;&gt;','in_invoice')]}"/>
@@ -120,7 +121,7 @@
                        <field name="amount_untaxed" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                    </field>
                    <xpath expr="//field[@name='tax_line']/tree/field[@name='name']" position="after">
-                        <field name="tax_id" domain="[('tax_group','=','other'), ('type_tax_use','in',['purchase','all'])]" on_change="tax_id_change(tax_id,parent.type)"/>
+                        <field name="tax_id" domain="[('tax_group','in',['other', 'vat']), ('type_tax_use','in',['purchase','all'])]" on_change="tax_id_change(tax_id,parent.type)"/>
                         <field name="base_code_id" invisible="1"/>
                         <field name="tax_code_id" invisible="1"/>
                    </xpath>
