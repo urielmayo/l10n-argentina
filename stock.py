@@ -35,6 +35,8 @@ class stock_picking(osv.osv):
     def do_transfer(self, cr, uid, picking_ids, context=None):
 
         res = super(stock_picking, self).do_transfer(cr, uid, picking_ids, context)
+        if context.get('do_only_split'):  # Prevent renumerating twice in stock_split_picking
+            return res
         for picking in self.browse(cr, uid, picking_ids, context=context):
             ptype_id = picking.picking_type_id.id
             sequence_id = self.pool.get('stock.picking.type').browse(cr, uid, ptype_id, context=context).sequence_transfer_id.id
@@ -44,7 +46,7 @@ class stock_picking(osv.osv):
                 self.write(cr, uid, picking.id, {'name': name}, context)
 
         return res
- 
+
 stock_picking()
 
 class stock_picking_type(osv.osv):
