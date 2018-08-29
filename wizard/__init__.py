@@ -3,7 +3,8 @@
 #
 #    OpenERP, Open Source Management Solution
 #    Copyright (c) 2015 E-MIPS (http://www.e-mips.com.ar)
-#    Copyright (c) 2015 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
+#    Copyright (c) 2018 Eynes Ingenieria del software (http://www.eynes.com.ar)
+#    Copyright (c) 2018 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
 #    All Rights Reserved. See AUTHORS for details.
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -21,4 +22,4 @@
 #
 ##############################################################################
 
-import cancel_picking_done
+from . import cancel_picking_done

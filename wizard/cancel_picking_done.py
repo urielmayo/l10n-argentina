@@ -3,7 +3,8 @@
 #
 #    OpenERP, Open Source Management Solution
 #    Copyright (c) 2015 E-MIPS (http://www.e-mips.com.ar)
-#    Copyright (c) 2015 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
+#    Copyright (c) 2018 Eynes Ingenieria del software (http://www.eynes.com.ar)
+#    Copyright (c) 2018 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
 #    All Rights Reserved. See AUTHORS for details.
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -21,18 +22,16 @@
 #
 ##############################################################################
 
-from openerp.osv import osv,fields
-from openerp.tools.translate import _
+from odoo import fields, models, api, _
+from odoo.exceptions import Warning
 
-class cancel_picking_done(osv.osv_memory):
+class CancelPickingDone(models.TransientModel):
     _name = 'cancel.picking.done'
-    _description = 'Return Picking'
-    _columns = {
-        'reason' : fields.text('Reason of cancellation'),
-        'next_action': fields.selection([('renumerate', 'Cancel & Create draft'), ('cancel', 'Cancel only')], 'Next Action',required=True),
-    }
 
-    def create_returns(self, cr, uid, ids, context=None):
+    reason = fields.Text(string='Reason of cancellation')
+    next_action = fields.Selection([('renumerate', 'Cancel & Create draft'), ('cancel', 'Cancel only')], string='Next Action', required=True)
+
+    def create_returns(self):
         
         pick_obj = self.pool.get('stock.picking')
         move_obj = self.pool.get('stock.move')
@@ -66,7 +65,7 @@ class cancel_picking_done(osv.osv_memory):
         return {'type': 'ir.actions.act_window_close'}
 
 
-    def action_view_picks(self, cr, uid, ids, context=None):
+    def action_view_picks(self):
         '''
         This function returns an action that display new pickings to renumerate
         '''
@@ -85,5 +84,3 @@ class cancel_picking_done(osv.osv_memory):
             result['views'] = [(res and res[1] or False, 'form')]
             result['res_id'] = ids and ids[0] or False
         return result
-
-cancel_picking_done()

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright (c) 2014 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
+#    Copyright (c) 2015 E-MIPS (http://www.e-mips.com.ar)
+#    Copyright (c) 2018 Eynes Ingenieria del software (http://www.eynes.com.ar)
+#    Copyright (c) 2018 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
 #    All Rights Reserved. See AUTHORS for details.
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -19,5 +21,5 @@
 #
 ##############################################################################
 
-import stock
-import wizard
+from . import models
+from . import wizard

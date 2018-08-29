@@ -2,7 +2,9 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
+#    Copyright (c) 2015 E-MIPS (http://www.e-mips.com.ar)
+#    Copyright (c) 2018 Eynes Ingenieria del software (http://www.eynes.com.ar)
+#    Copyright (c) 2018 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -19,17 +21,14 @@
 #
 ##############################################################################
 
-from openerp.osv import osv, fields
-from openerp import api
+from odoo import fields, models, api, _
+from odoo.exceptions import Warning
 
-class stock_picking(osv.osv):
-    _name = "stock.picking"
+class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    _columns = {
-        'renum_pick_id' : fields.many2one('stock.picking', 'Renumerated', help="Reference to the new picking created for renumerate this one. You cannot delete pickings if it is done, so it is cancelled and a new one is created, corrected and renumerated"),
-    }
-
+    renum_pick_id = fields.Many2one('stock.picking', string='Renumerated', help="Reference to the new picking created for renumerate this one. You cannot delete pickings if it is done, so it is cancelled and a new one is created, corrected and renumerated")
+    
 
     @api.cr_uid_ids_context
     def do_transfer(self, cr, uid, picking_ids, context=None):
@@ -47,18 +46,10 @@ class stock_picking(osv.osv):
 
         return res
 
-stock_picking()
-
-class stock_picking_type(osv.osv):
-    _name = "stock.picking.type"
+class StockPickingType(models.Model):
     _inherit = "stock.picking.type"
-
 
     # Secuencia para renumerar el stock.picking luego de una transferencia
     # Es opcional, por lo tanto, puede servirnos para cuando son Delivery Orders
     # y dependen del Warehouse, por lo tanto, podemos tener para varias sucursales
-    _columns = {
-        'sequence_transfer_id': fields.many2one('ir.sequence', 'Sequence After Transfer', required=False),
-    }
-
-stock_picking_type()
+    sequence_transfer_id = fields.Many2one('ir.sequence', string='Sequence After Transfer', required=False)

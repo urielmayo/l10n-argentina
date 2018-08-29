@@ -2,7 +2,9 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
+#    Copyright (c) 2015 E-MIPS (http://www.e-mips.com.ar)
+#    Copyright (c) 2018 Eynes Ingenieria del software (http://www.eynes.com.ar)
+#    Copyright (c) 2018 Aconcagua Team (http://www.proyectoaconcagua.com.ar)
 #    All Rights Reserved. See AUTHORS for details.
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -19,25 +21,27 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+
 {
-    "name": "Numeracion Remitos Argentina",
-    "version": "1.0",
-    "depends": ["base", "stock"],
-    "author": "E-MIPS",
-    "website": "http://www.proyectoaconcagua.com.ar",
-    "license": "GPL-3",
-    "category": "Localization",
-    "description": """
-    """,
-    "data": [
-        'wizard/cancel_picking_done_view.xml',
-        'stock_view.xml',
-        'stock_sequence.xml',
-    ],
-    'demo': [
-        ],
-    'test': [
+    'name': 'Numeracion Remitos Argentina',
+    'version': '1.0',
+    'summary': 'Numeracion Remitos Argentina',
+    'author': "E-MIPS/Eynes",
+    'maintainer': 'E-MIPS/Eynes',
+    'company': "E-MIPS/Eynes",
+    'website': "http://www.proyectoaconcagua.com.ar",
+    'depends': ['stock'],
+    'category': 'Localization',
+    'demo': [],
+    'data': [
+        #~ 'wizard/cancel_picking_done_view.xml',
+        #~ 'views/stock_view.xml',
+        #~ 'data/sequence.xml',
     ],
     'installable': True,
-    'active': False,
+    'application': False,
+    'auto_install': False,
+    #~ 'images': ['static/description/banners.jpg'],
+    'qweb': [],
+    'license': 'AGPL-3',
 }
