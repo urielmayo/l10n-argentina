@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
         <act_window name="Cancel &amp; Renumerate"
             res_model="cancel.picking.done"
@@ -14,7 +14,7 @@
             <field name="name">Cancel &amp; Renumerate</field>
             <field name="model">cancel.picking.done</field>
             <field name="arch" type="xml">
-                <form string="Cancel &amp; Renumerate" version="7.0">
+                <form string="Cancel &amp; Renumerate">
                     <label string="You can cancel actual delivery and create a new one with same data to deliver correct products. New one will be renumerated."/>
                     <group>
                         <field name="reason"/>
@@ -30,4 +30,4 @@
         </record>
         
     </data>
-</openerp>
+</odoo>

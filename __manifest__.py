@@ -34,9 +34,9 @@
     'category': 'Localization',
     'demo': [],
     'data': [
-        #~ 'wizard/cancel_picking_done_view.xml',
-        #~ 'views/stock_view.xml',
-        #~ 'data/sequence.xml',
+        'wizard/cancel_picking_done_view.xml',
+        'views/stock_view.xml',
+        'data/sequence.xml',
     ],
     'installable': True,
     'application': False,
