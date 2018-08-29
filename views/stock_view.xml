@@ -10,13 +10,13 @@
                 <xpath expr="/form/header//button[@name='%(stock.act_stock_return_picking)d']" position="after">
                     <button name="%(act_stock_cancel_done_picking)d" string="Cancel" states="done" type="action"/>
                 </xpath>
-                <field name="priority" position="after">
+				<xpath expr="//field[@name='priority']" position="after">
                     <field name="renum_pick_id" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
-                </field>
+				</xpath>
             </field>
         </record>
 
-        <record id="view_picking_out_ar_form" model="ir.ui.view">
+        <record id="view_picking_type_out_ar_form" model="ir.ui.view">
             <field name="name">stock.picking.type.ar.form</field>
             <field name="model">stock.picking.type</field>
             <field name="inherit_id" ref="stock.view_picking_type_form"/>

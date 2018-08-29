@@ -24,29 +24,22 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import Warning
 
-class StockPicking(models.Model):
+class Picking(models.Model):
     _inherit = "stock.picking"
 
     renum_pick_id = fields.Many2one('stock.picking', string='Renumerated', help="Reference to the new picking created for renumerate this one. You cannot delete pickings if it is done, so it is cancelled and a new one is created, corrected and renumerated")
     
-
-    @api.cr_uid_ids_context
-    def do_transfer(self, cr, uid, picking_ids, context=None):
-
-        res = super(stock_picking, self).do_transfer(cr, uid, picking_ids, context)
-        if context.get('do_only_split'):  # Prevent renumerating twice in stock_split_picking
-            return res
-        for picking in self.browse(cr, uid, picking_ids, context=context):
-            ptype_id = picking.picking_type_id.id
-            sequence_id = self.pool.get('stock.picking.type').browse(cr, uid, ptype_id, context=context).sequence_transfer_id.id
-
-            if sequence_id:
-                name = self.pool.get('ir.sequence').get_id(cr, uid, sequence_id, 'id', context=context)
-                self.write(cr, uid, picking.id, {'name': name}, context)
+    @api.multi
+    def action_done(self):
+        res = super(Picking, self).action_done()
+        sequence_id = self.picking_type_id.sequence_transfer_id.code
+        if self.picking_type_id.sequence_transfer_id.code:
+            name = self.env['ir.sequence'].next_by_code(sequence_id)
+            self.write({'name': name})
 
         return res
 
-class StockPickingType(models.Model):
+class PickingType(models.Model):
     _inherit = "stock.picking.type"
 
     # Secuencia para renumerar el stock.picking luego de una transferencia
