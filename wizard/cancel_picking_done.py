@@ -33,54 +33,47 @@ class CancelPickingDone(models.TransientModel):
 
     def create_returns(self):
         
-        pick_obj = self.pool.get('stock.picking')
-        move_obj = self.pool.get('stock.move')
-
-        # Datos del wizard
-        wiz = self.browse(cr, uid, ids, context=context)[0]
-        pick_ids = context['active_ids']
+        pick_obj = self.env['stock.picking']
+        move_obj = self.env['stock.move']
 
         # Obtenemos el picking
         new_picks = []
-        for pick in pick_obj.browse(cr, uid, pick_ids, context):
-
+        for pick in pick_obj.search([('id','=',self._context.get('active_id', False))]):
+            
             # Renumerate...clone pick
             pick_vals = {}
-            if wiz.next_action == 'renumerate':
-                new_pick = pick_obj.copy(cr, uid, pick.id, context=context) 
-                note = _('%s\nPick renumerated from %s. %s') % (pick.note or '', pick.name, wiz.reason or '')
-                pick_obj.write(cr, uid, new_pick, {'note': note, 'origin': pick.origin}, context=context)
-                new_picks.append(new_pick)
-                pick_vals['renum_pick_id'] = new_pick
+            if self.next_action == 'renumerate':
+                new_pick = pick.copy() 
+                note = _('%s\nPick renumerated from %s. %s') % (pick.note or '', pick.name, self.reason or '')
+                new_pick.write({'note': note, 'origin': pick.name})
+                new_picks.append(new_pick.id)
+                pick_vals['renum_pick_id'] = new_pick.id
 
             # Cancelamos el picking actual y sus lineas
-            moves_to_cancel = [m.id for m in pick.move_lines]
+            moves_to_cancel = [m for m in pick.move_lines]
             pick_vals['state'] = 'cancel'
-            pick_obj.write(cr, uid, pick.id, pick_vals, context=context)
-            move_obj.write(cr, uid, moves_to_cancel, {'state': 'cancel'}, context=context)
-
+            pick.write(pick_vals)
+            a = [move.write({'state': 'cancel'}) for move in moves_to_cancel]
+        
+        form = self.env.ref('stock.view_picking_form')
+        
         if new_picks:
-            return self.action_view_picks(cr, uid, new_picks, context=context)
-
-        return {'type': 'ir.actions.act_window_close'}
-
-
-    def action_view_picks(self):
-        '''
-        This function returns an action that display new pickings to renumerate
-        '''
-        mod_obj = self.pool.get('ir.model.data')
-        act_obj = self.pool.get('ir.actions.act_window')
-
-        result = mod_obj.get_object_reference(cr, uid, 'stock', 'action_picking_tree')
-        id = result and result[1] or False
-        result = act_obj.read(cr, uid, [id], context=context)[0]
-
-        #choose the view_mode accordingly
-        if len(ids)>1:
-            result['domain'] = "[('id','in',["+','.join(map(str, ids))+"])]"
-        else:
-            res = mod_obj.get_object_reference(cr, uid, 'stock', 'view_picking_form')
-            result['views'] = [(res and res[1] or False, 'form')]
-            result['res_id'] = ids and ids[0] or False
-        return result
+            if len(new_picks) == 1:
+                return {
+                    'res_model': 'stock.picking',
+                    'type': 'ir.actions.act_window',
+                    'views': [(form.id, 'form')],
+                    'view_id': form.id,
+                    'res_id': new_picks[0],
+                }
+            else:
+                tree = self.env.ref('stock.action_picking_tree')
+                return {
+                    'res_model': 'stock.picking',
+                    'type': 'ir.actions.act_window',
+                    'views': [(tree.id, 'tree'), (form.id, 'form')],
+                    'view_id': False,
+                    'view_type': 'form',
+                    'view_mode': 'tree,form',
+                    'domain': [('id', 'in', new_picks)],
+                }
