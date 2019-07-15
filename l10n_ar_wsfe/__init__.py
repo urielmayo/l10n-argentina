@@ -24,3 +24,4 @@ import invoice
 import wizard
 import wsfe_request
 import report
+import account_invoice_fiscal_type

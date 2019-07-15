@@ -27,6 +27,14 @@ from openerp.osv import osv
 
 __author__ = "Sebastian Kennedy <skennedy@e-mips.com.ar>"
 
+class invoice_wsfe_optional(models.Model):
+    _name = "account.invoice.optional"
+    _description = 'WSFE Invoice Optional'
+
+    invoice_id = fields.Many2one('account.invoice', 'Invoice')
+    optional_id = fields.Many2one('wsfe.optionals', 'Optional')
+    value = fields.Char('Value', size=255)
+
 
 class account_invoice(models.Model):
     _name = "account.invoice"
@@ -47,6 +55,12 @@ class account_invoice(models.Model):
     incoterm_id = fields.Many2one('stock.incoterms', 'Incoterm', help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')
+
+    optional_ids = fields.One2many(
+        'account.invoice.optional', 'invoice_id', 'Optionals')
+    fiscal_type_id = fields.Many2one(
+        'account.invoice.fiscal.type', 'Fiscal type') #,
+        #default=lambda self: self.env.ref('l10n_ar_wsfe.fiscal_type_fe'))
 
     @api.multi
     def onchange_partner_id(self, type, partner_id, date_invoice=False,

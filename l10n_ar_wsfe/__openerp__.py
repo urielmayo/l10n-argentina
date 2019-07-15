@@ -37,6 +37,7 @@
         'wsfe_view.xml',
         'account_invoice_view.xml',
         'account_invoice_workflow.xml',
+        'account_invoice_fiscal_type_data.xml',
         'wizard/wsfe_sinchronize_voucher_view.xml',
         'wizard/wsfe_massive_sinchronize_view.xml',
         'security/ir.model.access.csv',
