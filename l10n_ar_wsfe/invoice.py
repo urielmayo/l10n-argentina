@@ -135,7 +135,7 @@ class account_invoice(osv.osv):
 
     _defaults = {
         'aut_cae': lambda *a: False,
-        #'fiscal_type_id': _default_fiscal_type_id,
+        'fiscal_type_id': _default_fiscal_type_id,
     }
 
     def get_fiscal_type_id(self, cr, uid, ids, partner, context=None):
