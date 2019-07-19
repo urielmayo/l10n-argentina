@@ -67,6 +67,17 @@
 									<button name="read_tax" string="Update VAT Taxes" type="object" icon="gtk-ok"/>
 								</group>
 							</page>
+                                                        <page string="Optionals">
+                                                            <field name="optional_ids" nolabel="1">
+                                                                <tree string="Vat Taxes Mapping" readonly="1">
+                                                                    <field name="code"/>
+                                                                    <field name="name"/>
+                                                                    <field name="to_date"/>
+                                                                    <field name="from_date"/>
+                                                                    <field name="from_afip" readonly="True"/>
+                                                                </tree>
+                                                            </field>
+                                                        </page>
 						</notebook>
 					</sheet>
 				</form>

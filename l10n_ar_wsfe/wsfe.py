@@ -42,6 +42,20 @@ class wsfe_tax_codes(osv.osv):
     }
 
 
+class wsfe_optionals(osv.osv):
+    _name = "wsfe.optionals"
+    _description = "WSFE Optionals"
+
+    _columns = {
+        'code': fields.char('Code', required=False, size=4),
+        'name': fields.char('Desc', required=True, size=64),
+        'to_date': fields.date('Effect Until'),
+        'from_date': fields.date('Effective From'),
+        'from_afip': fields.boolean('From AFIP'),
+        'wsfe_config_id': fields.many2one('wsfe.config', 'WSFE Configuration'),
+    }
+
+
 class wsfe_config(osv.osv):
     _name = "wsfe.config"
     _description = "Configuration for WSFE"
@@ -54,6 +68,7 @@ class wsfe_config(osv.osv):
         'point_of_sale_ids': fields.many2many('pos.ar', 'pos_ar_wsfe_rel', 'wsfe_config_id', 'pos_ar_id', 'Points of Sale'),
         'vat_tax_ids' : fields.one2many('wsfe.tax.codes', 'wsfe_config_id' ,'Taxes', domain=[('from_afip', '=', True)]),
         'exempt_operations_tax_ids' : fields.one2many('wsfe.tax.codes', 'wsfe_config_id' ,'Taxes', domain=[('from_afip', '=', False), ('exempt_operations', '=', True)]),
+        'optional_ids': fields.one2many('wsfe.optionals', 'wsfe_config_id', 'Optionals', domain=[('from_afip', '=', True)]),
         'wsaa_ticket_id' : fields.many2one('wsaa.ta', 'Ticket Access'),
         'company_id' : fields.many2one('res.company', 'Company Name' , required=True),
     }
@@ -311,14 +326,14 @@ class wsfe_config(osv.osv):
 
     def read_tax(self, cr, uid , ids , context={}):
         ta_obj = self.pool.get('wsaa.ta')
+        wsfe_tax_obj = self.pool.get('wsfe.tax.codes')
+        wsfe_optionals_obj = self.pool.get('wsfe.optionals')
 
         conf = self.browse(cr, uid, ids)[0]
         token, sign = ta_obj.get_token_sign(cr, uid, [conf.wsaa_ticket_id.id], context=context)
 
         _wsfe = wsfe(conf.cuit, token, sign, conf.url)
         res = _wsfe.fe_param_get_tipos_iva()
-
-        wsfe_tax_obj = self.pool.get('wsfe.tax.codes')
 
         # Chequeamos los errores
         msg = self.check_errors(cr, uid, res, raise_exception=False, context=context)
@@ -353,6 +368,47 @@ class wsfe_config(osv.osv):
                 wsfe_tax_obj.write(cr, uid , res_c[0] , {'code': r.Id, 'name': r.Desc, 'to_date': td ,
                     'from_date': fd, 'wsfe_config_id': ids[0], 'from_afip': True } )
 
+        rses = _wsfe.fe_param_get_tipos_opcionales()
+
+        # Chequeamos los errores
+        msg = self.check_errors(
+            cr, uid, res, raise_exception=False, context=context)
+
+        if msg:
+            raise osv.except_osv(_('Error reading optionals'), msg)
+
+        for r in res['response']:
+            res_c = wsfe_optionals_obj.search(cr, uid , [('code','=', r.Id )])
+
+            #~ Si tengo no los codigos de esos Impuestos en la db, los creo
+            if not len(res_c):
+                fd = datetime.strptime(r.FchDesde, '%Y%m%d')
+                try:
+                    td = datetime.strptime(r.FchHasta, '%Y%m%d')
+                except ValueError:
+                    td = False
+
+                wsfe_optionals_obj.create(
+                    cr, uid , {
+                        'code': r.Id, 'name': r.Desc, 'to_date': td,
+                        'from_date': fd, 'wsfe_config_id': ids[0],
+                        'from_afip': True } , context={})
+            #~ Si los codigos estan en la db los modifico
+            else :
+                fd = datetime.strptime(r.FchDesde, '%Y%m%d')
+                #'NULL' ?? viene asi de fe_param_get_tipos_iva():
+                try:
+                    td = datetime.strptime(r.FchHasta, '%Y%m%d')
+                except ValueError:
+                    td = False
+
+                wsfe_optionals_obj.write(
+                    cr, uid , res_c[0] , {
+                        'code': r.Id, 'name': r.Desc, 'to_date': td ,
+                        'from_date': fd, 'wsfe_config_id': ids[0],
+                        'from_afip': True } )
+
+
         return True
 
     def _get_doctype_and_num(self, inv):
@@ -372,6 +428,10 @@ class wsfe_config(osv.osv):
         obj_precision = self.pool.get('decimal.precision')
         invoice_obj = self.pool.get('account.invoice')
         company_id = self.pool.get('res.users')._get_company(cr, uid)
+
+        obj_data = self.pool.get('ir.model.data')
+        wsfcred_type = obj_data.get_object_reference(
+            cr, uid, 'l10n_ar_wsfe', 'fiscal_type_fcred')[1]
 
         details = []
 
@@ -443,6 +503,8 @@ class wsfe_config(osv.osv):
                 detalle['FchServDesde'] = formatted_date_invoice
                 detalle['FchServHasta'] = formatted_date_invoice
                 detalle['FchVtoPago'] = date_due
+            elif inv.fiscal_type_id == wsfcred_type:
+                detalle['FchVtoPago'] = date_due
 
             # Obtenemos la moneda de la factura
             # Lo hacemos por el wsfex_config, por cualquiera de ellos
@@ -512,6 +574,9 @@ class wsfe_config(osv.osv):
 
             # Detalle del array de IVA
             detalle['Iva'] = iva_array
+            detalle['Opcionales'] = map(lambda o: {
+                'Id': int(o.optional_id.code),
+                'Valor': o.value}, inv.optional_ids)
 
             # Detalle de los importes
             detalle['ImpOpEx'] = importe_operaciones_exentas
