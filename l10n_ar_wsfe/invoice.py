@@ -59,7 +59,7 @@ class account_invoice(osv.osv):
             if invoice.is_debit_note:
                 invoice_type = 'debit'
         else:
-            invoice_type = 'credit'
+            invoice_type = 'refund'
 
         res = voucher_type_obj.search(
             cr, uid, [
