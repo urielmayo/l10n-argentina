@@ -37,8 +37,11 @@
         'wsfe_view.xml',
         'account_invoice_view.xml',
         'account_invoice_workflow.xml',
+        'res_partner_view.xml',
         'wizard/wsfe_sinchronize_voucher_view.xml',
         'security/ir.model.access.csv',
+        'account_invoice_fiscal_type_data.xml',
+        'voucher_type_data.xml',
     ],
     'demo': [
         'wsfe_demo.xml',

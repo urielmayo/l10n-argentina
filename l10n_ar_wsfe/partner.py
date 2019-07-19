@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2013 E-MIPS (http://www.e-mips.com.ar) All Rights Reserved.
+#    Copyright (c) 2019 E-MIPS (http://www.e-mips.com.ar) All Rights Reserved.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
@@ -18,11 +18,24 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-import partner
-import account_invoice_fiscal_type
-import wsfe
-import wsfex
-import invoice
-import wizard
-import wsfe_request
-import report
+
+
+from osv import osv, fields
+
+class res_partner(osv.osv):
+    _name = "res.partner"
+    _inherit = "res.partner"
+
+    _columns = {
+        'receipt_wsfcred': fields.boolean('Use Electronic Credit Invoice?'),
+    }
+
+    _defaults = {
+        'receipt_wsfcred': lambda *a: False,
+    }
+
+    def _commercial_fields(self, cr, uid, context=None):
+        res = super(res_partner, self)._commercial_fields(
+            cr, uid, context=context)
+
+        return res + ['receipt_wsfcred']

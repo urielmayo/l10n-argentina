@@ -275,6 +275,7 @@
 								<field name="document_type"  />
 							</group>
 							<field name="denomination_id" />
+                                                        <field name="fiscal_type_id" />
 						</group>
 					</sheet>
 				</form>
@@ -293,6 +294,7 @@
 					<field name="voucher_model" />
 					<field name="document_type" />
 					<field name="denomination_id"/>
+                                        <field name="fiscal_type_id" />
 				</tree>
 			</field>
 		</record>
