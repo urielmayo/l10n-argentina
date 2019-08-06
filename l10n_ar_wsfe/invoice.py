@@ -203,7 +203,7 @@ class account_invoice(osv.osv):
             invoice = self.browse(cr, uid, ids[0])
             if not refund.fiscal_position:
                 fiscal_position = refund.partner_id.property_account_position
-                vals = {'fiscal_position':fiscal_position.id}
+                vals['fiscal_position'] = fiscal_position.id
 
             # Agregamos el comprobante asociado y otros campos necesarios
             # si es de exportacion
@@ -213,6 +213,7 @@ class account_invoice(osv.osv):
                 vals['dst_cuit_id'] = invoice.dst_cuit_id.id
 
             vals['associated_inv_ids'] = [(4, invoice.id)]
+            vals['fiscal_type_id'] = invoice.fiscal_type_id.id
 
             if vals:
                 self.write(cr, uid, refund_id, vals)
@@ -231,8 +232,9 @@ class account_invoice(osv.osv):
 
             # Chequeamos que la posicion fiscal y la denomination_id coincidan
             if inv.fiscal_position.denomination_id.id != denomination_id:
-                raise osv.except_osv( _('Error'),
-                            _('The invoice denomination does not corresponds with this fiscal position.'))
+                raise osv.except_osv(
+                    _('Error'),
+                    _('The invoice denomination does not corresponds with this fiscal position.'))
 
         # Si es factura de proveedor
         else:
@@ -241,13 +243,15 @@ class account_invoice(osv.osv):
 
             # Chequeamos que la posicion fiscal y la denomination_id coincidan
             if inv.fiscal_position.denom_supplier_id.id != inv.denomination_id.id:
-                raise osv.except_osv( _('Error'),
-                                    _('The invoice denomination does not corresponds with this fiscal position.'))
+                raise osv.except_osv(
+                    _('Error'),
+                    _('The invoice denomination does not corresponds with this fiscal position.'))
 
         # Chequeamos que la posicion fiscal de la factura y del cliente tambien coincidan
         if inv.fiscal_position.id != inv.partner_id.property_account_position.id:
-            raise osv.except_osv( _('Error'),
-                                _('The invoice fiscal position is not the same as the partner\'s fiscal position.'))
+            raise osv.except_osv(
+                _('Error'),
+                _('The invoice fiscal position is not the same as the partner\'s fiscal position.'))
 
         return True
 
@@ -256,7 +260,7 @@ class account_invoice(osv.osv):
         conf_obj = conf._model
 
         # Obtenemos el tipo de comprobante
-        #tipo_cbte = voucher_type_obj.get_voucher_type(cr, uid, inv, context=context)
+        # tipo_cbte = voucher_type_obj.get_voucher_type(cr, uid, inv, context=context)
         tipo_cbte = inv.voucher_type_id.code
         try:
             pto_vta = int(inv.pos_ar_id.name)
@@ -270,7 +274,20 @@ class account_invoice(osv.osv):
         """Funcion para obtener el siguiente numero de comprobante correspondiente en el sistema"""
 
         # Obtenemos el ultimo numero de comprobante para ese pos y ese tipo de comprobante
-        cr.execute("select max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999')) from account_invoice where internal_number ~ '^[0-9]{4}-[0-9]{8}$' and pos_ar_id=%s and state in %s and type=%s and is_debit_note=%s", (invoice.pos_ar_id.id, ('open', 'paid', 'cancel',), invoice.type, invoice.is_debit_note))
+        q = """
+            SELECT max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
+            FROM account_invoice
+            WHERE internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+                AND pos_ar_id = %s
+                AND state in %s
+                AND type = %s
+                AND is_debit_note = %s
+                AND voucher_type_id = %s
+            """
+        states = ('open', 'paid', 'cancel',)
+        cr.execute(q, (invoice.pos_ar_id.id, states, invoice.type,
+                       invoice.is_debit_note, invoice.voucher_type_id.id))
+
         last_number = cr.fetchone()
 
         # Si no devuelve resultados, es porque es el primero
@@ -287,7 +304,9 @@ class account_invoice(osv.osv):
         invoices = self.read(cr, uid, ids, ['aut_cae'])
         for i in invoices:
             if i['aut_cae']:
-                raise osv.except_osv(_("Electronic Invoice Error!"), _("You cannot cancel an Electronic Invoice because it has been informed to AFIP."))
+                raise osv.except_osv(
+                    _("Electronic Invoice Error!"),
+                    _("You cannot cancel an Electronic Invoice because it has been informed to AFIP."))
 
         return super(account_invoice, self).action_cancel(cr, uid, ids, context=context)
 
@@ -329,7 +348,7 @@ class account_invoice(osv.osv):
 
             # si el usuario no ingreso un numero, busco el ultimo y lo incremento , si no hay ultimo va 1.
             # si el usuario hizo un ingreso dejo ese numero
-            internal_number = obj_inv.internal_number #False
+            internal_number = obj_inv.internal_number  # False
             next_number = False
 
             # Si son de Cliente
@@ -363,7 +382,6 @@ class account_invoice(osv.osv):
                     if obj_inv.internal_number:
                         internal_number = obj_inv.internal_number
 
-
                 # Lo ponemos como en Proveedores, o sea, A0001-00000001
                 if not internal_number:
                     internal_number = '%s-%08d' % (pos_ar.name, next_number)
@@ -384,7 +402,6 @@ class account_invoice(osv.osv):
                     m = re.match('^[0-9]{4}-[0-9]{8}$', obj_inv.internal_number)
                     if not m:
                         raise osv.except_osv( _('Error'), _('The Invoice Number should be the format XXXX-XXXXXXXX'))
-
 
             # Escribimos los campos necesarios de la factura
             self.write(cr, uid, obj_inv.id, invoice_vals)
@@ -417,7 +434,6 @@ class account_invoice(osv.osv):
 #
 #        details = conf_obj.prepare_details(cr, uid, conf, ids, context=context)
 #        return details
-
 
     def hook_add_taxes(self, cr, uid, inv, detalle):
         return detalle
@@ -490,5 +506,3 @@ class account_invoice(osv.osv):
                     cr2.close()
 
         return True
-
-account_invoice()
