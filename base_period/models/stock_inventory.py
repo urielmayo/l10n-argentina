@@ -1,29 +1,28 @@
 ##############################################################################
-#   Copyright (c) 2018 Eynes/E-MIPS (www.eynes.com.ar)
+#   Copyright (c) 2019 Eynes/E-MIPS (www.eynes.com.ar)
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from datetime import datetime
-
-from odoo import models, fields, api
-from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DSDTF
+from odoo import api, fields, models
 
 
 class StockInventory(models.Model):
-    _name = 'stock.inventory'
     _inherit = 'stock.inventory'
 
     @api.depends('date')
     def _compute_period(self):
-        for rec in self:
-            if not rec.date:
+        for si in self:
+            if not si.date:
                 continue
-            period_obj = rec.env['date.period']
-            period_date = datetime.strptime(
-                rec.date, DSDTF).date()
+
+            period_obj = si.env['date.period']
+            period_date = fields.Date.from_string(si.date)
             period = period_obj._get_period(period_date)
-            rec.period_id = period.id
+            si.period_id = period.id
 
     period_id = fields.Many2one(
-        string="Period", comodel_name="date.period",
-        compute='_compute_period', store=True)
+        string="Period",
+        comodel_name="date.period",
+        compute='_compute_period',
+        store=True,
+    )

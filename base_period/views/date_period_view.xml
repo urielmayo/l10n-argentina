@@ -44,9 +44,9 @@
             <field name="model">date.period</field>
             <field name="arch" type="xml">
                 <search string="Search Period">
-                    <field name="name" filter_domain="[('name','ilike',self)]" string="Period"/>
+                    <field name="name" filter_domain="[('name', 'ilike', self)]" string="Period"/>
                     <group expand="0" string="Group By">
-                        <filter string="Partner" domain="[]" context="{'group_by':'code'}"/>
+                        <filter string="Partner" context="{'group_by':'code'}" name="group_by_code"/>
                     </group>
                 </search>
             </field>
