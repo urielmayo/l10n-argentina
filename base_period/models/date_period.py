@@ -67,12 +67,23 @@ class DatePeriod(models.Model):
         self.env.cr.execute(active_journal_qry)
         total_active_journal = self.env.cr.fetchone()[0]
 
+        period_journal_qry = """
+        SELECT COUNT(*)
+        FROM date_period_journal_rel AS rel
+        LEFT JOIN account_journal AS aj
+            ON rel.journal_id = aj.id
+        WHERE aj.active = false
+            AND rel.close_period_id = %s
+        """
+
         for dp in self:
-            if dp.journal_ids and \
-                    len(dp.journal_ids) == total_active_journal:
-                dp.period_state = 'closed'
-            elif dp.journal_ids:
-                dp.period_state = 'partial'
+            self.env.cr.execute(period_journal_qry, (dp.id,))
+            related_journal_qty = self.env.cr.fetchone()[0]
+            if related_journal_qty:
+                if related_journal_qty == total_active_journal:
+                    dp.period_state = 'closed'
+                else:
+                    dp.period_state = 'partial'
             else:
                 dp.period_state = 'open'
 
