@@ -20,7 +20,7 @@
 {
     "name": "Close Date Period",
     "category": "L10N AR",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Eynes/E-MIPS",
     "license": "AGPL-3",
     "description": "Allow locking a period to prevent accounting changes.",
@@ -33,6 +33,6 @@
         "views/date_period_view.xml",
         "views/account_journal_view.xml",
     ],
-    "installable": True,
+    "installable": False,
     "application": True,
 }
