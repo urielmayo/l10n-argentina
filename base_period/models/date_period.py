@@ -135,46 +135,60 @@ class DatePeriod(models.Model):
 
         return recs.name_get()
 
-    def create_period(self, p_date):
-        for i in range(1, 13):
-            period_date = p_date + relativedelta(month=i)
-            period_code = period_date.strftime("%m/%Y")
-            ddate = fields.Date.to_string(p_date)
+    def _prepare_period_data(self, period_date):
+        period_code = period_date.strftime("%m/%Y")
+        first_day = period_date + relativedelta(day=1)
+        last_day = period_date + relativedelta(
+            day=1,
+            months=+1,
+            days=-1,
+        )
 
-            domain = [
-                ('date_from', '<=', ddate),
-                ('date_to', '>=', ddate)
-            ]
+        return {
+            'name': period_code,
+            'code': period_code,
+            'date_from': first_day,
+            'date_to': last_day,
+        }
 
-            period = self.search(domain)
-            if not period:
-                first_day = period_date + relativedelta(day=1)
-                last_day = period_date + relativedelta(
-                    day=1, months=+1, days=-1)
+    def search_period_on_date(self, p_date):
+        """Search for date.period on date ``p_date``.
 
-                args = {
-                    'name': period_code,
-                    'code': period_code,
-                    'date_from': first_day,
-                    'date_to': last_day,
-                }
+        :param p_date: datetime.date to search for.
+        :return: found date.period instance or empty.
+        """
 
-                self.create(args)
-
-    def _get_period(self, period_date):
-        """Search for period on date ``period_date``. If we don't find we create it."""
-
-        ddate = fields.Date.to_string(period_date)
+        period_date = fields.Date.to_string(p_date)
 
         domain = [
-            ('date_from', '<=', ddate),
-            ('date_to', '>=', ddate)
+            ('date_from', '<=', period_date),
+            ('date_to', '>=', period_date)
         ]
 
+        return self.search(domain)
+
+    def create_period(self, p_date):
+        for month_nbr in range(1, 13):
+            period_date = p_date + relativedelta(month=month_nbr)
+            period = self.search_period_on_date(period_date)
+            if not period:
+                period_data = self._prepare_period_data(
+                    period_date,
+                )
+                period = self.create(period_data)
+
+            # Return the period for the date that was passed as argument
+            if p_date.month == month_nbr:
+                intended_period = period
+
+        return intended_period
+
+    def _get_period(self, period_date):
+        """Search for period on date ``period_date``. If we don't find it we create it."""
+
         # Search for period, if we don't find it we create it
-        period = self.search(domain)
+        period = self.search_period_on_date(period_date)
         if not period:
-            self.create_period(period_date)
-            period = self.search(domain)
+            period = self.create_period(period_date)
 
         return period
