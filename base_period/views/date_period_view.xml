@@ -7,9 +7,19 @@
             <field name="model">date.period</field>
             <field name="arch" type="xml">
                 <form string="Period">
-                    <!-- <header> -->
-                        <!-- TODO -->
-                        <!-- </header> -->
+                    <header>
+                        <button name="%(close_date_period_wizard_action)d" class="btn-primary"
+                            string="Close" type="action"
+                            attrs="{'invisible': [('period_state', 'in', 'closed')]}"
+                            groups='account.group_account_manager'
+                            />
+                        <button name="%(reopen_date_period_wizard_action)d" class="btn-secondary"
+                            string="Reopen" type="action"
+                            attrs="{'invisible': [('period_state', 'in', 'open')]}"
+                            groups='account.group_account_manager'
+                            />
+                        <field name="period_state" widget="statusbar" statusbar_visible="open,partial,closed"/>
+                    </header>
                     <sheet>
                         <group>
                             <group>
@@ -21,6 +31,11 @@
                                 <field name="date_to"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page name="closed_journals" string="Closed Journals">
+                                <field name="journal_ids" readonly="True"/>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

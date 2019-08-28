@@ -1,8 +1,9 @@
 Major Developers:
 ===== ===========
 * Cardozo Nicolás Joaquin
-* Gabriel Davini
+* Julian Camilo Corso
 
 Other Contributors:
 ===== =============
 * Martín Nicolás Cuesta
+* Gabriel Davini

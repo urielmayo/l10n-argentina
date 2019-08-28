@@ -37,6 +37,37 @@ class DatePeriod(models.Model):
         inverse_name="period_id",
         string="Stock Inventory",
     )
+    period_state = fields.Selection(
+        [
+            ('open', 'Open'),
+            ('partial', 'Partialy Closed'),
+            ('closed', 'Closed'),
+        ],
+        string='Status',
+        compute="_compute_period_state",
+        default='open',
+        copy=False,
+        store=True,
+        track_visibility='onchange',
+    )
+    journal_ids = fields.Many2many(
+        comodel_name='account.journal',
+        relation='date_period_journal_rel',
+        column1='close_period_id',
+        column2='journal_id',
+        string='Journals',
+    )
+
+    @api.depends('journal_ids')
+    def _compute_period_state(self):
+        journal_model = self.env['account.journal']
+        for dp in self:
+            if len(dp.journal_ids) == journal_model.search_count([]):
+                dp.period_state = 'closed'
+            elif dp.journal_ids:
+                dp.period_state = 'partial'
+            else:
+                dp.period_state = 'open'
 
     @api.multi
     def unlink(self):
