@@ -62,7 +62,7 @@ class DatePeriod(models.Model):
     def _compute_period_state(self):
         # Count all active journals
         active_journal_qry = """
-        SELECT COUNT(*) FROM account_journal WHERE active = false
+        SELECT COUNT(*) FROM account_journal WHERE active = true
         """
         self.env.cr.execute(active_journal_qry)
         total_active_journal = self.env.cr.fetchone()[0]
@@ -72,7 +72,7 @@ class DatePeriod(models.Model):
         FROM date_period_journal_rel AS rel
         LEFT JOIN account_journal AS aj
             ON rel.journal_id = aj.id
-        WHERE aj.active = false
+        WHERE aj.active = true
             AND rel.close_period_id = %s
         """
 
@@ -168,6 +168,7 @@ class DatePeriod(models.Model):
         return self.search(domain)
 
     def create_period(self, p_date):
+        month_period_map = {}
         for month_nbr in range(1, 13):
             period_date = p_date + relativedelta(month=month_nbr)
             period = self.search_period_on_date(period_date)
@@ -177,10 +178,11 @@ class DatePeriod(models.Model):
                 )
                 period = self.create(period_data)
 
-            # Return the period for the date that was passed as argument
-            if p_date.month == month_nbr:
-                intended_period = period
+            month_period_map[month_nbr] = period
 
+        # Return the period for the date that was passed as argument
+        intended_period = month_period_map[p_date.month]
+        del month_period_map
         return intended_period
 
     def _get_period(self, period_date):
