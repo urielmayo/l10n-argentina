@@ -25,60 +25,10 @@
           <field name="arch" type="xml">
               <field name="name" position="replace">
                    <field name="name"
-                       filter_domain="['|','|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self),('vat','ilike',self)]"/>
+                       filter_domain="['|', '|', '|', ('display_name', 'ilike', self), ('ref', '=', self), ('email', 'ilike', self), ('vat', 'ilike', self)]"/>
               </field>
           </field>
         </record>
-
-        <record id="view_res_document_type_form" model="ir.ui.view">
-            <field name="name">res.document.type.form</field>
-            <field name="model">res.document.type</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Document type" version="7.0">
-                    <sheet>
-                        <h1>
-                            <label string="Document type"/>
-                        </h1>
-                        <group>
-                            <field name="name" select="1"/>
-                            <field name="afip_code" select="1"/>
-                            <field name="verification_required"/>
-                            <field name="check_duplicated"/>
-                            <field name="dst_cuit"/>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="view_res_document_type_tree" model="ir.ui.view">
-            <field name="name">res.document.type.tree</field>
-            <field name="model">res.document.type</field>
-            <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <tree string="Document type">
-                    <field name="name"/>
-                    <field name="afip_code"/>
-                    <field name="verification_required"/>
-                    <field name="check_duplicated"/>
-                    <field name="dst_cuit"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_res_document_type" model="ir.actions.act_window">
-            <field name="name">Document types</field>
-            <field name="res_model">res.document.type</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-        </record>
-
-        <menuitem id="menu_document_type"
-            name="Document type"
-            action="action_res_document_type"
-            sequence="150"
-            parent="account.account_account_menu"/>
 
     </data>
 </odoo>
