@@ -28,12 +28,14 @@ class Picking(models.Model):
     _inherit = "stock.picking"
 
     renum_pick_id = fields.Many2one('stock.picking', string='Renumerated', help="Reference to the new picking created for renumerate this one. You cannot delete pickings if it is done, so it is cancelled and a new one is created, corrected and renumerated")
+    name_original = fields.Char(string=_("Original picking number"))
 
     @api.multi
     def action_done(self):
         res = super(Picking, self).action_done()
         sequence_id = self.picking_type_id.sequence_transfer_id.id
         if self.picking_type_id.sequence_transfer_id.code:
+            self.write({'name_original': self.name})
             name = self.env['ir.sequence'].browse(sequence_id).next_by_id()
             self.write({'name': name})
 
