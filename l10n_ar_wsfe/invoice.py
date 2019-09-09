@@ -44,8 +44,11 @@ class account_invoice(osv.osv):
 
     def _default_fiscal_type_id(self, cr, uid, context=None):
         obj_data = self.pool.get('ir.model.data')
-        fiscal_type_normal_id = obj_data.get_object_reference(
-            cr, uid, 'l10n_ar_wsfe', 'fiscal_type_normal')[1]
+        try:
+            fiscal_type_normal_id = obj_data.get_object_reference(
+                cr, uid, 'l10n_ar_wsfe', 'fiscal_type_normal')[1]
+        except Exception:
+            return False
         return fiscal_type_normal_id
 
     def _get_voucher_type(
