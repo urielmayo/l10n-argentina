@@ -3,15 +3,14 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.account.models.account_move import \
-    AccountMove as AccountMoveOriginal
+from odoo.addons.account.models.account_move import AccountMove as AccountMoveOriginal
 
 
 class AccountTax(models.Model):
-    _name = "account.tax"
+
     _inherit = "account.tax"
     _description = "Tax"
 
@@ -19,14 +18,21 @@ class AccountTax(models.Model):
     is_exempt = fields.Boolean(
         string='Exempt',
         default=False,
-        help="Check this if this Tax represent Tax Exempts")
-    tax_group = fields.Selection([
-        ('vat', 'VAT'),
-        ('perception', 'Perception'),
-        ('retention', 'Retention'),
-        ('internal', 'Internal Tax'),
-        ('other', 'Other')], string='Tax Group',
-        default='vat', required=True, help="This is tax categorization.")
+        help="Check this if this Tax represent Tax Exempts",
+    )
+    tax_group = fields.Selection(
+        [
+            ('vat', 'VAT'),
+            ('perception', 'Perception'),
+            ('retention', 'Retention'),
+            ('internal', 'Internal Tax'),
+            ('other', 'Other'),
+        ],
+        string='Tax Group',
+        default='vat',
+        required=True,
+        help="This is tax categorization.",
+    )
 
 
 @api.multi
@@ -45,15 +51,18 @@ def post(self):
                 refund_list = ['out_refund', 'in_refund']
                 if invoice and invoice.type in \
                         refund_list and journal.refund_sequence:
+
                     if not journal.refund_sequence_id:
-                        raise UserError(_('Please define a sequence \
-                            for the credit notes'))
+                        err = _('Please define a sequence for the credit notes')
+                        raise UserError(err)
+
                     sequence = journal.refund_sequence_id
+
                 new_name = sequence.with_context(
                     ir_sequence_date=move.date).next_by_id()
             else:
-                raise UserError(
-                    _('Please define a sequence on the journal.'))
+                err = _('Please define a sequence on the journal.')
+                raise UserError(err)
 
             if new_name:
                 move.name = new_name
@@ -62,7 +71,7 @@ def post(self):
 
 
 class AccountMove(models.Model):
-    _name = "account.move"
+
     _inherit = "account.move"
 
     @api.model_cr

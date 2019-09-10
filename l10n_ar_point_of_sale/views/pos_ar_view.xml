@@ -1,115 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
-    <data>
 
-        <record id="pos_ar_view_form" model="ir.ui.view">
-            <field name="name">pos.ar.view.form</field>
-            <field name="model">pos.ar</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Point of Sale AR">
-                    <sheet>
-                        <h1>Point of Sale AR</h1>
+    <record id="pos_ar_view_form" model="ir.ui.view">
+        <field name="name">pos.ar.view.form</field>
+        <field name="model">pos.ar</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Point of Sale AR">
+                <sheet>
+                    <h1>Point of Sale AR
+                        <div>
+                            <label for="number" string="Number" class="oe_edit_only"/>
+                            <field name="number" class="oe_edit_only" required="1" readonly="0"/>
+                            <field name="name" class="oe_read_only"/>
+                        </div>
+                    </h1>
+                    <group>
                         <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="desc" />
-                                <field name="shop_id"/>
-                                <field name="image" />
-                                <field name="activity_start_date"/>
-                            </group>
-                            <group>
-                                <field name="priority"/>
-                                <field name="show_in_reports"/>
-                                <field name="company_id" options="{'no_create': True}"
-                                    groups="base.group_multi_company"/>
-                            </group>
+                            <field name="desc" />
+                            <field name="shop_id"/>
+                            <field name="image" />
+                            <field name="activity_start_date"/>
                         </group>
-                        <notebook>
-                            <page string="Available Denominations" name="denominations">
-                                <field name="denomination_ids" string="Denominations">
-                                </field>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="pos_ar_view_tree" model="ir.ui.view">
-            <field name="name">pos.ar.view.tree</field>
-            <field name="model">pos.ar</field>
-            <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <tree string="POS AR">
-                    <field name="name"/>
-                    <!-- <field name="denomination_id"/> -->
-                    <field name="priority"/>
-                    <field name="shop_id"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_pos_ar_view_tree" model="ir.actions.act_window">
-            <field name="name">Point of Sale</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">pos.ar</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-        </record>
-
-        <record id="action_pos_ar_view_form" model="ir.actions.act_window">
-            <field name="name">Point of Sale</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">pos.ar</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form, tree</field>
-        </record>
-
-
-        <!--Views of Invoice Denomination-->
-
-        <record id="inv_den_view_form" model="ir.ui.view">
-            <field name="name">inv.den.view.form</field>
-            <field name="model">invoice.denomination</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Invoice denomination" version="7.0">
-                    <sheet>
-                        <h1>
-                            <label string="Invoice denomination"/>
-                        </h1>
                         <group>
-                            <field name="name" select="1"/>
-                            <field name="desc" select="1"/>
-                            <field name="vat_discriminated" select="1"/>
+                            <field name="priority"/>
+                            <field name="show_in_reports"/>
+                            <field name="company_id" options="{'no_create': True}"
+                                groups="base.group_multi_company"/>
                         </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
+                    </group>
+                    <notebook>
+                        <page string="Available Denominations" name="denominations">
+                            <field name="denomination_ids" string="Denominations">
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-        <record id="inv_den_view_tree" model="ir.ui.view">
-            <field name="name">inv.den.view.tree</field>
-            <field name="model">invoice.denomination</field>
-            <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <tree string="Invoice denominations">
-                    <field name="name" />
-                    <field name="desc" />
-                    <field name="vat_discriminated" />
-                </tree>
-            </field>
-        </record>
+    <record id="pos_ar_view_tree" model="ir.ui.view">
+        <field name="name">pos.ar.view.tree</field>
+        <field name="model">pos.ar</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="POS AR">
+                <field name="name"/>
+                <!-- <field name="denomination_id"/> -->
+                <field name="priority"/>
+                <field name="shop_id"/>
+            </tree>
+        </field>
+    </record>
 
-        <record id="action_pos_ar_denomination_view_tree" model="ir.actions.act_window">
-            <field name="name">Invoice Denomination</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">invoice.denomination</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-        </record>
+    <record id="action_pos_ar_view_tree" model="ir.actions.act_window">
+        <field name="name">Point of Sale</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pos.ar</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 
-    </data>
+    <record id="action_pos_ar_view_form" model="ir.actions.act_window">
+        <field name="name">Point of Sale</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pos.ar</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form, tree</field>
+    </record>
+
 </odoo>

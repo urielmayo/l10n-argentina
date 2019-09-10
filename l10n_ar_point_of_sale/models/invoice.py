@@ -3,10 +3,11 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-import re
 import logging
+import re
+
+from odoo import _, api, fields, models
 from odoo.addons import decimal_precision as dp
-from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
@@ -18,74 +19,100 @@ class AccountInvoice(models.Model):
     _order = "date_invoice desc, internal_number desc"
 
     pos_ar_id = fields.Many2one(
-        comodel_name='pos.ar', string='Point of Sale',
-        readonly=True, states={'draft': [('readonly', False)]})
+        comodel_name='pos.ar',
+        string='Point of Sale',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
     is_debit_note = fields.Boolean(string='Debit Note', default=False)
     denomination_id = fields.Many2one(
-        comodel_name='invoice.denomination', readonly=True,
-        states={'draft': [('readonly', False)]})
-    internal_number = fields.Char(
-        string='Invoice Number', size=32, readonly=True,
+        comodel_name='invoice.denomination',
+        readonly=True,
         states={'draft': [('readonly', False)]},
-        help="Unique number of the invoice, computed automatically when " +
-        "the invoice is created.")
+    )
+    internal_number = fields.Char(
+        string='Invoice Number',
+        size=32,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="Unique number of the invoice, computed automatically when "
+        "the invoice is created.",
+    )
     amount_exempt = fields.Monetary(
-        string='Amount Exempt', digits=dp.get_precision('Account'),
-        store=True, readonly=True, compute='_compute_amount')
+        string='Amount Exempt',
+        digits=dp.get_precision('Account'),
+        store=True,
+        readonly=True,
+        compute='_compute_amount',
+    )
     amount_no_taxed = fields.Monetary(
-        string='No Taxed', digits=dp.get_precision('Account'), store=True,
-        readonly=True, compute='_compute_amount')
+        string='No Taxed',
+        digits=dp.get_precision('Account'),
+        store=True,
+        readonly=True,
+        compute='_compute_amount',
+    )
     amount_taxed = fields.Monetary(
-        string='VAT Base', digits=dp.get_precision('Account'), store=True,
-        readonly=True, compute='_compute_amount')
+        string='VAT Base',
+        digits=dp.get_precision('Account'),
+        store=True,
+        readonly=True,
+        compute='_compute_amount',
+    )
     amount_other_taxed = fields.Monetary(
-        string='Other Tax Base', digits=dp.get_precision('Account'),
-        store=True, readonly=True, compute='_compute_amount')
+        string='Other Tax Base',
+        digits=dp.get_precision('Account'),
+        store=True,
+        readonly=True,
+        compute='_compute_amount',
+    )
     local = fields.Boolean(string='Local', default=True)
     dst_cuit_id = fields.Many2one('dst_cuit.codes', 'Country CUIT')
     internal_number = fields.Char(
-        string="Internal Number", default=False, copy=False, readonly=True,
-        help="Unique number of the invoice, computed automatically when " +
-        "the invoice is created.")
+        string="Internal Number",
+        default=False,
+        copy=False,
+        readonly=True,
+        help="Unique number of the invoice, computed automatically when "
+        "the invoice is created.",
+    )
 
     # DONE
     @api.multi
     def name_get(self):
-
         TYPES = {
-            'out_invoice': _('CI '),
-            'in_invoice': _('SI '),
-            'out_refund': _('CR '),
-            'in_refund': _('SR '),
-            'out_debit': _('CD '),
-            'in_debit': _('SD '),
+            'out_invoice': _('CI'),
+            'in_invoice': _('SI'),
+            'out_refund': _('CR'),
+            'in_refund': _('SR'),
+            'out_debit': _('CD'),
+            'in_debit': _('SD'),
         }
-        result = []
 
-        if not self._context.get('use_internal_number', True):
-            result = super(AccountInvoice, self).name_get()
-        else:
+        result = []
+        if self.env.context.get('use_internal_number', False):
             for inv in self:
-                type = inv.type
-                rtype = type
+                inv_type = rtype = inv.type
                 number = inv.internal_number or ''
-                denom = inv.denomination_id and inv.denomination_id.name or ''
+                denom = inv.denomination_id.name or ''
                 debit_note = inv.is_debit_note
 
-                # Chequeo de Nota de Debito
-                if type == 'out_invoice':
+                # Debit Note check
+                if inv_type == 'out_invoice':
                     if debit_note:
                         rtype = 'out_debit'
                     else:
                         rtype = 'out_invoice'
-                elif type == 'in_invoice':
+                elif inv_type == 'in_invoice':
                     if debit_note:
                         rtype = 'in_debit'
                     else:
                         rtype = 'in_invoice'
 
-                name = TYPES[rtype] + denom + number
+                name = "{} {}{}".format(TYPES[rtype], denom, number)
                 result.append((inv.id, name))
+        else:
+            result = super(AccountInvoice, self).name_get()
 
         return result
 
@@ -94,16 +121,19 @@ class AccountInvoice(models.Model):
     def name_search(self, name, args=None, operator='ilike', limit=100):
         args = args or []
         recs = self.browse()
-        if not self._context.get('use_internal_number', True):
-            return super(AccountInvoice, self).name_search(
-                name, args, operator, limit=limit)
-        else:
+        if self.env.context.get('use_internal_number', False):
             if name:
-                recs = self.search([('internal_number', '=', name)] +
-                                   args, limit=limit)
+                recs = self.search(
+                    [('internal_number', '=', name)] + args,
+                    limit=limit,
+                )
             if not recs:
-                recs = self.search([('internal_number', operator, name)] +
-                                   args, limit=limit)
+                recs = self.search(
+                    [('internal_number', operator, name)] + args,
+                    limit=limit,
+                )
+        else:
+            return super().name_search(name, args, operator, limit=limit)
 
         return recs.name_get()
 
@@ -114,43 +144,94 @@ class AccountInvoice(models.Model):
         self.env.cr.execute(
             'UPDATE account_move SET ref=%s '
             'WHERE id=%s',  # AND (ref is null OR ref = \'\')',
-            (ref, move_id))
+            (ref, move_id),
+        )
+
         self.env.cr.execute(
             'UPDATE account_move_line SET ref=%s '
             'WHERE move_id=%s',  # AND (ref is null OR ref = \'\')',
-            (ref, move_id))
+            (ref, move_id),
+        )
+
         self.env.cr.execute(
             'UPDATE account_analytic_line SET ref=%s '
             'FROM account_move_line '
             'WHERE account_move_line.move_id = %s '
             'AND account_analytic_line.move_id = account_move_line.id',
-            (ref, move_id))
+            (ref, move_id),
+        )
+
         return True
 
     # DONE
-    # Se calculan los campos del pie de pagina de la factura
-    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount',
-                 'tax_line_ids.amount_rounding',
-                 'currency_id', 'company_id', 'date_invoice', 'type')
+    # Compute fields for invoice's page footer
+    @api.depends(
+        'invoice_line_ids.price_subtotal',
+        'tax_line_ids.amount',
+        'tax_line_ids.amount_rounding',
+        'currency_id',
+        'company_id',
+        'date_invoice',
+        'type',
+    )
     def _compute_amount(self):
         super()._compute_amount()
-        for invoice in self:
-            invoice.amount_exempt = sum(
-                line.price_subtotal for line in invoice.invoice_line_ids if
-                any(map(lambda x: x.is_exempt, line.invoice_line_tax_ids)))
-            invoice.amount_no_taxed = sum(
-                line.price_subtotal for line in invoice.invoice_line_ids if
-                not line.invoice_line_tax_ids)
-            invoice.amount_taxed = sum(
-                line.price_subtotal for line in invoice.invoice_line_ids if
-                any(map(lambda x: (x.tax_group == 'vat' and not x.is_exempt),
-                        line.invoice_line_tax_ids)))
-            invoice.amount_other_taxed = sum(
-                line.price_subtotal for line in invoice.invoice_line_ids if
-                any(map(lambda x: (x.tax_group != 'vat' and not x.is_exempt),
-                        line.invoice_line_tax_ids)))
 
-    # TODO --Averiguar como cancelar una nota de credito pagada
+        def _filter_exempt(line):
+            return any(line.invoice_line_tax_ids.mapped("is_exempt"))
+
+        def _filter_untaxed(line):
+            return not line.invoice_line_tax_ids
+
+        def _filter_taxed(line):
+            taxed = line.invoice_line_tax_ids.mapped(
+                lambda x: x.tax_group == 'vat' and not x.is_exempt
+            )
+            return any(taxed)
+
+        def _filter_other_taxed(line):
+            other_taxed = line.invoice_line_tax_ids.mapped(
+                lambda x: x.tax_group != 'vat' and not x.is_exempt
+            )
+            return any(other_taxed)
+
+        for inv in self:
+            # Amount exempt
+            #inv.amount_exempt = sum(
+            #    line.price_subtotal for line in inv.invoice_line_ids
+            #    if any(map(lambda x: x.is_exempt, line.invoice_line_tax_ids)),
+            #)
+            inv.amount_exempt = sum(
+                inv.invoice_line_ids(_filter_exempt).mapped("price_subtotal")
+            )
+
+            # Amount untaxed
+            #inv.amount_no_taxed = sum(
+            #    line.price_subtotal for line in inv.invoice_line_ids if
+            #    not line.invoice_line_tax_ids)
+            inv.amount_no_taxed = sum(
+                inv.invoice_line_ids(_filter_untaxed).mapped("price_subtotal")
+            )
+
+            # Amount taxed
+            #inv.amount_taxed = sum(
+            #    line.price_subtotal for line in inv.invoice_line_ids if
+            #    any(map(lambda x: (x.tax_group == 'vat' and not x.is_exempt),
+            #            line.invoice_line_tax_ids)))
+            inv.amount_taxed = sum(
+                inv.invoice_line_ids(_filter_taxed).mapped("price_subtotal")
+            )
+
+            # Amount for taxes other than VAT
+            #inv.amount_other_taxed = sum(
+            #    line.price_subtotal for line in inv.invoice_line_ids if
+            #    any(map(lambda x: (x.tax_group != 'vat' and not x.is_exempt),
+            #            line.invoice_line_tax_ids)))
+            inv.amount_other_taxed = sum(
+                inv.invoice_line_ids(_filter_other_taxed).mapped("price_subtotal")
+            )
+
+    # TODO: how do we cancel a paid Credit Note?
     @api.multi
     def action_cancel(self):
         states = (
@@ -159,15 +240,14 @@ class AccountInvoice(models.Model):
             'proforma',
             'open'
         )
-        allowed_states = self.env.context.\
-            get("cancel_states", states)
+        allowed_states = self.env.context.get("cancel_states", states)
         for inv in self:
             if inv.type == "out_refund" and inv.state not in allowed_states:
                 state_tags = [_(tag) for state, tag in
                               self._columns["state"].selection
                               if state in allowed_states]
-                err = _("Credit Note can only be \
-                    cancelled in these states: %s!")
+                err = _("Credit Note can only be "
+                        "cancelled in these states: %s!")
                 raise ValidationError(err % ', '.join(state_tags))
 
         return super(AccountInvoice, self).action_cancel()
@@ -403,10 +483,10 @@ class AccountInvoice(models.Model):
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
+        # Extend method to set local, dst_cuit_id and denomination_id fields.
+        # Also set domain for pos_ar_id when invoice type is 'out_'
         res = super(AccountInvoice, self)._onchange_partner_id()
-        domain = {}
-        if 'domain' in res:
-            domain = res['domain']
+        domain = res.get('domain', {})
         if self.partner_id and self.fiscal_position_id:
             if self.type in ['in_invoice', 'in_refund']:
                 self.denomination_id = self.fiscal_position_id.\
@@ -424,12 +504,14 @@ class AccountInvoice(models.Model):
                             key=lambda x: x.priority)
                         if sorted_pos:
                             self.pos_ar_id = sorted_pos[0]
+
             self.local = self.fiscal_position_id.local
             self.dst_cuit_id = self.partner_id.dst_cuit_id
         else:
             self.local = True
             self.denomination_id = False
             self.pos_ar_id = False
+
         return res
 
     def _prepare_tax_line_vals(self, line, tax):
