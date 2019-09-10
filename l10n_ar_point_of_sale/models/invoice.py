@@ -202,7 +202,8 @@ class AccountInvoice(models.Model):
             #    if any(map(lambda x: x.is_exempt, line.invoice_line_tax_ids)),
             #)
             inv.amount_exempt = sum(
-                inv.invoice_line_ids(_filter_exempt).mapped("price_subtotal")
+                inv.invoice_line_ids.filtered(_filter_exempt).mapped(
+                    "price_subtotal")
             )
 
             # Amount untaxed
@@ -210,7 +211,8 @@ class AccountInvoice(models.Model):
             #    line.price_subtotal for line in inv.invoice_line_ids if
             #    not line.invoice_line_tax_ids)
             inv.amount_no_taxed = sum(
-                inv.invoice_line_ids(_filter_untaxed).mapped("price_subtotal")
+                inv.invoice_line_ids.filtered(_filter_untaxed).mapped(
+                    "price_subtotal")
             )
 
             # Amount taxed
@@ -219,7 +221,8 @@ class AccountInvoice(models.Model):
             #    any(map(lambda x: (x.tax_group == 'vat' and not x.is_exempt),
             #            line.invoice_line_tax_ids)))
             inv.amount_taxed = sum(
-                inv.invoice_line_ids(_filter_taxed).mapped("price_subtotal")
+                inv.invoice_line_ids.filtered(_filter_taxed).mapped(
+                    "price_subtotal")
             )
 
             # Amount for taxes other than VAT
@@ -228,7 +231,8 @@ class AccountInvoice(models.Model):
             #    any(map(lambda x: (x.tax_group != 'vat' and not x.is_exempt),
             #            line.invoice_line_tax_ids)))
             inv.amount_other_taxed = sum(
-                inv.invoice_line_ids(_filter_other_taxed).mapped("price_subtotal")
+                inv.invoice_line_ids.filtered(_filter_other_taxed).mapped(
+                    "price_subtotal")
             )
 
     # TODO: how do we cancel a paid Credit Note?
