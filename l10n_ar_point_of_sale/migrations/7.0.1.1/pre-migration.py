@@ -151,10 +151,10 @@ def _do_update(cr):
             try:
                 cr.execute(q, q_p)
             except Exception:
-                _logger.exception('Unable to add imd for fiscal_position_proveedor_exterior to %s' % afpid)
+                _logger.exception('Unable to add imd for fiscal_position_final_consumer to %s' % afpid)
                 cr.rollback()
             else:
-                _logger.info('[IMD] fiscal_position_proveedor_exterior refers to account.fiscal.position %s' % afpid)
+                _logger.info('[IMD] fiscal_position_final_consumer refers to account.fiscal.position %s' % afpid)
                 cr.commit()
 
 
