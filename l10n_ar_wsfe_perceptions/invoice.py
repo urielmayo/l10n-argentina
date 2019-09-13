@@ -36,7 +36,7 @@ class account_invoice(osv.osv):
 
         for perception in inv.perception_ids:
             code = codes[perception.perception_id.jurisdiccion]
-            perc = {'Id': code, 'BaseImp': perception.base, 'Importe': perception.amount, 'Alic': 0.0}
+            perc = {'Id': code, 'Desc': perception.name[:80], 'BaseImp': abs(perception.base_currency), 'Importe': abs(perception.tax_currency), 'Alic': 0.0}
             perc_array.append(perc)
 
         if detalle['Tributos']:
