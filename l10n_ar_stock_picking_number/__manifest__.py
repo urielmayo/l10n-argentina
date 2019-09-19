@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
@@ -24,7 +23,7 @@
 
 {
     'name': 'Numeracion Remitos Argentina',
-    'version': '1.0',
+    'version': '12.0.1.0.0',
     'summary': 'Numeracion Remitos Argentina',
     'author': "E-MIPS/Eynes",
     'maintainer': 'E-MIPS/Eynes',
@@ -32,7 +31,6 @@
     'website': "http://www.proyectoaconcagua.com.ar",
     'depends': ['stock'],
     'category': 'Localization',
-    'demo': [],
     'data': [
         'wizard/cancel_picking_done_view.xml',
         'views/stock_view.xml',
@@ -41,7 +39,5 @@
     'installable': True,
     'application': False,
     'auto_install': False,
-    #~ 'images': ['static/description/banners.jpg'],
-    'qweb': [],
     'license': 'AGPL-3',
 }

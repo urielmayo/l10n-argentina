@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
@@ -21,18 +20,24 @@
 #
 ##############################################################################
 
-from odoo import fields, models, api, _
-from odoo.exceptions import Warning
+from odoo import api, fields, models
 
-class Picking(models.Model):
+
+class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    renum_pick_id = fields.Many2one('stock.picking', string='Renumerated', help="Reference to the new picking created for renumerate this one. You cannot delete pickings if it is done, so it is cancelled and a new one is created, corrected and renumerated")
-    name_original = fields.Char(string=_("Original picking number"))
+    renum_pick_id = fields.Many2one(
+        'stock.picking',
+        string='Renumerated',
+        help="Reference to the new picking created for renumerate this one. You"
+        " cannot delete pickings if it is done, so it is cancelled and a new on"
+        "e is created, corrected and renumerated",
+    )
+    name_original = fields.Char(string="Original picking number")
 
     @api.multi
     def action_done(self):
-        res = super(Picking, self).action_done()
+        res = super().action_done()
         sequence_id = self.picking_type_id.sequence_transfer_id.id
         if self.picking_type_id.sequence_transfer_id.code:
             self.write({'name_original': self.name})
@@ -41,10 +46,14 @@ class Picking(models.Model):
 
         return res
 
-class PickingType(models.Model):
+
+class StockPickingType(models.Model):
     _inherit = "stock.picking.type"
 
     # Secuencia para renumerar el stock.picking luego de una transferencia
     # Es opcional, por lo tanto, puede servirnos para cuando son Delivery Orders
     # y dependen del Warehouse, por lo tanto, podemos tener para varias sucursales
-    sequence_transfer_id = fields.Many2one('ir.sequence', string='Sequence After Transfer', required=False)
+    sequence_transfer_id = fields.Many2one(
+        'ir.sequence',
+        string='Sequence After Transfer',
+    )

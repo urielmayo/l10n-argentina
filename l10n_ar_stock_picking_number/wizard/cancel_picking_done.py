@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
@@ -22,49 +21,65 @@
 #
 ##############################################################################
 
-from odoo import fields, models, api, _
-from odoo.exceptions import Warning
+from odoo import _, fields, models
+
 
 class CancelPickingDone(models.TransientModel):
     _name = 'cancel.picking.done'
 
     reason = fields.Text(string='Reason of cancellation')
-    next_action = fields.Selection([('renumerate', 'Cancel & Create draft'), ('cancel', 'Cancel only')], string='Next Action', required=True)
+    next_action = fields.Selection(
+        [
+            ('renumerate', 'Cancel & Create draft'),
+            ('cancel', 'Cancel only'),
+        ],
+        string='Next Action',
+        required=True,
+    )
 
     def create_returns(self):
-        
-        pick_obj = self.env['stock.picking']
-        move_obj = self.env['stock.move']
 
-        # Obtenemos el picking
-        new_picks = []
-        for pick in pick_obj.search([('id','=',self._context.get('active_id', False))]):
-            
-            # Renumerate...clone pick
+        # Get active picking
+        active_id = self.env.context.get('active_id', False)
+        active_pickings = self.env['stock.picking'].browse(active_id)
+
+        new_picking_ids = []
+        for pick in active_pickings:
+            # Renumerate... clone pick
             pick_vals = {}
             if self.next_action == 'renumerate':
-                new_pick = pick.copy() 
-                note = _('%s\nPick renumerated from %s. %s') % (pick.note or '', pick.name, self.reason or '')
-                new_pick.write({'note': note, 'origin': pick.name})
-                new_picks.append(new_pick.id)
+                new_pick = pick.copy()
+
+                note = _('{}\nPick renumerated from {}. {}').format(
+                    pick.note or '',
+                    pick.name,
+                    self.reason or '',
+                )
+
+                new_pick.write(
+                    {
+                        'note': note,
+                        'origin': pick.name,
+                    }
+                )
+
+                new_picking_ids.append(new_pick.id)
                 pick_vals['renum_pick_id'] = new_pick.id
 
-            # Cancelamos el picking actual y sus lineas
-            moves_to_cancel = [m for m in pick.move_lines]
+            # Cancel current picking and its moves
             pick_vals['state'] = 'cancel'
             pick.write(pick_vals)
-            a = [move.write({'state': 'cancel'}) for move in moves_to_cancel]
-        
+            pick.move_lines.write({'state': 'cancel'})
+
         form = self.env.ref('stock.view_picking_form')
-        
-        if new_picks:
-            if len(new_picks) == 1:
+        if new_picking_ids:
+            if len(new_picking_ids) == 1:
                 return {
                     'res_model': 'stock.picking',
                     'type': 'ir.actions.act_window',
                     'views': [(form.id, 'form')],
                     'view_id': form.id,
-                    'res_id': new_picks[0],
+                    'res_id': new_picking_ids[0],
                 }
             else:
                 tree = self.env.ref('stock.action_picking_tree')
@@ -75,5 +90,5 @@ class CancelPickingDone(models.TransientModel):
                     'view_id': False,
                     'view_type': 'form',
                     'view_mode': 'tree,form',
-                    'domain': [('id', 'in', new_picks)],
+                    'domain': [('id', 'in', new_picking_ids)],
                 }
