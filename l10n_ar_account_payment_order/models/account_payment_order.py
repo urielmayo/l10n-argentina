@@ -193,9 +193,7 @@ class AccountPaymentOrder(models.Model):
             if not rec.date:
                 continue
             period_obj = rec.env['date.period']
-            period_date = datetime.strptime(
-                rec.date, '%Y-%m-%d').date()
-            period = period_obj._get_period(period_date)
+            period = period_obj._get_period(rec.date)
             rec.period_id = period.id
 
     @api.depends('income_line_ids.invoice_id', 'debt_line_ids.invoice_id')
@@ -1274,13 +1272,3 @@ class AccountPaymentModeLine(models.Model):
             return self.env.user.company_id.currency_id
         else:
             return currency_obj.search([('rate', '=', 1.0)], limit=1)
-
-
-class DatePeriod(models.Model):
-    _name = 'date.period'
-    _inherit = 'date.period'
-
-    @api.multi
-    def _hook_affected_models(self, affected_models):
-        affected_models.append('account.payment.order')
-        return super()._hook_affected_models(affected_models)
