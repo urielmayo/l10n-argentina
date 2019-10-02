@@ -8,7 +8,7 @@
 
         <!-- Cheques Configuracion -->
 
-        <record id="view_account_check_config_tree" model="ir.ui.view">
+        <record id="account_check_view_tree_config" model="ir.ui.view">
             <field name="name">account.check.config.tree</field>
             <field name="model">account.check.config</field>
             <field name="type">tree</field>
@@ -24,7 +24,7 @@
             </field>
         </record>
 
-        <record id="view_account_check_config_form" model="ir.ui.view">
+        <record id="account_check_view_form_config" model="ir.ui.view">
             <field name="name">account.check.config.form</field>
             <field name="model">account.check.config</field>
             <field name="type">form</field>
@@ -32,7 +32,7 @@
                 <form string="Check Config" version="7.0">
                     <sheet>
                         <h1>
-                            <label string="Account Check Configuration"/>
+							<p>Account Check Configuration</p>
                         </h1>
                         <group>
                             <field name="company_id"/>
@@ -47,7 +47,7 @@
             </field>
         </record>
 
-        <record id="action_check_config" model="ir.actions.act_window">
+        <record id="account_check_config_action" model="ir.actions.act_window">
             <field name="name">Check Config</field>
             <field name="res_model">account.check.config</field>
             <field name="view_type">form</field>
@@ -55,14 +55,14 @@
         </record>
 
         <menuitem id="menu_treasury_check_config"
-            action="action_check_config"
+            action="account_check_config_action"
             name="Check Config"
             parent="menu_treasury_configuration"
             />
 
         <!-- Cheques Emitidos -->
 
-        <record id="view_account_issued_check_tree" model="ir.ui.view">
+        <record id="account_issued_check_view_tree" model="ir.ui.view">
             <field name="name">account.issued.check.tree</field>
             <field name="model">account.issued.check</field>
             <field name="type">tree</field>
@@ -82,7 +82,7 @@
             </field>
         </record>
 
-        <record id="view_account_issued_check_form" model="ir.ui.view">
+        <record id="account_issued_check_view_form" model="ir.ui.view">
             <field name="name">account.issued.check.form</field>
             <field name="model">account.issued.check</field>
             <field name="type">form</field>
@@ -97,7 +97,7 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <label string="Issued Check"/>
+								<label for="number" string="Issued Check"/>
                                 <field name="number" class="oe_inline"/>
                             </h1>
                         </div>
@@ -137,7 +137,7 @@
             </field>
         </record>
 
-        <record id="view_account_issued_check_filter" model="ir.ui.view">
+        <record id="account_issued_check_view_search" model="ir.ui.view">
             <field name="name">account.issued.check.select</field>
             <field name="model">account.issued.check</field>
             <field name="type">search</field>
@@ -145,15 +145,15 @@
                 <search string="Search Issued Checks">
                     <filter string="Common" name="common" domain="[('type','=', 'common')]"/>
                     <separator/>
-                    <filter string="Post-dated" domain="[('type','=', 'postdated')]"/>
+                    <filter string="Post-dated" name="post_dated" domain="[('type','=', 'postdated')]"/>
                     <separator/>
-                    <filter string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+					<filter string="Cancelled" name="cancelled" domain="[('state', '=', 'cancel')]"/>
                     <separator/>
-                    <filter string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
                     <separator/>
-                    <filter string="Waiting Accreditation" domain="[('state', '=', 'waiting')]"/>
+					<filter string="Waiting Accreditation" name="waiting_accreditation" domain="[('state', '=', 'waiting')]"/>
                     <separator/>
-                    <filter string="Issued" domain="[('state', '=', 'issued')]"/>
+                    <filter string="Issued" name="issued" domain="[('state', '=', 'issued')]"/>
                     <separator/>
                     <field name="number"/>
                     <field name="issue_date"/>
@@ -162,16 +162,16 @@
                     <field name="bank_id"/>
                     <field name="payment_date"/>
                     <group expand="0" string="Group By...">
-                        <filter string="Bank Account" context="{'group_by':'account_bank_id'}"/>
-                        <filter string="Payment Date" context="{'group_by':'payment_date'}" help="Payment Date"/>
-                        <filter string="Receiving Partner" context="{'group_by':'receiving_partner_id'}"/>
-                        <filter string="State" context="{'group_by': 'state'}"/>
+                        <filter string="Bank Account" name="bank_account" context="{'group_by':'account_bank_id'}"/>
+						<filter string="Payment Date" name="payment_date" context="{'group_by':'payment_date'}" help="Payment Date"/>
+                        <filter string="Receiving Partner" name="receiving_partner" context="{'group_by':'receiving_partner_id'}"/>
+                        <filter string="State" name="state" context="{'group_by': 'state'}"/>
                     </group>
                 </search>
             </field>
         </record>
 
-        <record id="view_account_issued_check_issued_calendar" model="ir.ui.view">
+        <record id="account_issued_check_view_calendar_issued" model="ir.ui.view">
             <field name="name">account.issued.check.issued.calendar</field>
             <field name="model">account.issued.check</field>
             <field name="type">calendar</field>
@@ -184,7 +184,7 @@
             </field>
         </record>
 
-        <record id="view_account_issued_check_payment_calendar" model="ir.ui.view">
+        <record id="account_issued_check_view_calendar_payment" model="ir.ui.view">
             <field name="name">account.issued.check.payment.calendar</field>
             <field name="model">account.issued.check</field>
             <field name="type">calendar</field>
@@ -199,49 +199,49 @@
 
         <!-- Tesoreria/Cheques/Cheques Emitidos -->
 
-        <record id="action_issued_check" model="ir.actions.act_window">
+		<record id="account_issued_check_action" model="ir.actions.act_window">
             <field name="name">Issued Checks</field>
             <field name="res_model">account.issued.check</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar</field>
-            <field name="search_view_id" ref="view_account_issued_check_filter"/>
+            <field name="search_view_id" ref="account_issued_check_view_search"/>
         </record>
 
-        <record id="action_issued_check_calendar_payment_date" model="ir.actions.act_window">
+        <record id="account_issued_check_action_calendar_payment_date" model="ir.actions.act_window">
             <field name="name">Issued Checks by Payment Date</field>
             <field name="res_model">account.issued.check</field>
             <field name="view_mode">calendar,form</field>
-            <field name="view_id" ref="view_account_issued_check_payment_calendar"/>
+            <field name="view_id" ref="account_issued_check_view_calendar_payment"/>
         </record>
 
-        <record id="action_issued_check_calendar_issued_date" model="ir.actions.act_window">
+        <record id="account_issued_check_action_calendar_issued_date" model="ir.actions.act_window">
             <field name="name">Issued Checks by Issue Date</field>
             <field name="res_model">account.issued.check</field>
             <field name="view_mode">calendar,form</field>
-            <field name="view_id" ref="view_account_issued_check_issued_calendar"/>
+            <field name="view_id" ref="account_issued_check_view_calendar_issued"/>
         </record>
 
         <menuitem id="menu_treasury_issued_check"
-            action="action_issued_check"
+            action="account_issued_check_action"
             name="Issued Checks"
             parent="menu_treasury_issued_check_menu"
             />
 
         <menuitem id="menu_treasury_issued_check_calendar_payment"
-            action="action_issued_check_calendar_payment_date"
+            action="account_issued_check_action_calendar_payment_date"
             name="Calendar By Payment Date"
             parent="menu_treasury_issued_check_menu"
             />
 
         <menuitem id="menu_treasury_issued_check_calendar_issued"
-            action="action_issued_check_calendar_issued_date"
+            action="account_issued_check_action_calendar_issued_date"
             name="Calendar By Issue Date"
             parent="menu_treasury_issued_check_menu"
             />
 
         <!-- Third Checks -->
 
-        <record id="view_account_third_check_tree" model="ir.ui.view">
+        <record id="account_third_check_view_tree" model="ir.ui.view">
             <field name="name">account.third.check.tree</field>
             <field name="model">account.third.check</field>
             <field name="type">tree</field>
@@ -264,7 +264,7 @@
             </field>
         </record>
 
-        <record id="view_account_third_check_form" model="ir.ui.view">
+        <record id="account_third_check_view_form" model="ir.ui.view">
             <field name="name">account.third.check.form</field>
             <field name="model">account.third.check</field>
             <field name="type">form</field>
@@ -282,7 +282,7 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <label string="Third Check"/>
+                                <label for="number" string="Third Check"/>
                                 <field name="number" class="oe_inline" attrs="{'invisible': [('state','=','draft')]}"/>
                             </h1>
                         </div>
@@ -341,7 +341,7 @@
             </field>
         </record>
 
-        <record id="view_third_checks_search" model="ir.ui.view">
+        <record id="account_third_checks_view_search" model="ir.ui.view">
             <field name="name">third.check.search</field>
             <field name="model">account.third.check</field>
             <field name="type">search</field>
@@ -362,7 +362,7 @@
                         <filter icon="terp-check" string="Common" name="common"
                             domain="[('type','=', 'common')]"/>
                         <filter icon="terp-gnome-cpu-frequency-applet+" string="Post-dated"
-                            domain="[('type','=', 'postdated')]"/>
+                            name="post_dated" domain="[('type','=', 'postdated')]"/>
                         <field name="number" select="1" string="Check Number"/>
                         <field name="issue_date"/>
                         <field name="origin"/>
@@ -378,27 +378,27 @@
                     </group>
                     <group expand="0" string="Group By..." colspan="4">
                         <filter string="Source Partner" icon="terp-partner"
-                            domain="[]" context="{'group_by':'source_partner_id'}"/>
+                            name="source_partner" domain="[]" context="{'group_by':'source_partner_id'}"/>
                         <filter string="Destiny Partner" icon="terp-partner"
                             domain="[('state','not in', ('draft', 'wallet', 'deposited')), ('endorsement_date','!=',False)]"
-                            context="{'group_by':'destiny_partner_id'}"/>
+                            context="{'group_by':'destiny_partner_id'}" name="destiny_partner" />
                         <filter string="Payment Date" icon="terp-go-month" domain="[]"
-                            context="{'group_by':'payment_date'}" help="Payment Date"/>
+                            context="{'group_by':'payment_date'}" help="Payment Date" name="payment_date" />
                         <filter string="Endorsement Date" icon="terp-go-month" domain="[('endorsement_date','!=',False)]"
-                            context="{'group_by':'endorsement_date'}" help="Endorsement Date"/>
+                            context="{'group_by':'endorsement_date'}" help="Endorsement Date" name="endorsement_date" />
                         <separator orientation="vertical"/>
                         <filter string="Bank" icon="terp-accessories-archiver" domain="[('state','!=','draft')]"
-                            context="{'group_by':'bank_id'}"/>
+                            context="{'group_by':'bank_id'}" name="bank" />
                         <filter string="Deposit Slip" icon="terp-stock_effects-object-colorize" domain="[]"
-                            context="{'group_by':'deposit_slip'}"/>
+                            context="{'group_by':'deposit_slip'}" name="deposit_slip"/>
                         <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]"
-                            context="{'group_by':'state'}"/>
+                            context="{'group_by':'state'}" name="state"/>
                     </group>
                 </search>
             </field>
         </record>
 
-        <record id="view_account_third_check_issued_calendar" model="ir.ui.view">
+        <record id="account_third_check_view_calendar_issued" model="ir.ui.view">
             <field name="name">account.third.check.issued.calendar</field>
             <field name="model">account.third.check</field>
             <field name="type">calendar</field>
@@ -411,7 +411,7 @@
             </field>
         </record>
 
-        <record id="view_account_third_check_payment_calendar" model="ir.ui.view">
+        <record id="account_third_check_view_calendar_payment" model="ir.ui.view">
             <field name="name">account.third.check.payment.calendar</field>
             <field name="model">account.third.check</field>
             <field name="type">calendar</field>
@@ -424,7 +424,7 @@
             </field>
         </record>
 
-        <record id="view_account_third_check_endorsement_calendar" model="ir.ui.view">
+        <record id="account_third_check_view_calendar_endorsement" model="ir.ui.view">
             <field name="name">account.third.check.endorsement.calendar</field>
             <field name="model">account.third.check</field>
             <field name="type">calendar</field>
@@ -441,34 +441,34 @@
 
         <!-- Tesoreria/Cheques/Cheques Emitidos -->
 
-        <record id="action_third_check" model="ir.actions.act_window">
+        <record id="account_third_check_action" model="ir.actions.act_window">
             <field name="name">Third Checks</field>
             <field name="res_model">account.third.check</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" eval="view_account_third_check_tree"/>
-            <field name="search_view_id" ref="view_third_checks_search"/>
+            <field name="view_id" eval="account_third_check_view_tree"/>
+            <field name="search_view_id" ref="account_third_checks_view_search"/>
         </record>
 
-        <record id="action_third_check_calendar_payment_date" model="ir.actions.act_window">
+        <record id="account_third_check_action_calendar_payment_date" model="ir.actions.act_window">
             <field name="name">Third Checks by Payment Date</field>
             <field name="res_model">account.third.check</field>
             <field name="view_mode">calendar,form</field>
-            <field name="view_id" ref="view_account_third_check_payment_calendar"/>
+            <field name="view_id" ref="account_third_check_view_calendar_payment"/>
         </record>
 
-        <record id="action_third_check_calendar_issued_date" model="ir.actions.act_window">
+        <record id="account_third_check_action_calendar_issued_date" model="ir.actions.act_window">
             <field name="name">Third Checks by Issue Date</field>
             <field name="res_model">account.third.check</field>
             <field name="view_mode">calendar,form</field>
-            <field name="view_id" ref="view_account_third_check_issued_calendar"/>
+            <field name="view_id" ref="account_third_check_view_calendar_issued"/>
         </record>
 
-        <record id="action_third_check_calendar_endorsement_date" model="ir.actions.act_window">
+        <record id="account_third_check_action_calendar_endorsement_date" model="ir.actions.act_window">
             <field name="name">Third Checks by Endorsement Date</field>
             <field name="res_model">account.third.check</field>
             <field name="view_mode">calendar,form</field>
-            <field name="view_id" ref="view_account_third_check_endorsement_calendar"/>
+            <field name="view_id" ref="account_third_check_view_calendar_endorsement"/>
             <field name="domain">[('endorsement_date','!=',False)]</field>
         </record>
 
@@ -480,24 +480,24 @@
             sequence="20"/>
 
         <menuitem id="menu_treasury_third_check"
-            action="action_third_check"
+            action="account_third_check_action"
             name="Third Checks"
             sequence="5"
             parent="menu_treasury_third_check_menu"/>
 
 
         <menuitem id="menu_treasury_third_check_calendar_payment"
-            action="action_third_check_calendar_payment_date"
+            action="account_third_check_action_calendar_payment_date"
             name="Calendar By Payment Date"
             parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_issued"
-            action="action_third_check_calendar_issued_date"
+            action="account_third_check_action_calendar_issued_date"
             name="Calendar By Issue Date"
             parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_endorsement"
-            action="action_third_check_calendar_endorsement_date"
+            action="account_third_check_action_calendar_endorsement_date"
             name="Calendar By Endorsement Date"
             parent="menu_treasury_third_check_menu"/>
 
