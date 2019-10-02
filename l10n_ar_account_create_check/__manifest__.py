@@ -20,7 +20,7 @@
 {
     "name": "Checkbook Management",
     "category": "L10N_AR",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Eynes/E-MIPS",
     "license": "AGPL-3",
     "description": "Checkbook management for Own Checks",

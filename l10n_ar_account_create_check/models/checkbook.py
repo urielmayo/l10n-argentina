@@ -187,6 +187,7 @@ class AccountIssuedCheck(models.Model):
 
         return ret
 
+    @api.model
     def create(self, vals):
         checkbook_check_obj = self.env['account.checkbook.check']
         checkbook_id = vals.get('checkbook_id', False)
@@ -199,7 +200,8 @@ class AccountIssuedCheck(models.Model):
         if a:
             checkbook_check_obj.browse(a).write({'state': 'done'})
         return super(AccountIssuedCheck, self).create(vals)
-
+    
+    @api.multi
     def unlink(self):
         if not self:
             return super(AccountIssuedCheck, self).unlink()
