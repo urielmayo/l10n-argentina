@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="view_wizard_annull_checks_form" model="ir.ui.view">
+        <record id="wizard_annull_checks_view_form" model="ir.ui.view">
             <field name="name">wizard.annull.checks.form</field>
             <field name="model">wizard.annull.checks</field>
             <field name="priority" eval="8"/>
