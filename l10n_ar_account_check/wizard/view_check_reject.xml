@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="account.check_reject_form_view" model="ir.ui.view">
+        <record id="check_reject_form_view" model="ir.ui.view">
             <field name="name">account.check.reject.wizard.form</field>
             <field name="model">account.check.reject</field>
             <field name="type">form</field>
@@ -42,7 +42,7 @@
             key2="client_action_multi"/>
 
 
-        <record id="account.issued_check_reject_form_view" model="ir.ui.view">
+        <record id="issued_check_reject_form_view" model="ir.ui.view">
             <field name="name">check.reject.issued.check.wizard.form</field>
             <field name="model">check.reject.issued.check</field>
             <field name="type">form</field>
