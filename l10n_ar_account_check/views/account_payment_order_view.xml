@@ -4,7 +4,7 @@
 
         <!-- Payment-->
 
-		<record id="account_payment_order_view_form_voucher_check" model="ir.ui.view">
+	<record id="account_payment_order_view_form_voucher_check" model="ir.ui.view">
             <field name="name">account.payment.order.check.form.inherit</field>
             <field name="model">account.payment.order</field>
             <field name="type">form</field>
