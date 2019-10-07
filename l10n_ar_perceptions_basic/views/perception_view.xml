@@ -6,19 +6,20 @@
         <!-- * Perception Configuration * -->
         <!-- *************************** -->
         <!-- Form View for perception.perception -->
-        <record id="view_perception_perception_form" model="ir.ui.view">
+        <record id="perception_perception_view_form" model="ir.ui.view">
             <field name="name">perception.perception.form</field>
             <field name="model">perception.perception</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Perceptions">
+                <form>
                     <group>
                         <field name="name" select="1"/>
                         <field name="tax_id" select="1"/>
                         <field name="jurisdiccion" select="1"/>
                         <field name="type_tax_use" select="1"/>
                         <field name="type" select="1"/>
-                        <field name="state_id" select="1" attrs="{'invisible':[('jurisdiccion','!=','provincial')], 'required':[('jurisdiccion','=','provincial')]}"/>
+                        <field name="state_id" select="1"
+                            attrs="{'invisible':[('jurisdiccion','!=','provincial')], 'required':[('jurisdiccion','=','provincial')]}"/>
                         <field name="account_analytic_id" select="1"/>
                     </group>
                 </form>
@@ -26,7 +27,7 @@
         </record>
 
         <!-- Tree View for perception.perception -->
-        <record id="view_perception_perception_tree" model="ir.ui.view">
+        <record id="perception_perception_view_tree" model="ir.ui.view">
             <field name="name">perception.perception.tree</field>
             <field name="model">perception.perception</field>
             <field name="type">tree</field>
@@ -41,14 +42,20 @@
         </record>
 
         <!-- Search View for perception.tax.line -->
-        <record id="view_perception_tax_line_search" model="ir.ui.view">
+        <record id="perception_tax_line_view_search" model="ir.ui.view">
             <field name="name">perception.tax.line.search</field>
             <field name="model">perception.tax.line</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Perception Tax Lines">
-                    <filter icon="terp-check" name="applied" string="Applied" domain="[('perception_id.type_tax_use', '=', 'sale')]" help="Perception Applied" />
-                    <filter icon="gtk-cancel" name="supported" string="Supported" domain="[('perception_id.type_tax_use', '=', 'purchase')]" help="Perception Supported" />
+                    <filter icon="terp-check" name="applied"
+                        string="Applied"
+                        domain="[('perception_id.type_tax_use', '=', 'sale')]"
+                        help="Perception Applied" />
+                    <filter icon="gtk-cancel" name="supported"
+                        string="Supported"
+                        domain="[('perception_id.type_tax_use', '=', 'purchase')]"
+                        help="Perception Supported" />
                     <separator orientation="vertical"/>
                     <field name="name"/>
                     <field name="date"/>
@@ -56,16 +63,22 @@
                     <field name="partner_id"/>
                     <field name="perception_id"/>
                     <field name="state_id"/>
-                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
-                    <group expand="0" string="Group By..." groups="account.group_account_user">
-                        <filter string="Province" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state_id'}"/>
-                        <filter name="group_date" string="Date" icon="terp-go-month" domain="[]"  context="{'group_by':'date'}"/>
+                    <field name="company_id"
+                        groups="base.group_multi_company" widget="selection"/>
+                    <group expand="0" string="Group By..."
+                        groups="account.group_account_user">
+                        <filter name="province" string="Province"
+                            icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'state_id'}"/>
+                        <filter name="group_date" string="Date"
+                            icon="terp-go-month" domain="[]"
+                            context="{'group_by':'date'}"/>
                     </group>
                 </search>
             </field>
         </record>
 
-        <record id="view_perception_tax_line_tree" model="ir.ui.view">
+        <record id="perception_tax_line_view_tree" model="ir.ui.view">
             <field name="name">perception.tax.line.tree</field>
             <field name="model">perception.tax.line</field>
             <field name="type">tree</field>
@@ -84,12 +97,12 @@
             </field>
         </record>
 
-        <record id="view_perception_tax_line_form" model="ir.ui.view">
+        <record id="perception_tax_line_view_form" model="ir.ui.view">
             <field name="name">perception.tax.line.form</field>
             <field name="model">perception.tax.line</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Perception Tax Line" version="7.0">
+                <form version="7.0">
                     <sheet>
                         <h1>
                             <label string="Perception Tax Line"/>
@@ -107,7 +120,8 @@
                             </group>
                             <group>
                                 <field name="state_id"/>
-                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="company_id"
+                                    groups="base.group_multi_company"/>
                             </group>
                         </group>
                     </sheet>
@@ -116,7 +130,8 @@
         </record>
 
         <!--Window Action para Perceptions -->
-        <record id="action_perception_perception_tree" model="ir.actions.act_window">
+        <record id="perception_perception_action_tree"
+            model="ir.actions.act_window">
             <field name="name">Perception</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">perception.perception</field>
@@ -125,22 +140,28 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <record id="action_perception_perception_tree_view" model="ir.actions.act_window.view">
+        <record id="perception_perception_action_tree_view"
+            model="ir.actions.act_window.view">
             <field eval="20" name="sequence"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_perception_perception_tree"/>
-            <field name="act_window_id" ref="action_perception_perception_tree"/>
+            <field name="view_id" ref="perception_perception_view_tree"/>
+            <field name="act_window_id"
+                ref="perception_perception_action_tree"/>
         </record>
 
-        <record id="action_perception_tax_tree" model="ir.actions.act_window">
+        <record id="perception_tax_line_action_tree"
+            model="ir.actions.act_window">
             <field name="name">Perception Tax Applied</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">perception.tax.line</field>
             <field name="view_type">form</field>
-            <field name="view_id" ref="view_perception_tax_line_tree"/>
-            <field name="context">{"search_default_applied":1, "use_internal_number": 1}</field>
-            <field name="domain">[('invoice_id.state','in',['open','paid'])]</field>
-            <field name="search_view_id" ref="view_perception_tax_line_search" />
+            <field name="view_id" ref="perception_tax_line_view_tree"/>
+            <field name="context">
+                {"search_default_applied":1, "use_internal_number": 1}</field>
+            <field name="domain">
+                [('invoice_id.state','in',['open','paid'])]</field>
+            <field name="search_view_id"
+                ref="perception_tax_line_view_search" />
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a perception.
@@ -148,15 +169,19 @@
             </field>
         </record>
 
-        <record id="action_perception_tax_supported_tree" model="ir.actions.act_window">
+        <record id="perception_tax_line_action_tree_supported"
+            model="ir.actions.act_window">
             <field name="name">Perception Tax Supported</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">perception.tax.line</field>
             <field name="view_type">form</field>
-            <field name="view_id" ref="view_perception_tax_line_tree"/>
-            <field name="context">{"search_default_supported":1, "use_internal_number": 1}</field>
-            <field name="domain">[('invoice_id.state','in',['open','paid'])]</field>
-            <field name="search_view_id" ref="view_perception_tax_line_search" />
+            <field name="view_id" ref="perception_tax_line_action_tree"/>
+            <field name="context">
+                {"search_default_supported":1, "use_internal_number": 1}</field>
+            <field name="domain">
+                [('invoice_id.state','in',['open','paid'])]</field>
+            <field name="search_view_id"
+                ref="perception_tax_line_view_search" />
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     Click to create a perception.

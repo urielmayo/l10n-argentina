@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="view_invoice_perception_form" model="ir.ui.view">
+        <record id="invoice_form" model="ir.ui.view">
             <field name="name">account.invoice.perception.form.inherit</field>
             <field name="model">account.invoice</field>
             <field name="type">form</field>
@@ -21,7 +21,7 @@
                             <field name="amount" />
                             <field name="state_id" />
                         </tree>
-                        <form string="Perception Lines">
+                        <form>
                             <h1>
                                 <field name="perception_id" class="oe_inline" domain="[('type_tax_use', '=', 'sale')]" />
                             </h1>
@@ -45,7 +45,7 @@
             </field>
         </record>
 
-        <record id="view_invoice_supplier_perception_form" model="ir.ui.view">
+        <record id="invoice_supplier_form" model="ir.ui.view">
             <field name="name">account.invoice.perception.form.inherit</field>
             <field name="model">account.invoice</field>
             <field name="type">form</field>
@@ -64,7 +64,7 @@
                             <field name="amount" />
                             <field name="state_id" />
                         </tree>
-                        <form string="Perception Lines">
+                        <form>
                             <h1>
                                 <field name="perception_id" class="oe_inline" domain="[('type_tax_use', '=', 'purchase')]" />
                             </h1>

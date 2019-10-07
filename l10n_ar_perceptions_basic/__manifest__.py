@@ -20,7 +20,7 @@
 {
     "name": "Perceptions for Argentina (Percepciones)",
     "category": "L10N AR",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Eynes/E-MIPS",
     "license": "AGPL-3",
     "description": "This module provides Perceptions Taxes for Argentina.",
@@ -29,7 +29,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        "data/account_data.xml",
+        "data/account_tax_group_data.xml",
         "views/perception_view.xml",
         "views/account_invoice_view.xml",
         "views/menuitems.xml",
