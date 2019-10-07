@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="view_other_payment_form" model="ir.ui.view">
+        <record id="other_payment_view_form" model="ir.ui.view">
             <field name="name">account.payment.order.other.payment.form</field>
             <field name="model">account.payment.order</field>
             <field name="arch" type="xml">
@@ -194,14 +194,14 @@
             </field>
         </record>
 
-        <record id="action_other_payments" model="ir.actions.act_window">
+        <record id="other_payments_action" model="ir.actions.act_window">
             <field name="name">Other Payments</field>
             <field name="res_model">account.payment.order</field>
             <field name="view_type">form</field>
             <field name="domain">[('journal_id.type','=','payment'), ('type','=','payment'), ('other_payment', '=', True)]</field>
             <field name="context">{'default_type': 'payment', 'type': 'payment', 'default_other_payment': True}</field>
             <field name="view_id" eval="False"/>
-            <field name="search_view_id" ref="l10n_ar_account_payment_order.view_payment_order_filter_vendor_pay"/>
+            <field name="search_view_id" ref="l10n_ar_account_payment_order.account_payment_order_view_filter_vendor_pay"/>
             <field name="target">current</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
@@ -212,27 +212,27 @@
                 </p>
             </field>
         </record>
-        <record id="action_other_payment_tree" model="ir.actions.act_window.view">
+		<record id="other_payment_action_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
-            <field name="act_window_id" ref="action_other_payments"/>
+            <field name="act_window_id" ref="other_payments_action"/>
         </record>
-        <record id="action_other_payment_form" model="ir.actions.act_window.view">
+        <record id="other_payment_action_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_other_payment_form"/>
-            <field name="act_window_id" ref="action_other_payments"/>
+            <field name="view_id" ref="other_payment_view_form"/>
+            <field name="act_window_id" ref="other_payments_action"/>
         </record>
 
 
-        <record id="action_other_receipts" model="ir.actions.act_window">
+        <record id="other_receipts_action" model="ir.actions.act_window">
             <field name="name">Other Receipts</field>
             <field name="res_model">account.payment.order</field>
             <field name="view_type">form</field>
             <field name="domain">[('journal_id.type','=','receipt'), ('type','=','receipt'), ('other_payment', '=', True)]</field>
             <field name="context">{'default_type': 'receipt', 'type': 'receipt', 'default_other_payment': True}</field>
             <field name="view_id" eval="False"/>
-            <field name="search_view_id" ref="l10n_ar_account_payment_order.view_payment_order_receipt_filter"/>
+            <field name="search_view_id" ref="l10n_ar_account_payment_order.account_payment_order_view_filter_receipt"/>
             <field name="target">current</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
@@ -242,35 +242,35 @@
                 </p>
             </field>
         </record>
-        <record id="action_other_receipts_tree" model="ir.actions.act_window.view">
+        <record id="other_receipts_action_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
-            <field name="act_window_id" ref="action_other_receipts"/>
+            <field name="act_window_id" ref="other_receipts_action"/>
         </record>
-        <record id="action_other_receipts_form" model="ir.actions.act_window.view">
+        <record id="other_receipts_action_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_other_payment_form"/>
-            <field name="act_window_id" ref="action_other_receipts"/>
+            <field name="view_id" ref="other_payment_view_form"/>
+            <field name="act_window_id" ref="other_receipts_action"/>
         </record>
 
-        <record id="l10n_ar_account_payment_order.action_vendor_payment_order" model="ir.actions.act_window">
+        <record id="l10n_ar_account_payment_order.account_payment_order_action_vendor" model="ir.actions.act_window">
             <field name="domain">[('journal_id.type', '=', 'payment'), ('type','=','payment'), ('other_payment', '=', False)]</field>
         </record>
 
-        <record id="l10n_ar_account_payment_order.action_payment_order_receipt" model="ir.actions.act_window">
+        <record id="l10n_ar_account_payment_order.account_payment_order_action_receipt" model="ir.actions.act_window">
             <field name="domain">[('journal_id.type', '=', 'receipt'), ('type','=','receipt'), ('other_payment', '=', False)]</field>
         </record>
 
 
-        <menuitem id="menu_action_other_payments"
-            action="action_other_payments"
-            parent="account.menu_finance_payables_documents"
+        <menuitem id="action_other_payments_menu"
+            action="other_payments_action"
+            parent="account.menu_finance_payables"
             sequence="15"/>
 
-        <menuitem id="menu_action_other_receipts"
-            action="action_other_receipts"
-            parent="account.menu_finance_receivables_documents"
+		<menuitem id="action_other_receipts_menu"
+            action="other_receipts_action"
+            parent="account.menu_finance_receivables"
             sequence="15"/>
 
     </data>

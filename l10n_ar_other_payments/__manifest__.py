@@ -20,7 +20,7 @@
 {
     "name": "Other Payments",
     "category": "L10N AR",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Eynes/E-MIPS",
     "license": "AGPL-3",
     "description": "Extension del modulo de pagos, para poder registrar salida de dinero para otros conceptos con ordenes de pago.",  # noqa
