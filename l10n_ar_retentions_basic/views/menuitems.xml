@@ -11,19 +11,19 @@
             name="Retentions"
             parent="retention_root_menu"
             sequence="10"
-            action="action_retention_retention_tree"/>
+            action="retention_retention_action_tree"/>
 
-        <menuitem id="retention_tax_line_applied_menu"
+        <menuitem id="retention_tax_line_menu_applied"
             name="Retentions Applied"
             parent="l10n_ar_point_of_sale.menu_taxes_payables"
             sequence="30"
-            action="action_retention_tax_tree"/>
+            action="retention_tax_line_action_tree"/>
 
-        <menuitem id="retention_tax_line_supported_menu"
+        <menuitem id="retention_tax_line_menu_supported"
             name="Retentions Supported"
             parent="l10n_ar_point_of_sale.menu_taxes_receivables"
             sequence="30"
-            action="action_retention_tax_supported_tree"/>
+            action="retention_tax_line_action_tree_supported"/>
 
     </data>
 </odoo>
