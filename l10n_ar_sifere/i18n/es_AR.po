@@ -1,0 +1,233 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * l10n_ar_sifere
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-09 17:38+0000\n"
+"PO-Revision-Date: 2019-10-09 14:45-0300\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es_AR\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#. module: l10n_ar_sifere
+#: code:addons/l10n_ar_sifere/wizard/create_sifere_files.py:197
+#, python-format
+msgid ""
+"Applicable Perception for export not found. \n"
+" HINT: Is there any IIBB perception                                          supported for this period?"
+msgstr ""
+"Percepción aplicable para la exportación no encontrada.\n"
+" PISTA: ¿Hay alguna percepción IIBB soportada para este período?"
+
+#. module: l10n_ar_sifere
+#: code:addons/l10n_ar_sifere/wizard/create_sifere_files.py:283
+#, python-format
+msgid ""
+"Applicable Perception for export not found. \n"
+" HINT: Is there any IIBB perception supported for this period?"
+msgstr ""
+"Percepción aplicable para la exportación no encontrada.\n"
+" PISTA: ¿Hay alguna percepción IIBB soportada para este período?"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_perception_file
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_retention_file
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_code
+msgid "Code"
+msgstr "Código"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_config_id
+msgid "Config"
+msgstr "Configuración"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_sifere_config_tree
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_perception_file
+msgid "Create sifere perception file"
+msgstr "Crear archivo de percepción sifere"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_retention_file
+msgid "Create sifere retention file"
+msgstr "Crear archivo de retención sifere"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_create_uid
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_create_uid
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_create_uid
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_create_date
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_create_date
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_create_date
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_display_name
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_display_name
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_display_name
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_display_name
+msgid "Display Name"
+msgstr "Mostrar nombre"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_perception_file
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_retention_file
+msgid "Generate"
+msgstr "Generar"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_id
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_id
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_id
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_id
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_ignore_jurisdiction
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_sifere_config_form
+msgid "Ignore jurisdiction errors?"
+msgstr "Ignorar los errores de jurisdicción?"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_perception_perception_is_bank_settlement
+msgid "Is Bank Settlement"
+msgstr "Es Liquidación Bancaria"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_jurisdiction_ids
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_sifere_config_form
+msgid "Jurisdictions"
+msgstr "jurisdicciones"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file___last_update
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file___last_update
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config___last_update
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction___last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_write_uid
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_write_uid
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_write_uid
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_write_uid
+msgid "Last Updated by"
+msgstr "Última Actualización por"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_write_date
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_write_date
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_write_date
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_write_date
+msgid "Last Updated on"
+msgstr "Última Actualización el"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_config_name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_notes
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_notes
+msgid "Notes"
+msgstr "Notas"
+
+#. module: l10n_ar_sifere
+#: model:ir.model,name:l10n_ar_sifere.model_perception_perception
+msgid "Perception Configuration"
+msgstr "Configuración de la percepción"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_perception_file_period_id
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_create_sifere_retention_file_period_id
+msgid "Period"
+msgstr "Período"
+
+#. module: l10n_ar_sifere
+#: model:ir.actions.act_window,name:l10n_ar_sifere.action_create_perception_sifere_file
+msgid "SIFERE Perception Supported Report"
+msgstr "SIFERE Percepción Informe Supported"
+
+#. module: l10n_ar_sifere
+#: model:ir.actions.act_window,name:l10n_ar_sifere.action_create_retention_sifere_file
+msgid "SIFERE Retention Supported Report"
+msgstr "SIFERE informe de retención soportados"
+
+#. module: l10n_ar_sifere
+#: model:ir.actions.act_window,name:l10n_ar_sifere.action_sifere_config
+#: model:ir.ui.menu,name:l10n_ar_sifere.menu_action_sifere_config
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_sifere_config_form
+msgid "Sifere Configuration"
+msgstr "Configuración Sifere"
+
+#. module: l10n_ar_sifere
+#: model:ir.model.fields,field_description:l10n_ar_sifere.field_sifere_jurisdiction_state
+msgid "State"
+msgstr "Estado"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_perception_file
+msgid "This wizard allows you to export a file with perceptions supported(SIFERE)"
+msgstr "Este wizard le permite exportar un archivo con percepciones sufridas (SIFERE)"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_retention_file
+msgid "This wizard allows you to export a file with retentions supported(SIFERE)"
+msgstr "Este wizard le permte exportar un archivo con retenciones soportadas (SIFERE)"
+
+#. module: l10n_ar_sifere
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_perception_file
+#: model:ir.ui.view,arch_db:l10n_ar_sifere.view_create_sifere_retention_file
+msgid "Validation Errors"
+msgstr "Errores de validación"
+
+#. module: l10n_ar_sifere
+#: model:ir.model,name:l10n_ar_sifere.model_create_sifere_perception_file
+msgid "create.sifere.perception.file"
+msgstr "create.sifere.perception.file"
+
+#. module: l10n_ar_sifere
+#: model:ir.model,name:l10n_ar_sifere.model_create_sifere_retention_file
+msgid "create.sifere.retention.file"
+msgstr "create.sifere.retention.file"
+
+#. module: l10n_ar_sifere
+#: model:ir.model,name:l10n_ar_sifere.model_report_files_generator
+msgid "report.files.generator"
+msgstr "report.files.generator"
+
+#. module: l10n_ar_sifere
+#: model:ir.model,name:l10n_ar_sifere.model_sifere_config
+msgid "sifere.config"
+msgstr "sifere.config"
+
+#. module: l10n_ar_sifere
+#: model:ir.model,name:l10n_ar_sifere.model_sifere_jurisdiction
+msgid "sifere.jurisdiction"
+msgstr "sifere.jurisdiction"
