@@ -266,7 +266,7 @@
 		parent="account.menu_finance_payables"
 		sequence="15"/>
 
-<menuitem id="action_other_receipts_menu"
+	<menuitem id="action_other_receipts_menu"
 		action="other_receipts_action"
 		parent="account.menu_finance_receivables"
 		sequence="15"/>
