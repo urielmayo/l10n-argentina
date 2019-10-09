@@ -20,10 +20,10 @@
 {
     "name": "Other Payments",
     "category": "L10N AR",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Eynes/E-MIPS",
     "license": "AGPL-3",
-    "description": "Extension del modulo de pagos, para poder registrar salida de dinero para otros conceptos con ordenes de pago.",  # noqa
+    "description": "Extension of payment module, to be able to register cash outflow for other concepts with payment orders.",  # noqa
     "depends": [
         "base",
         "l10n_ar_account_payment_order",
