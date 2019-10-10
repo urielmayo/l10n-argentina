@@ -34,9 +34,7 @@ class RetentionTaxLine(models.Model):
         string='Tax Account',
         required=True,
         domain=[
-            ('type', '<>', 'view'),
-            ('type', '<>', 'income'),
-            ('type', '<>', 'closed'),
+            ('type', 'not in', ['view', 'income', 'closed']),
         ],
     )
     base = fields.Float(
@@ -200,6 +198,14 @@ class AccountPaymentOrder(models.Model):
         return amount
 
     @api.multi
+    def prepare_retention_values(self, voucher):
+        ret_vals = {
+            'voucher_number': voucher.number,
+            'partner_id': voucher.partner_id.id,
+        }
+        return ret_vals
+
+    @api.multi
     def create_move_line_hook(self, move_id, move_lines):
         voucher = self
         move_lines = super(AccountPaymentOrder, self).\
@@ -211,11 +217,10 @@ class AccountPaymentOrder(models.Model):
                 res['move_id'] = move_id
                 move_lines.append(res)
 
-            # Write voucher values in the retention tax line
-            ret_vals = {
-                'voucher_number': voucher.number,
-                'partner_id': voucher.partner_id.id,
-            }
+            # Write voucher values in the retention tax line using method
+            # prepare_retention_values()
+            ret_vals = {}
+            ret_vals = self.prepare_retention_values(voucher)
             ret.write(ret_vals)
 
         return move_lines
