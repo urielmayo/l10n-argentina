@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-
         <menuitem id="perception_root_menu"
             name="Perceptions"
             parent="l10n_ar_point_of_sale.menu_tax_subroot"
@@ -24,6 +22,4 @@
             parent="l10n_ar_point_of_sale.menu_taxes_payables"
             sequence="30"
             action="perception_tax_line_action_tree_supported"/>
-
-    </data>
 </odoo>
