@@ -10,38 +10,57 @@ class PerceptionPerception(models.Model):
     _name = "perception.perception"
     _description = "Perception Configuration"
     """
-    Objeto que define las percepciones que pueden utilizarse
+    Object that define the perceptions available for use.
 
-    Configura las percepciones posibles. Luego a partir de
-    estos objetos se crean perception.tax que iran en las
-    account.invoice. Además, se crean account_invoice_tax
-    que serian percepciones que se realizan en una factura,
-    ya sea, de proveedor o de cliente. Y a partir de estas se
-    crean los asientos correspondientes. De este objeto se
-    toma la configuracion para generar las perception.tax y
-    las account.invoice.tax con datos como monto, base imponible,
-    nro de certificado, etc.
+    Set available perceptions. perception.tax objects used
+    in account invoices are created based on perception.perception objects.
+    This model also creates account.invoice.tax objects used as
+    perceptions in the invoices from both clients and providers and allowing
+    to create the corresponding moves. This object also provides
+    the configuration to generate perception.tax and account.invoice.tax
+    objects with data like amount, certificate number, etc.
     """
 
     name = fields.Char(
-        'Perception', required=True, size=64)
+        string='Perception',
+        required=True,
+        size=64,
+    )
     tax_id = fields.Many2one(
-        'account.tax', string='Tax', required=True,
-        help="Tax configuration for this perception")
+        'account.tax',
+        string='Tax',
+        required=True,
+        help="Tax configuration for this perception",
+    )
     type_tax_use = fields.Selection([
-        ('sale', 'Sales'),
-        ('purchase', 'Purchases'),
-        ('none', 'None')], related='tax_id.type_tax_use',
-        readonly=True, string='Tax Application')
-    state_id = fields.Many2one('res.country.state', 'State/Province')
+            ('sale', 'Sales'),
+            ('purchase', 'Purchases'),
+            ('none', 'None'),
+        ],
+        related='tax_id.type_tax_use',
+        string='Tax Application',
+        readonly=True,
+    )
+    state_id = fields.Many2one(
+        'res.country.state',
+        string='State/Province',
+    )
     type = fields.Selection([
-        ('vat', 'VAT'),
-        ('gross_income', 'Gross Income'),
-        ('profit', 'Profit'),
-        ('other', 'Other')], 'Type', default='vat')
+            ('vat', 'VAT'),
+            ('gross_income', 'Gross Income'),
+            ('profit', 'Profit'),
+            ('other', 'Other'),
+        ],
+        default='vat',
+    )
     jurisdiccion = fields.Selection([
-        ('nacional', 'Nacional'),
-        ('provincial', 'Provincial'),
-        ('municipal', 'Municipal')], 'Jurisdiccion', default='nacional')
+            ('nacional', 'Nacional'),
+            ('provincial', 'Provincial'),
+            ('municipal', 'Municipal'),
+        ],
+        default='nacional',
+    )
     account_analytic_id = fields.Many2one(
-        'account.analytic.account', string='Analytic Account')
+        'account.analytic.account',
+        string='Analytic Account',
+    )
