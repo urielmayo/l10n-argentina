@@ -219,7 +219,6 @@ class AccountPaymentOrder(models.Model):
 
             # Write voucher values in the retention tax line using method
             # prepare_retention_values()
-            ret_vals = {}
             ret_vals = self.prepare_retention_values(voucher)
             ret.write(ret_vals)
 
