@@ -11,45 +11,81 @@ class RetentionTaxLine(models.Model):
     _name = "retention.tax.line"
     _description = "Retention Tax Line"
 
-    # TODO: Tal vaz haya que ponerle estados a este objeto
-    # para manejar tambien propiedades segun estados
-    name = fields.Char(string='Retention', size=64)
-    date = fields.Date(string='Date', index=True)
+    # TODO: Maybe should add states to this object
+    # to manage properties depending its state
+    name = fields.Char(
+        string='Retention',
+        size=64,
+    )
+    date = fields.Date(
+        index=True,
+    )
     payment_order_id = fields.Many2one(
-        comodel_name='account.payment.order', string='Payment Order',
-        ondelete='cascade')
-    voucher_number = fields.Char(string='Reference', size=64)
+        comodel_name='account.payment.order',
+        string='Payment Order',
+        ondelete='cascade',
+    )
+    voucher_number = fields.Char(
+        string='Reference',
+        size=64,
+    )
     account_id = fields.Many2one(
-        comodel_name='account.account', string='Tax Account', required=True,
+        comodel_name='account.account',
+        string='Tax Account',
+        required=True,
         domain=[
-            ('type', '<>', 'view'),
-            ('type', '<>', 'income'),
-            ('type', '<>', 'closed')])
-    base = fields.Float(string='Base', digits=dp.get_precision('Account'))
-    amount = fields.Float(string='Amount', digits=dp.get_precision('Account'))
+            ('type', 'not in', ['view', 'income', 'closed']),
+        ],
+    )
+    base = fields.Float(
+        digits=dp.get_precision('Account'),
+    )
+    amount = fields.Float(
+        digits=dp.get_precision('Account'),
+    )
     retention_id = fields.Many2one(
         comodel_name='retention.retention',
-        string='Retention Configuration', required=True,
+        string='Retention Configuration',
+        required=True,
         help="Retention configuration used for this retention tax, where " +
-        "all the configuration resides. Accounts, Tax Codes, etc.")
+        "all the configuration resides. Accounts, Tax Codes, etc.",
+    )
     base_amount = fields.Float(
-        comodel_name='Base Code Amount', digits=dp.get_precision('Account'))
+        comodel_name='Base Code Amount',
+        digits=dp.get_precision('Account'),
+    )
     tax_amount = fields.Float(
-        string='Tax Code Amount', digits=dp.get_precision('Account'))
+        string='Tax Code Amount',
+        digits=dp.get_precision('Account'),
+    )
     company_id = fields.Many2one(
-        string='Company', related='account_id.company_id',
-        store=True, readonly=True)
+        string='Company',
+        related='account_id.company_id',
+        store=True,
+        readonly=True,
+    )
     partner_id = fields.Many2one(
-        comodel_name='res.partner', string='Partner', required=False)
+        comodel_name='res.partner',
+        string='Partner',
+        required=False,
+    )
     vat = fields.Char(
-        string='CIF/NIF', related='partner_id.vat', readonly=True)
+        string='CIF/NIF',
+        related='partner_id.vat',
+        readonly=True,
+    )
     certificate_no = fields.Char(
-        string='Certificate No.', required=False, size=32)
+        string='Certificate No.',
+        required=False,
+        size=32,
+    )
     state_id = fields.Many2one(
-        comodel_name='res.country.state', string="State/Province")
+        comodel_name='res.country.state',
+        string="State/Province",
+    )
 
     @api.onchange('retention_id')
-    def onchange_retention(self):
+    def _onchange_retention(self):
         retention = self.retention_id
         if retention.id:
             self.name = retention.name
@@ -62,10 +98,8 @@ class RetentionTaxLine(models.Model):
 
     @api.multi
     def create_voucher_move_line(self):
-        """
-        Params
-        self = retention.tax.line
-        """
+        # Params
+        # self = retention.tax.line
         voucher = self.payment_order_id
         self.ensure_one()
         retention = self
@@ -73,8 +107,8 @@ class RetentionTaxLine(models.Model):
         if retention.amount == 0.0:
             return {}
 
-        # Chequeamos si esta seteada la fecha,
-        # sino le ponemos la fecha del voucher
+        # Check if the date is already setted
+        # if not set the date of the voucher
         retention_vals = {}
         if not retention.date:
             retention_vals['date'] = voucher.date
@@ -104,7 +138,7 @@ class RetentionTaxLine(models.Model):
 
         self.apply_retention_sequence()
 
-        # Creamos la linea contable perteneciente a la retencion
+        # Create the move line of the retetention
         move_line = {
             'name': retention.name or '/',
             'debit': debit,
@@ -119,7 +153,7 @@ class RetentionTaxLine(models.Model):
             'amount_currency': company_currency !=
             current_currency and sign * retention.amount or 0.0,
             'date': voucher.date,
-            'date_maturity': voucher.date_due
+            'date_maturity': voucher.date_due,
         }
 
         return move_line
@@ -138,10 +172,20 @@ class AccountPaymentOrder(models.Model):
     _name = 'account.payment.order'
     _inherit = 'account.payment.order'
 
-    retention_ids = fields.One2many(comodel_name='retention.tax.line',
-                                    inverse_name='payment_order_id',
-                                    string='Retentions', readonly=True,
-                                    states={'draft': [('readonly', False)]})
+    retention_ids = fields.One2many(
+        comodel_name='retention.tax.line',
+        inverse_name='payment_order_id',
+        string='Retentions',
+        readonly=True,
+        states={
+            'draft': [('readonly', False)],
+        },
+    )
+
+    @api.onchange('retention_ids')
+    def _onchange_retentions(self):
+        amount = self.payment_order_amount_hook()
+        self.amount = amount
 
     @api.multi
     def get_retentions_amount(self):
@@ -153,10 +197,13 @@ class AccountPaymentOrder(models.Model):
         amount += self.get_retentions_amount()
         return amount
 
-    @api.onchange('retention_ids')
-    def onchange_retentions(self):
-        amount = self.payment_order_amount_hook()
-        self.amount = amount
+    @api.multi
+    def prepare_retention_values(self, voucher):
+        ret_vals = {
+            'voucher_number': voucher.number,
+            'partner_id': voucher.partner_id.id,
+        }
+        return ret_vals
 
     @api.multi
     def create_move_line_hook(self, move_id, move_lines):
@@ -170,11 +217,9 @@ class AccountPaymentOrder(models.Model):
                 res['move_id'] = move_id
                 move_lines.append(res)
 
-            # Escribimos valores del voucher en la retention tax line
-            ret_vals = {
-                'voucher_number': voucher.number,
-                'partner_id': voucher.partner_id.id,
-            }
+            # Write voucher values in the retention tax line using method
+            # prepare_retention_values()
+            ret_vals = self.prepare_retention_values(voucher)
             ret.write(ret_vals)
 
         return move_lines
