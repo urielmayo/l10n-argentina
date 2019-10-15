@@ -20,7 +20,7 @@
 {
     "name": "Base Report Exporter",
     "category": "L10N AR",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Eynes/E-Mips",
     "license": "AGPL-3",
     "description": "Base module to provide a framework for exporters",
