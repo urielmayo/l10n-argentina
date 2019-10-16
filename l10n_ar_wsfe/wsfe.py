@@ -636,6 +636,7 @@ class wsfe_voucher_type(osv.osv):
     _columns = {
         'name': fields.char('Name', size=64, required=True, readonly=False, help='Voucher Type, eg.: Factura A, Nota de Credito B, etc.'),
         'code': fields.char('Code', size=4, required=True, help='Internal Code assigned by AFIP for voucher type'),
+        'description': fields.char(required=True, string="Description"),
 
         'voucher_model': fields.selection([
             ('account.invoice','Factura/NC/ND'),
