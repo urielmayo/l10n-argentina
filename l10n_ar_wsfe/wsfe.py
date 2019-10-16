@@ -634,67 +634,97 @@ class wsfe_voucher_type(osv.osv):
     _description = "Voucher Type for Electronic Invoice"
 
     _columns = {
-        'name': fields.char('Name', size=64, required=True, readonly=False, help='Voucher Type, eg.: Factura A, Nota de Credito B, etc.'),
-        'code': fields.char('Code', size=4, required=True, help='Internal Code assigned by AFIP for voucher type'),
+        'name': fields.char(
+            'Name', size=64, required=True, readonly=False,
+            help='Voucher Type, eg.: Factura A, Nota de Credito B, etc.'),
+        'code': fields.char(
+            'Code', size=4, required=True,
+            help='Internal Code assigned by AFIP for voucher type'),
+        'description': fields.char(required=True, string="Description"),
 
-        'voucher_model': fields.selection([
-            ('account.invoice','Factura/NC/ND'),
-            ('account.voucher','Recibo'),],'Voucher Model', select=True, required=True),
+        'voucher_model': fields.selection(
+            [('account.invoice', 'Factura/NC/ND'),
+             ('account.voucher', 'Recibo')],
+            'Voucher Model', select=True, required=True),
 
-        'document_type' : fields.selection([
-            ('invoice','Factura'),
-            ('refund','Nota de Credito'),
-            ('debit','Nota de Debito'),
-            ],'Document Type', select=True, required=True, readonly=False),
+        'document_type': fields.selection(
+            [('invoice', 'Factura'),
+             ('refund', 'Nota de Credito'),
+             ('debit', 'Nota de Debito')],
+            'Document Type', select=True,
+            required=True, readonly=False),
 
-        'denomination_id': fields.many2one('invoice.denomination', 'Denomination', required=False),
-        'fiscal_type_id': fields.many2one('account.invoice.fiscal.type', 'Fiscal type'),
+        'denomination_id': fields.many2one('invoice.denomination',
+                                           'Denomination', required=False),
+        'fiscal_type_id': fields.many2one('account.invoice.fiscal.type',
+                                          'Fiscal type'),
     }
 
-    """Es un comprobante que una empresa envía a su cliente, en la que se le notifica haber cargado o debitado en su cuenta una determinada suma o valor, por el concepto que se indica en la misma nota. Este documento incrementa el valor de la deuda o saldo de la cuenta, ya sea por un error en la facturación, interés por mora en el pago, o cualquier otra circunstancia que signifique el incremento del saldo de una cuenta.
-It is a proof that a company sends to your client, which is notified to be charged or debited the account a certain sum or value, the concept shown in the same note. This document increases the value of the debt or account balance, either by an error in billing, interest for late payment, or any other circumstance that means the increase in the balance of an account."""
+    """
+    Es un comprobante que una empresa envía a su cliente,
+    en la que se le notifica haber cargado o debitado en su cuenta
+    una determinada suma o valor, por el concepto que se indica en la
+    misma nota. Este documento incrementa el valor de la deuda o saldo
+    de la cuenta, ya sea por un error en la facturación, interés por mora
+    en el pago, o cualquier otra circunstancia que signifique el incremento
+    del saldo de una cuenta.
+    It is a proof that a company sends to your client, which is notified
+    to be charged or debited the account a certain sum or value, the concept
+    shown in the same note. This document increases the value of the debt or
+    account balance, either by an error in billing, interest for late payment,
+    or any other circumstance that means the increase in the balance
+    of an account."""
 
 
     # def get_voucher_type(self, cr, uid, voucher, context=None):
-    #
+
     #     # Chequeamos el modelo
     #     voucher_model = None
     #     model = voucher._table_name
-    #
+
     #     if model == 'account.invoice':
     #         voucher_model = 'invoice'
-    #
+
     #         denomination_id = voucher.denomination_id.id
     #         type = voucher.type
     #         fiscal_type_id = voucher.fiscal_type_id.id
-	#
+
     #         if type == 'out_invoice':
     #             # TODO: Activar esto para ND
     #             if voucher.is_debit_note:
     #                 type = 'out_debit'
-    #
+
     #         res = self.search(
     #             cr, uid, [
     #                 ('voucher_model','=',voucher_model),
     #                 ('document_type','=',type),
     #                 ('denomination_id','=',denomination_id)],
     #             context=context)
-    #
+
     #         if fiscal_type_id:
     #             res = filter(
     #                 lambda vt: vt.fiscal_type_id.id == fiscal_type_id, res)
-    #
+
     #         if not len(res):
-    #             raise osv.except_osv(_("Voucher type error!"), _("There is no voucher type that corresponds to this object"))
-    #
-    #         # if len(res) > 1:
-    #         #     raise osv.except_osv(_("Voucher type error!"), _("There is more than one voucher type that corresponds to this object"))
-    #
-    #         return self.read(cr, uid, res[0], ['code'], context=context)['code']
-    #
+    #            raise osv.except_osv(
+    #                 _("Voucher type error!"),
+    #                 _("There is no voucher type that" +
+    #                   "corresponds to this object")
+    #             )
+
+    #         if len(res) > 1:
+    #             raise osv.except_osv(
+    #                 _("Voucher type error!"),
+    #                 _("There is more than one voucher type" +
+    #                   "that corresponds to this object")
+    #             )
+
+    #         return self.read(
+    #             cr, uid, res[0], ['code'], context=context)['code']
+
     #     elif model == 'account.voucher':
     #         voucher_model = 'voucher'
-    #
+
     #     return None
 
 wsfe_voucher_type()

@@ -279,14 +279,15 @@
 						</h1>
 						<group>
 							<field name="name" select="1"/>
+							<field name="description"/>
 							<field name="code" select="1"/>
 							<field name="voucher_model" select="1"/>
 							<separator colspan="4"/>
 							<group colspan="4" name="voucher_invoice" attrs="{'invisible': [('voucher_model','!=','account.invoice')]}">
 								<field name="document_type"  />
 							</group>
-							<field name="denomination_id" />
-                                                        <field name="fiscal_type_id" />
+							<field name="denomination_id"/>
+                            <field name="fiscal_type_id"/>
 						</group>
 					</sheet>
 				</form>
@@ -305,7 +306,7 @@
 					<field name="voucher_model" />
 					<field name="document_type" />
 					<field name="denomination_id"/>
-                                        <field name="fiscal_type_id" />
+                    <field name="fiscal_type_id" />
 				</tree>
 			</field>
 		</record>
