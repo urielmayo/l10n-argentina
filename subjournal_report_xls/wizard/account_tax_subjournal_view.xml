@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <record id="view_account_tax_subjournal" model="ir.ui.view">
+        <record id="account_tax_subjournal_form" model="ir.ui.view">
             <field name="name">Account Tax Subjournal</field>
             <field name="model">account.tax.subjournal</field>
             <field name="type">form</field>
@@ -44,7 +44,7 @@
             </field>
         </record>
 
-        <record id="action_account_tax_subjournal" model="ir.actions.act_window">
+        <record id="account_tax_subjournal_action" model="ir.actions.act_window">
             <field name="name">Account Tax Subjournal</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.tax.subjournal</field>
@@ -53,10 +53,10 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_account_tax_subjournal"
+        <menuitem id="account_tax_subjournal_menu"
             name="Taxes Subjournal"
             parent="account.account_reports_management_menu"
-            action="action_account_tax_subjournal"
+            action="account_tax_subjournal_action"
             icon="STOCK_PRINT"/>
 
     </data>
