@@ -46,6 +46,9 @@
                 </page>
                 <page string="Other Info" position="before">
                     <page string="FCRED" attrs="{'invisible': [('local','=', False)]}">
+                        <group>
+                            <field name="fecred_state"/>
+                        </group>
                         <group string="Optionals">
                             <field name="optional_ids" nolabel="1">
                                 <tree editable="bottom">

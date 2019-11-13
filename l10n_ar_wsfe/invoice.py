@@ -134,6 +134,11 @@ class account_invoice(osv.osv):
                     'fiscal_type_id',
                     'type',
                 ], 10)}),
+        # TODO: Get this value from WSFCRED
+        'fecred_state': fields.selection([
+            ('accepted', 'Accepted'),
+            ('rejected', 'Rejected')],
+            'FECred Status'),
     }
 
     _defaults = {
@@ -200,6 +205,11 @@ class account_invoice(osv.osv):
     def refund(self, cr, uid, ids, date=None, period_id=None, description=None, journal_id=None, context=None):
         new_ids = super(account_invoice, self).refund(cr, uid, ids, date, period_id, description, journal_id, context=context)
 
+        optional_obj = self.pool.get('wsfe.optionals')
+        obj_data = self.pool.get('ir.model.data')
+        wsfcred_type = obj_data.get_object_reference(
+            cr, uid, 'l10n_ar_wsfe', 'fiscal_type_fcred')[1]
+
         for refund_id in new_ids:
             vals = {}
             refund = self.browse(cr, uid, refund_id)
@@ -217,6 +227,26 @@ class account_invoice(osv.osv):
 
             vals['associated_inv_ids'] = [(4, invoice.id)]
             vals['fiscal_type_id'] = invoice.fiscal_type_id.id
+
+            if invoice.fiscal_type_id.id == wsfcred_type:
+                optional_cancel_id = optional_obj.search(cr, uid,
+                    [('code', '=', '22')])[0]
+
+                fecred_state = invoice.fecred_state
+                if fecred_state == 'accepted':
+                    optional_value = 'N'
+                elif fecred_state == 'rejected':
+                    optional_value = 'S'
+                else:
+                    raise osv.except_osv(
+                        _('Error!'),
+                        _('You have to complete a value for FECred State '
+                          'in invoice.'))
+
+                vals['optional_ids'] = [(0, 0, {
+                    'optional_id': optional_cancel_id,
+                    'value': optional_value,
+                })]
 
             if vals:
                 self.write(cr, uid, refund_id, vals)
