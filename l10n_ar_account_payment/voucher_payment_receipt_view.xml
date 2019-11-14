@@ -27,6 +27,7 @@
                 </field>
                 <xpath expr="//page[@string='Payment Information']/label[@for='line_cr_ids']" position="before">
                     <label for="payment_line_ids"/>
+                    <separator/>
                     <field name="payment_line_ids" on_change="onchange_payment_line(amount, payment_line_ids, context)">
                         <tree string="Payment Methods" editable="bottom" colors="gray:amount==0">
                             <field name="name"/>
@@ -43,6 +44,13 @@
                 </xpath>
                 <xpath expr="//page[@string='Payment Information']/label[@for='line_dr_ids']" position="attributes">
                     <attribute name="string">Credits</attribute>
+                </xpath>
+
+                <xpath expr="//page[@string='Payment Information']/label[@for='line_cr_ids']" position="after">
+                    <separator/>
+                </xpath>
+                <xpath expr="//page[@string='Payment Information']/label[@for='line_dr_ids']" position="after">
+                    <separator/>
                 </xpath>
 
                 <!-- Suma del campo amount_unreconciled -->
@@ -145,6 +153,7 @@
                 </field>
                 <xpath expr="//page[@string='Payment Information']/label[@for='line_dr_ids']" position="before">
                     <label for="payment_line_ids"/>
+                    <separator/>
                     <field name="payment_line_ids" on_change="onchange_payment_line(amount, payment_line_ids, context)">
                         <tree string="Payment Methods" editable="bottom" colors="gray:amount==0">
                             <field name="name"/>
@@ -163,6 +172,14 @@
                 <xpath expr="//page[@string='Payment Information']/label[@for='line_cr_ids']" position="attributes">
                     <attribute name="string">Credits</attribute>
                 </xpath>
+
+                <xpath expr="//page[@string='Payment Information']/label[@for='line_dr_ids']" position="after">
+                    <separator/>
+                </xpath>
+                <xpath expr="//page[@string='Payment Information']/label[@for='line_cr_ids']" position="after">
+                    <separator/>
+                </xpath>
+
 
                  <!-- Suma del campo amount_unreconciled -->
                 <xpath expr="//page[@string='Payment Information']/field[@name='line_dr_ids']/tree/field[@name='amount_unreconciled']" position="attributes">
