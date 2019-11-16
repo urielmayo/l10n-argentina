@@ -606,16 +606,8 @@ class wsfe_config(osv.osv):
                 total_associated += associated_inv.amount_total
                 CbtesAsoc.append(CbteAsoc)
 
-#            if CbtesAsoc and inv.fiscal_type_id.id == wsfcred_type:
-#                detalle['CbtesAsoc'] = CbtesAsoc
-#
-#                anulled_inv = 'S' if total_associated == inv.amount_total else 'N'
-#
-#                # Anulacion
-#                detalle['Opcionales'].append({
-#                    'Id': 22,
-#                    'Valor': anulled_inv,
-#                })
+            if CbtesAsoc:
+                detalle['CbtesAsoc'] = CbtesAsoc
 
             # Agregamos un hook para agregar tributos o IVA que pueda ser
             # llamado de otros modulos. O mismo para modificar el detalle.
