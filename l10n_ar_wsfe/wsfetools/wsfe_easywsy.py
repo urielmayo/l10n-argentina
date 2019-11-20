@@ -347,8 +347,10 @@ class WSFE(AfipWS):
         res = self.last_request['parse_result']
         wsfe_req_obj = env['wsfe.request']
         voucher_type_obj = env['wsfe.voucher_type']
+        denom_id = res['Comprobantes'][0]['invoice'].denomination_id
         voucher_type = voucher_type_obj.search(
-            [('code', '=', res['CbteTipo'])])
+            [('code', '=', res['CbteTipo']),
+             ('denomination_id', '=', denom_id.id)])
         voucher_type_name = voucher_type.name
         req_details = []
         pos = res['PtoVta']
