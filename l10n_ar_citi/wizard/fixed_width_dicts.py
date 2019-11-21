@@ -39,7 +39,7 @@ SALES_VOUCHER = {
         "padding": "0",
         "required": True,
         "start_pos": 17,
-        "type": "integer"
+        "type": "string"
     },
 
     "max_voucher_id": {
@@ -48,7 +48,7 @@ SALES_VOUCHER = {
         "padding": "0",
         "required": True,
         "start_pos": 37,
-        "type": "integer"
+        "type": "string"
     },
 
     "document_type": {
@@ -272,7 +272,7 @@ ALIQOUT_PURCHASES = {
         "padding": "0",
         "required": True,
         "start_pos": 9,
-        "type": "integer"
+        "type": "string"
     },
 
     "document_type_id": {
@@ -348,7 +348,7 @@ ALIQOUT_SALES = {
         "padding": "0",
         "required": True,
         "start_pos": 9,
-        "type": "integer"
+        "type": "string"
     },
 
     "amount_net": {
@@ -415,7 +415,7 @@ PURCHASES_VOUCHER = {
         "padding": "0",
         "required": True,
         "start_pos": 17,
-        "type": "integer"
+        "type": "string"
     },
 
     "import_delivery": {
