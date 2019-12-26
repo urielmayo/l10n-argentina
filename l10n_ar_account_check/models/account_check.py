@@ -268,13 +268,13 @@ class AccountIssuedCheck(models.Model):
                 {'check_move_validity': False}
                 ).create(bank_move_line_vals)
 
-            move_lines_to_reconcile = []
-            payment_move_line = move_line_obj.search([
-                ('issued_check_id', '=', check.id)])
-            move_lines_to_reconcile.append(payment_move_line.id)
-            move_lines_to_reconcile.append(clearance_move_line.id)
-            reconcile_recordset = move_line_obj.browse(move_lines_to_reconcile)
-            reconcile_recordset.reconcile()
+            # move_lines_to_reconcile = []
+            # payment_move_line = move_line_obj.search([
+            #     ('issued_check_id', '=', check.id)])
+            # move_lines_to_reconcile.append(payment_move_line.id)
+            # move_lines_to_reconcile.append(clearance_move_line.id)
+            # reconcile_recordset = move_line_obj.browse(move_lines_to_reconcile)
+            # reconcile_recordset.reconcile()
 
         return self.write({"state": "issued"})
 
