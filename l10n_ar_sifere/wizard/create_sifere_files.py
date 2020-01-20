@@ -81,7 +81,7 @@ class ReportFilesGenerator(models.Model):
         res = cr.fetchall()
         if not len(res):
             return {
-                'errors': 'Applicable Retentions for export not found. ' +
+                'error': 'Applicable Retentions for export not found. ' +
                 '\nHINT: Is there any IIBB retentions supported for this ' +
                 'period?',
                 'resource': self.period_id,
@@ -139,7 +139,7 @@ class ReportFilesGenerator(models.Model):
             nro_doc_retenido = tax_line.partner_id.vat
             if not nro_doc_retenido:
                 errors.append({
-                    'errors': 'Partner VAT not found',
+                    'error': 'Partner VAT not found',
                     'resource': tax_line.partner_id,
                 })
             if '-' not in nro_doc_retenido and len(nro_doc_retenido) == 11:
@@ -152,7 +152,7 @@ class ReportFilesGenerator(models.Model):
                 jurisdiction_code = 0
                 if not sifere_config.ignore_jurisdiction:
                     errors.append({
-                        'errors': 'Jurisdiction cannot be found',
+                        'error': 'Jurisdiction cannot be found',
                         'resource': tax_line.retention_id,
                     })
             else:
@@ -190,7 +190,7 @@ class ReportFilesGenerator(models.Model):
             nro_doc_percibido = tax_line.partner_id.vat
             if not nro_doc_percibido:
                 errors.append({
-                    'errors': 'Partner VAT not found',
+                    'error': 'Partner VAT not found',
                     'resource': tax_line.partner_id,
                 })
             if '-' not in nro_doc_percibido and len(nro_doc_percibido) == 11:
@@ -203,7 +203,7 @@ class ReportFilesGenerator(models.Model):
                 jurisdiction_code = 0
                 if not sifere_config.ignore_jurisdiction:
                     errors.append({
-                        'errors': 'Jurisdiction cannot be found',
+                        'error': 'Jurisdiction cannot be found',
                         'resource': tax_line.perception_id,
                     })
             else:
@@ -280,7 +280,7 @@ class ReportFilesGenerator(models.Model):
         res = cr.fetchall()
         if not len(res):
             return {
-                'errors': _(
+                'error': _(
                     'Applicable Perception for export not found. \n ' +
                     'HINT: Is there any IIBB perception supported for ' +
                     'this period?'),
@@ -325,7 +325,7 @@ class ReportFilesGenerator(models.Model):
             nro_doc_percibido = tax_line.partner_id.vat
             if not nro_doc_percibido:
                 errors.append({
-                    'errors': 'Partner VAT not found',
+                    'error': 'Partner VAT not found',
                     'resource': tax_line.partner_id,
                 })
             if '-' not in nro_doc_percibido and len(nro_doc_percibido) == 11:
@@ -338,7 +338,7 @@ class ReportFilesGenerator(models.Model):
                 jurisdiction_code = 0
                 if not sifere_config.ignore_jurisdiction:
                     errors.append({
-                        'errors': 'Jurisdiction cannot be found',
+                        'error': 'Jurisdiction cannot be found',
                         'resource': tax_line.perception_id,
                     })
             else:
