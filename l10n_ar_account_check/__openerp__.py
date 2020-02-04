@@ -42,6 +42,7 @@
         'security/ir.model.access.csv',
         'wizard/add_checks_view.xml',
         'wizard/view_check_deposit.xml',
+        'wizard/accredit_check_view.xml',
         'account_check_view.xml',
         'account_voucher_view.xml',
         'wizard/view_check_reject.xml',

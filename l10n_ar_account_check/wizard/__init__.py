@@ -26,3 +26,4 @@ import check_deposit  # noqa
 import check_reject  # noqa
 import add_checks  # noqa
 import accredit_checks  # noqa
+import accredit_check  # noqa

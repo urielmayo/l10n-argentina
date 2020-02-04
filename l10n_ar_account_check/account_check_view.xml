@@ -86,7 +86,8 @@
             <field name="arch" type="xml">
                 <form string="Issued Checks" version="7.0">
                     <header>
-                        <button name="accredit_checks" string="Accredit Check" type="object" states="waiting" class="oe_highlight"/>
+                        <!-- <button name="accredit_checks" string="Accredit Check" type="object" states="waiting" class="oe_highlight"/> -->
+                        <button name="%(wizard_accredit_check_action)d" string="Accredit Check" type="action" states="waiting" class="oe_highlight"/>
                         <button name="break_conciliation" string="Break Conciliation" type="object" class="oe_highlight"
                             attrs="{'invisible': ['|', ('state', 'not in', ['issued']), ('accredited', '=', 'False')]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,issued" statusbar_colors='{"cancel":"red"}'/>
