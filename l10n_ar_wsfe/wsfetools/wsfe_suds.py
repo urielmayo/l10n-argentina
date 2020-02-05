@@ -358,6 +358,7 @@ class WSFEv1:
             arrayIva = []
             arrayTributos = []
             arrayOpcionales = []
+            arrayCbtesAsoc = []
 
             argdetreq = self.client.factory.create('ns0:FECAEDetRequest')
 
@@ -396,6 +397,15 @@ class WSFEv1:
 
                             arrayOpcionales.append(argopc)
                             continue
+                    elif k == 'CbtesAsoc':
+                        for cbte in v:
+                            argcbte = self.client.factory.create('ns0:CbteAsoc')
+                            for ck, cv in cbte.iteritems():
+                                if ck in argcbte:
+                                    argcbte[ck] = cv
+
+                            arrayCbtesAsoc.append(argcbte)
+                            continue
 
                 else:
                     if k in argdetreq:
@@ -409,6 +419,9 @@ class WSFEv1:
                 argdetreq.Tributos.Tributo.append(arrayTributos)
             if len(arrayOpcionales):
                 argdetreq.Opcionales.Opcional.append(arrayOpcionales)
+            if len(arrayCbtesAsoc):
+                argdetreq.CbtesAsoc.CbteAsoc.append(arrayCbtesAsoc)
+
             argcaereq.FeDetReq.FECAEDetRequest.append(argdetreq)
 
         result = self.client.service.FECAESolicitar(self.argauth, argcaereq)

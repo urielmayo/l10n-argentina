@@ -426,6 +426,10 @@ class wsfe_config(models.Model):
         obj_precision = self.env['decimal.precision']
         invoice_obj = self.env['account.invoice']
         company = self.env.user.company_id
+        voucher_type_obj = self.env['wsfe.voucher_type']
+
+        obj_data = self.pool.get('ir.model.data')
+        wsfcred_type = self.env.ref('l10n_ar_wsfe.fiscal_type_fcred')
 
         details = []
 
@@ -490,9 +494,13 @@ class wsfe_config(models.Model):
             detalle['CbteDesde'] = cbte_nro
             detalle['CbteHasta'] = cbte_nro
             detalle['CbteFch'] = date_invoice.strftime('%Y%m%d')
+	    is_not_anulation_fcred = inv.fiscal_type_id == wsfcred_type and inv.optional_ids.filtered(lambda x: x.optional_id.code == '22' and x.value.strip().lower() == 'n')
             if concept in [2,3]:
                 detalle['FchServDesde'] = formatted_date_invoice
                 detalle['FchServHasta'] = formatted_date_invoice
+		if not is_not_anulation_fcred:
+		    detalle['FchVtoPago'] = date_due
+            elif inv.fiscal_type_id == wsfcred_type and inv.type == 'out_invoice' and not inv.is_debit_note:
                 detalle['FchVtoPago'] = date_due
 
             # Obtenemos la moneda de la factura
@@ -562,8 +570,8 @@ class wsfe_config(models.Model):
 
             # Detalle del array de IVA
             detalle['Iva'] = iva_array
-            detalle['Opcionales'] = inv.optional_ids.mapped(
-                lambda o: {'Id': int(o.optional_id.code), 'Valor': o.value})
+            detalle['Opcionales'] = inv.optional_ids and inv.optional_ids.mapped(
+                lambda o: {'Id': int(o.optional_id.code), 'Valor': o.value.strip()}) or []
 
             # Detalle de los importes
             detalle['ImpOpEx'] = importe_operaciones_exentas
@@ -575,10 +583,29 @@ class wsfe_config(models.Model):
             detalle['Tributos'] = None
             #print 'Detalle de facturacion: ', detalle
 
+            # Associated Comps
+            CbtesAsoc = []
+            for associated_inv in inv.associated_inv_ids:
+                tipo_cbte = voucher_type_obj.get_voucher_type(associated_inv)
+                pos, number = associated_inv.internal_number.split('-')
+                cbte_fch = datetime.strptime(
+                    associated_inv.date_invoice, '%Y-%m-%d').strftime('%Y%m%d')
+                CbteAsoc = {
+                    'Tipo': tipo_cbte,
+                    'PtoVta': int(pos),
+                    'Nro': int(number),
+                    'Cuit': inv.company_id.partner_id.vat,
+                    'CbteFch': cbte_fch,
+                }
+
+                CbtesAsoc.append(CbteAsoc)
+
+            if CbtesAsoc and inv.fiscal_type_id == wsfcred_type:
+                detalle['CbtesAsoc'] = CbtesAsoc
+
             # Agregamos un hook para agregar tributos o IVA que pueda ser
             # llamado de otros modulos. O mismo para modificar el detalle.
             detalle = invoice_obj.hook_add_taxes(inv, detalle)
-
             details.append(detalle)
 
         #print 'Detalles: ', details
@@ -634,7 +661,8 @@ It is a proof that a company sends to your client, which is notified to be charg
                 res = res.filtered(lambda x: x.fiscal_type_id.id == fiscal_type_id)
 
             if not len(res):
-                raise osv.except_osv(_("Voucher type error!"), _("There is no voucher type that corresponds to this object"))
+                return None
+                #raise osv.except_osv(_("Voucher type error!"), _("There is no voucher type that corresponds to this object"))
 
             #if len(res) > 1:
             #    raise osv.except_osv(_("Voucher type error!"), _("There is more than one voucher type that corresponds to this object"))

@@ -98,7 +98,7 @@ class account_invoice(models.Model):
                 vals['export_type_id'] = invoice.export_type_id.id
                 vals['dst_country_id'] = invoice.dst_country_id.id
                 vals['dst_cuit_id'] = invoice.dst_cuit_id.id
-                vals['associated_inv_ids'] = [(4, invoice.id)]
+
             vals['associated_inv_ids'] = [(4, invoice.id)]
 
             if vals:
@@ -149,6 +149,9 @@ class account_invoice(models.Model):
 
         # Obtenemos el tipo de comprobante
         tipo_cbte = voucher_type_obj.get_voucher_type(inv)
+        if not tipo_cbte:
+            raise osv.except_osv(_("Voucher type error!"), _("There is no voucher type that corresponds to this object"))
+
         try:
             pto_vta = int(inv.pos_ar_id.name)
         except ValueError:
@@ -165,7 +168,28 @@ class account_invoice(models.Model):
         invoice = self
         cr = self.env.cr
         # Obtenemos el ultimo numero de comprobante para ese pos y ese tipo de comprobante
-        cr.execute("select max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999')) from account_invoice where internal_number ~ '^[0-9]{4}-[0-9]{8}$' and pos_ar_id=%s and state in %s and type=%s and is_debit_note=%s", (invoice.pos_ar_id.id, ('open', 'paid', 'cancel',), invoice.type, invoice.is_debit_note))
+	query = """
+        select
+	    max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
+	from account_invoice
+	where internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+	    and pos_ar_id=%(pos_id)s
+	    and state in %(states)s
+	    and type=%(inv_type)s
+	    and is_debit_note=%(debit_note)s
+	    and denomination_id=%(denomination)s
+	"""
+	fiscal_type = invoice.fiscal_type_id and '= %s' % invoice.fiscal_type_id.id or 'IS NULL'
+	fiscal_filter = "and fiscal_type_id {fiscal_type}".format(fiscal_type=fiscal_type)
+	query += fiscal_filter
+	params =  {
+	    'pos_id': invoice.pos_ar_id.id,
+	    'states': ('open', 'paid', 'cancel',),
+	    'inv_type': invoice.type,
+	    'debit_note': invoice.is_debit_note,
+	    'denomination': invoice.denomination_id.id,
+	}
+	cr.execute(query, params)
         last_number = cr.fetchone()
         self.env.invalidate_all()
 
@@ -330,6 +354,8 @@ class account_invoice(models.Model):
 
             # Obtenemos el tipo de comprobante
             tipo_cbte = voucher_type_obj.get_voucher_type(inv)
+            if not tipo_cbte:
+                raise osv.except_osv(_("Voucher type error!"), _("There is no voucher type that corresponds to this object"))
 
             # Obtenemos el numero de comprobante a enviar a la AFIP teniendo en
             # cuenta que inv.number == 000X-00000NN o algo similar.

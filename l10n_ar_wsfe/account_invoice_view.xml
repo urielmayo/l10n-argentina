@@ -26,7 +26,7 @@
                 </field>
                 <page string="Other Info" position="inside">
                     <group string="Associated Invoices">
-                        <field name="associated_inv_ids" nolabel="1">
+                        <field name="associated_inv_ids" nolabel="1" domain="[('partner_id', '=', partner_id), ('type', '=', 'out_invoice'), ('state', 'not in', ['draft', 'cancel'])]">
                             <tree string="Associated Invoices">
                                 <field name="partner_id" groups="base.group_user"/>
                                 <field name="date_invoice"/>
