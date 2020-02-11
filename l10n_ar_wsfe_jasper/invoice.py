@@ -228,13 +228,15 @@ class account_invoice(models.Model):
         pos = '0002'
 
         eivoucher_obj = self.env['wsfe.voucher_type']
-        ei_voucher_type = eivoucher_obj.search([('document_type', '=', self.type), ('denomination_id', '=', self.denomination_id.id)])  # [0]
+        ei_voucher_type = eivoucher_obj.get_voucher_type(self) # search([('document_type', '=', self.type), ('denomination_id', '=', self.denomination_id.id)])#[0]
+        if not ei_voucher_type:
+            ei_voucher_type = '0'
 
         if self.pos_ar_id:
             pos = self.pos_ar_id.name
 
         # ei_voucher_type = eivoucher_obj.browse(cr, uid, aux_res)
-        inv_code = ei_voucher_type.code
+        inv_code = ei_voucher_type
 
         if self.state == 'open' and self.cae != 'NA' and self.cae_due_date:
             cae = self.cae
