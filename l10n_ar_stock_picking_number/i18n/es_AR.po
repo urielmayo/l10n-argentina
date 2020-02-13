@@ -99,3 +99,8 @@ msgstr "Órdenes de entrega"
 msgid "or"
 msgstr "o"
 
+#. module: l10n_ar_stock_picking_number
+#: code:addons/l10n_ar_stock_picking_number/models/stock.py:47
+#, python-format
+msgid "There is another identical sequence"
+msgstr "Ya existe una secuencia idéntica"

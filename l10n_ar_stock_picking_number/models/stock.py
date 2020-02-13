@@ -20,7 +20,8 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class StockPicking(models.Model):
@@ -34,6 +35,18 @@ class StockPicking(models.Model):
         "e is created, corrected and renumerated",
     )
     name_original = fields.Char(string="Original picking number")
+
+    @api.constrains('name')
+    def _check_repeat_sequence(self):
+        for picking in self:
+            stock_picking = self.search([
+                ('name', '=', picking.name),
+                ('id', '!=', picking.id)
+            ])
+            if stock_picking:
+                raise UserError(_(
+                    'There is another identical sequence'
+                ))
 
     @api.multi
     def action_done(self):
