@@ -2,21 +2,21 @@
 <odoo>
     <data>
 
-        <menuitem id="menu_period_root"
+        <menuitem id="date_period_menu_root"
             parent="account.account_account_menu"
             name="Periods"
             />
 
 
-        <menuitem id="menu_action_period"
-            parent="menu_period_root"
-            action="action_period"
+        <menuitem id="date_period_menu_action"
+            parent="date_period_menu_root"
+            action="date_period_action"
             name="Periods"
             />
 
         <menuitem id="account_fiscal_year_menu"
             action="account_fiscal_year_action"
-            parent="menu_period_root"/>
+            parent="date_period_menu_root"/>
 
     </data>
 </odoo>
