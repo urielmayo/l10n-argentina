@@ -7,3 +7,4 @@ from . import account_invoice  # noqa
 from . import account_move  # noqa
 from . import date_period  # noqa
 from . import stock_inventory  # noqa
+from . import account_fiscal_year # noqa

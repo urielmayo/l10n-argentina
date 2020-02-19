@@ -13,20 +13,8 @@ class AccountMove(models.Model):
     period_id = fields.Many2one(
         string="Period",
         comodel_name="date.period",
-        compute='_compute_period',
-        store=True,
+        required=True,
     )
-
-    @api.depends('date')
-    def _compute_period(self):
-        for move in self:
-            if not move.date:
-                continue
-
-            period_obj = move.env['date.period']
-            period_date = fields.Date.from_string(move.date)
-            period = period_obj._get_period(period_date)
-            move.period_id = period.id
 
     @api.model
     def create(self, vals):
@@ -34,6 +22,10 @@ class AccountMove(models.Model):
         date = vals.get('date', fields.Date.context_today(self))
         period_date = fields.Date.from_string(date)
         period = period_model._get_period(period_date)
+        if not vals.get('period_id', False):
+            vals.update({
+                'period_id': period.id
+            })
         journal_id = vals.get('journal_id', self._get_default_journal())
         if not journal_id:
             return super(AccountMove, self).create(vals)
