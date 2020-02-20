@@ -15,6 +15,11 @@
                     <field name="dst_cuit_id" attrs="{
                         'invisible': [('dst_cuit', '!=', True)]}"/>
                 </field>
+                <field name="vat" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': [('document_type_id', '=', False)]}
+                    </attribute>
+                </field>
             </field>
         </record>
 
