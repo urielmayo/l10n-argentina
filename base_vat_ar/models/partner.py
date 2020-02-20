@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 #   Copyright (c) 2018 Eynes/E-MIPS (www.eynes.com.ar)
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
@@ -112,8 +112,15 @@ class ResPartner(models.Model):
                 vat_country = partner.country_id.code.lower()
                 vat_number = partner.vat
             else:
-                vat_country, vat_number = partner.vat[:2].lower(), \
-                    partner.vat[2:].replace(' ', '')
+                try:
+                    int(partner.vat[:2].lower())
+                    vat_country = 'ar'
+                    vat_number = partner.vat
+                except ValueError:
+                    vat_country, vat_number = partner.vat[:2].lower(), \
+                        partner.vat[2:].replace(' ', '')
+            if not self.document_type_id:
+                return True
             if partner.document_type_id and \
                     not partner.document_type_id.sudo().verification_required:
                 return True
@@ -134,8 +141,18 @@ class ResPartner(models.Model):
         """
         Check VAT Routine for Argentina.
         """
-        if len(vat) != 11:
-            return False
+        cuit = self.sudo().env.ref('base_vat_ar.document_cuit')
+        cuil = self.sudo().env.ref('base_vat_ar.document_cuil')
+        dni = self.sudo().env.ref('base_vat_ar.document_dni')
+        if self.document_type_id == cuit:
+            if len(vat) != 11:
+                return False
+        if self.document_type_id == cuil:
+            if len(vat) > 11:
+                return False
+        if self.document_type_id == dni:
+            if len(vat) > 8:
+                return False
         try:
             int(vat)
         except ValueError:
