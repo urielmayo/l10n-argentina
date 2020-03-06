@@ -12,6 +12,7 @@ from odoo.exceptions import ValidationError
 
 class wsaa_load_config(models.TransientModel):
     _name = 'wsaa.load.config'
+    _description = 'Load configuration for WSAA'
 
     @api.multi
     def read_file(self, filename=False, filedata=False,
