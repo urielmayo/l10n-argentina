@@ -29,7 +29,7 @@
                 <form string="WSAA Config" version="7.0">
                     <sheet>
                         <h1>
-                            <label string="WSAA Config"/>
+                            <label for="id" string="WSAA Config"/>
                         </h1>
                         <group>
                             <field name="name" select="1" />
