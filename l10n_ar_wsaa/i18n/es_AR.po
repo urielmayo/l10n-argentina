@@ -201,7 +201,7 @@ msgstr "Fecha de Vencimiento"
 #. module: l10n_ar_wsaa
 #: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__expiration_time
 msgid "Expiration Time"
-msgstr "Tiempo de Expiracióñ"
+msgstr "Tiempo de Expiración"
 
 #. module: l10n_ar_wsaa
 #: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
