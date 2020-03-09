@@ -50,7 +50,7 @@ class WsfeConfig(models.Model):
         'wsfe.tax.codes', 'wsfe_config_id',
         'Taxes', domain=[('from_afip', '=', True)])
     exempt_operations_tax_ids = fields.One2many(
-        'wsfe.tax.codes', 'wsfe_config_id', 'Taxes',
+        'wsfe.tax.codes', 'wsfe_config_id', 'Taxes of Exempt Operations',
         domain=[('from_afip', '=', False), ('exempt_operations', '=', True)])
     wsaa_ticket_id = fields.Many2one('wsaa.ta', 'Ticket Access')
     company_id = fields.Many2one('res.company', 'Company Name', required=True)
@@ -264,6 +264,9 @@ class WsfeConfig(models.Model):
     @api.multi
     def read_tax(self):
         self.ensure_one()
+        if not self.cuit:
+            raise UserError(
+                _("Please configure the company VAT before get Taxes!"))
         wsfe_tax_model = self.env['wsfe.tax.codes']
         ws = self.ws_auth()
         data = {

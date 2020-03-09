@@ -37,7 +37,7 @@ class AccountInvoice(models.Model):
     shipping_perm_ids = fields.One2many(
         'wsfex.shipping.permission', 'invoice_id', 'Shipping Permissions')
     incoterm_id = fields.Many2one(
-        'stock.incoterms', 'Incoterm',
+        'account.incoterms', 'Incoterm',
         help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")  # noqa
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')

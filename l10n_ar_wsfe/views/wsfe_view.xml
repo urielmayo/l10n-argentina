@@ -299,7 +299,7 @@
                 <form string="Voucher Types" version="7.0">
                     <sheet>
                         <h1>
-                            <label string="Configuration Voucher Types"/>
+                            <label for="id" string="Configuration Voucher Types"/>
                         </h1>
                         <group>
                             <field name="name" select="1"/>
@@ -353,7 +353,7 @@
                 <form string="WSFE Request" create="false" edit="false" delete="false">
                     <sheet>
                         <h1>
-                            <label string="WSFE Request"/>
+                            <label for="id" string="WSFE Request"/>
                         </h1>
                         <group col="4" colspan="6">
                             <separator colspan="6" string="Header"/>

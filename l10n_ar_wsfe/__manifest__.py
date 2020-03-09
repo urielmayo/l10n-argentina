@@ -39,4 +39,7 @@
     ],
     "installable": True,
     "application": True,
+    "external_dependencies": {
+        "python": ["easywsy", "suds"]
+        }
 }
