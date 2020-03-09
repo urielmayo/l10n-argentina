@@ -69,6 +69,7 @@
                                         <div><strong>Load Certificate</strong></div>
                                     </button>
                                 </div>
+                                <br/>
                                 <field name="certificate" colspan="4" nolabel="1" height="200"/>
                                 <separator string="Key" colspan="4" class="oe_inline"/>
                                 <div class="oe_right oe_button_box oe_inline">

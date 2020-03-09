@@ -1,49 +1,106 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* l10n_ar_wsaa
+#	* l10n_ar_wsaa
 #
 msgid ""
 msgstr ""
-"Language: es\n"
-"Project-Id-Version: Odoo Server 8.0\n"
+"Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-06 12:54+0000\n"
-"PO-Revision-Date: 2018-08-06 12:03-0300\n"
+"POT-Creation-Date: 2020-03-06 17:51+0000\n"
+"PO-Revision-Date: 2020-03-06 17:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 2.1.1\n"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model,name:l10n_ar_wsaa.model_wsaa_certificate_request
+msgid ".csr file generation for an AFIP Certificate"
+msgstr "Generación del archivo .csr para el certificado de AFIP"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Download</strong>"
+msgstr "<strong>Bajar</strong>"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Gather from<br/>New Certificate</strong>"
+msgstr "<strong>Recolectado desde<br/>Nuevo Certificado</strong>"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Gather from<br/>Old Certificate</strong>"
+msgstr "<strong>Recolectado desde<br/>Viejo Certificado</strong>"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Generate Key</strong>"
+msgstr "<strong>Generar Llave</strong>"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Load Certificate</strong>"
+msgstr "<strong>Cargar Certificado</strong>"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Load Key</strong>"
+msgstr "<strong>Cargar Llave</strong>"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "<strong>Load Old Certificate</strong>"
+msgstr "<strong>Cargar Viejo Certificado</strong>"
 
 #. module: l10n_ar_wsaa
 #: model:ir.ui.menu,name:l10n_ar_wsaa.base_afipws
 msgid "AFIP WebServices"
-msgstr "AFIP WebServices"
+msgstr "Webservices de AFIP"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
-#: field:wsaa.config,service_ids:0
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Are you sure you want to generate a new random key?"
+msgstr "Esta seguro que desea generar una nueva lleve aleatoria?"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__service_ids
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
 msgid "Authorized Services"
 msgstr "Servicios Autorizados"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.load.config:l10n_ar_wsaa.certificate_renewal_wizard
-#: view:wsaa.load.config:l10n_ar_wsaa.key_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.certificate_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.key_renewal_wizard
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.load.config,cert_name:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__cert_name
 msgid "Cert FileName"
-msgstr "Cert FileName"
+msgstr "Archivo con Certificado"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
-#: field:wsaa.config,certificate:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__cert_request
+msgid "Cert Request (.csr)"
+msgstr "Pedido de Certificado (.csr)"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__certificate
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
 msgid "Certificate"
 msgstr "Certificado"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__certificate
+msgid "Certificate (.crt)"
+msgstr "Certificado (.crt)"
 
 #. module: l10n_ar_wsaa
 #: model:ir.actions.act_window,name:l10n_ar_wsaa.certificate_renewal_wizard_action
@@ -51,29 +108,42 @@ msgid "Certificate Renewal"
 msgstr "Certificado de Renovación"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.load.config,certificate:0
+#: model:ir.actions.act_window,name:l10n_ar_wsaa.action_wsaa_certificate_request
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certficate_request_view_tree
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Certificate Request"
+msgstr "Ceriticado de Pedido"
+
+#. module: l10n_ar_wsaa
+#: model:ir.ui.menu,name:l10n_ar_wsaa.wsaa_certificate_request_menu
+msgid "Certificate Requests"
+msgstr "Certificad de Pedido"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__certificate
 msgid "Certificate of Approval"
 msgstr "Certificado de Aprobación"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.load.config:l10n_ar_wsaa.certificate_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.certificate_renewal_wizard
 msgid "Choose your WSAA Certificate"
-msgstr "Elija su Certificado WSAA"
+msgstr "Elegir el Certificado WSAA"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.load.config:l10n_ar_wsaa.key_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.key_renewal_wizard
 msgid "Choose your WSAA Key"
-msgstr "Elija su clave WSAA"
+msgstr "Elegir la Llave WSAA"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.config,company_id:0 field:wsaa.ta,company_id:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__company_id
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__company_id
 msgid "Company Name"
 msgstr "Nombre de la Empresa"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.ta,config_id:0
-msgid "Config id"
-msgstr "Config id"
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__config_id
+msgid "Config"
+msgstr "Configuración"
 
 #. module: l10n_ar_wsaa
 #: model:ir.model,name:l10n_ar_wsaa.model_wsaa_config
@@ -81,162 +151,253 @@ msgid "Configuration for WSAA"
 msgstr "Configuración para WSAA"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,create_uid:0 field:wsaa.config,create_uid:0
-#: field:wsaa.load.config,create_uid:0 field:wsaa.ta,create_uid:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__create_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__create_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__create_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__create_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,create_date:0 field:wsaa.config,create_date:0
-#: field:wsaa.load.config,create_date:0 field:wsaa.ta,create_date:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__create_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__create_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__create_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__create_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__create_date
 msgid "Created on"
 msgstr "Creado en"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,description:0 field:wsaa.config,name:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__description
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__name
 msgid "Description"
 msgstr "Descripción"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,display_name:0 field:wsaa.config,display_name:0
-#: field:wsaa.load.config,display_name:0 field:wsaa.ta,display_name:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__display_name
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__display_name
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__display_name
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__display_name
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__display_name
 msgid "Display Name"
 msgstr "Nombre para Mostrar"
 
 #. module: l10n_ar_wsaa
-#: code:addons/l10n_ar_wsaa/wizard/wsaa_load_config.py:38
-#: code:addons/l10n_ar_wsaa/wizard/wsaa_load_config.py:42
-#, python-format
-msgid "Error"
-msgstr "Error"
+#: selection:wsaa.certificate.request,state:0
+msgid "Done"
+msgstr "Hecho"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.ta,expiration_time:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__due_date
+msgid "Due Date"
+msgstr "Fecha de Vencimiento"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__expiration_time
 msgid "Expiration Time"
 msgstr "Tiempo de Expiración"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,id:0 field:wsaa.config,id:0 field:wsaa.load.config,id:0
-#: field:wsaa.ta,id:0
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Generate Request"
+msgstr "Generar Pedido"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__id
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__id
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__id
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__id
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__id
 msgid "ID"
 msgstr "ID"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
 msgid "Key"
 msgstr "Llave"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.load.config,key_name:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__key_name
 msgid "Key FileName"
-msgstr "Llave FileName"
+msgstr "Nombre de Archivo Llave"
 
 #. module: l10n_ar_wsaa
 #: model:ir.actions.act_window,name:l10n_ar_wsaa.key_renewal_wizard_action
 msgid "Key Renewal"
-msgstr "Renovación de Llave"
+msgstr "Renovación de la Llave"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,__last_update:0 field:wsaa.config,__last_update:0
-#: field:wsaa.load.config,__last_update:0 field:wsaa.ta,__last_update:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service____last_update
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request____last_update
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config____last_update
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config____last_update
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta____last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última Modificación en"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,write_uid:0 field:wsaa.config,write_uid:0
-#: field:wsaa.load.config,write_uid:0 field:wsaa.ta,write_uid:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__write_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__write_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__write_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__write_uid
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__write_uid
 msgid "Last Updated by"
-msgstr "Última Actualización por"
+msgstr "Ultima Actualización por"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,write_date:0 field:wsaa.config,write_date:0
-#: field:wsaa.load.config,write_date:0 field:wsaa.ta,write_date:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__write_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__write_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__write_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__write_date
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__write_date
 msgid "Last Updated on"
-msgstr "Última Actaulización en"
+msgstr "Ultima Actualización en"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
-msgid "Load Certificate"
-msgstr "Cargar Certificado"
+#: model:ir.model,name:l10n_ar_wsaa.model_wsaa_load_config
+msgid "Load configuration for WSAA"
+msgstr "Cargar configuración para WSAA"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
-msgid "Load Key"
-msgstr "Cargar Llave"
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Name:"
+msgstr "Nombre"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.config,key:0 field:wsaa.load.config,key:0
+#: selection:wsaa.certificate.request,state:0
+msgid "New"
+msgstr "Nuevo"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Old Certificate"
+msgstr "Certificado Viejo"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__old_certificate
+msgid "Old Certificate (.crt)"
+msgstr "Certificado Viejo (.crt)"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__partner_id
+msgid "Partner"
+msgstr "Socio"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__key
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__key
 msgid "Private Key"
 msgstr "Llave Privada"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__key
+msgid "Private Key (.key)"
+msgstr "Llave Privada (.key)"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
 msgid "Renew TA"
 msgstr "Renovar TA"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.load.config:l10n_ar_wsaa.certificate_renewal_wizard
+#: selection:wsaa.certificate.request,state:0
+msgid "Request Created"
+msgstr "Pedido Creado"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Request Information"
+msgstr "Pedir Información"
+
+#. module: l10n_ar_wsaa
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.certificate_renewal_wizard
 msgid "Save Certificate"
 msgstr "Guardar Certificado"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.load.config:l10n_ar_wsaa.key_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.key_renewal_wizard
 msgid "Save Key"
 msgstr "Guardar Llave"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
 msgid "Security Info"
 msgstr "Información de Seguridad"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.ta,name:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__name
 msgid "Service"
 msgstr "Servicio"
 
 #. module: l10n_ar_wsaa
-#: field:afipws.service,name:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_afipws_service__name
 msgid "Service Name"
 msgstr "Nombre de Servicio"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.ta,sign:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__sign
 msgid "Sign"
 msgstr "Firmar"
 
 #. module: l10n_ar_wsaa
-#: code:addons/l10n_ar_wsaa/wizard/wsaa_load_config.py:43
-#, python-format
-msgid "The Filename should end in \".%s\""
-msgstr "El Nombre de Archivo debe terminar en \".%s\""
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__state
+msgid "State"
+msgstr "Estado"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__subj_cuit
+msgid "Subject CUIT"
+msgstr "CUIT"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__subj_c
+msgid "Subject Country"
+msgstr "País"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__subj_o
+msgid "Subject Enterprise"
+msgstr "Empresa"
+
+#. module: l10n_ar_wsaa
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__subj_cn
+msgid "Subject Hostname"
+msgstr "Hostname"
 
 #. module: l10n_ar_wsaa
 #: sql_constraint:wsaa.config:0
 msgid "The configuration must be unique per company !"
-msgstr "El nombre de archivo debe terminar en !"
+msgstr "La configuración debe ser única por empresa!"
 
 #. module: l10n_ar_wsaa
 #: sql_constraint:afipws.service:0
 msgid "The name of the service must be unique!"
-msgstr "El nombre de servicio debe ser único!"
+msgstr "El nombre del servicio debe ser único!"
 
 #. module: l10n_ar_wsaa
 #: sql_constraint:wsaa.ta:0
 msgid "The service must be unique per company!"
-msgstr "El servicio debe ser único por empresa!"
+msgstr "El servicio debe ser único por empresa"
 
 #. module: l10n_ar_wsaa
 #: model:ir.model,name:l10n_ar_wsaa.model_wsaa_ta
 msgid "Ticket Access for WSAA"
-msgstr "Acceso a Entradas para WSAA"
+msgstr "Ticket de Acceso para WSAA"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.ta,token:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_ta__token
 msgid "Token"
-msgstr "Simbólico"
+msgstr "Token"
 
 #. module: l10n_ar_wsaa
-#: field:wsaa.config,url:0
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_config__url
 msgid "URL for WSAA"
 msgstr "URL para WSAA"
 
@@ -247,10 +408,10 @@ msgstr "Servicios WS"
 
 #. module: l10n_ar_wsaa
 #: model:ir.actions.act_window,name:l10n_ar_wsaa.action_wsaa_config_tree
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_form
-#: view:wsaa.config:l10n_ar_wsaa.view_wsaa_config_tree
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.view_wsaa_config_tree
 msgid "WSAA Config"
-msgstr "Config de WSAA"
+msgstr "Configuración de WSSA"
 
 #. module: l10n_ar_wsaa
 #: model:ir.ui.menu,name:l10n_ar_wsaa.wsaa_config_menu
@@ -258,29 +419,27 @@ msgid "WSAA Configuration"
 msgstr "Configuración de WSAA"
 
 #. module: l10n_ar_wsaa
-#: code:addons/l10n_ar_wsaa/models/wsaa.py:97
-#, python-format
-msgid "WSAA Error!"
-msgstr "Error de WSAA!"
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.wsaa_certificate_request_view_form
+msgid "Wsaa Certificate Request"
+msgstr "Pedido de Certificado WSAA"
 
 #. module: l10n_ar_wsaa
-#: help:wsaa.load.config,key:0
+#: model:ir.model.fields,help:l10n_ar_wsaa.field_wsaa_load_config__key
 msgid "You Privary Key Here"
-msgstr "Tu Privacidad Aquí"
+msgstr "Tu Llave Privada"
 
 #. module: l10n_ar_wsaa
-#: help:wsaa.load.config,certificate:0
+#: model:ir.model.fields,help:l10n_ar_wsaa.field_wsaa_load_config__certificate
 msgid "You certificate (.crt)"
 msgstr "Tu certificado (.crt)"
 
 #. module: l10n_ar_wsaa
-#: code:addons/l10n_ar_wsaa/wizard/wsaa_load_config.py:39
-#, python-format
-msgid "You must enter a File"
-msgstr "Debes ingresar un Archivo"
+#: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_certificate_request__name
+msgid "name"
+msgstr "nombre"
 
 #. module: l10n_ar_wsaa
-#: view:wsaa.load.config:l10n_ar_wsaa.certificate_renewal_wizard
-#: view:wsaa.load.config:l10n_ar_wsaa.key_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.certificate_renewal_wizard
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsaa.key_renewal_wizard
 msgid "or"
 msgstr "o"
