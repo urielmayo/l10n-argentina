@@ -1,0 +1,2 @@
+easywsy==4.0.1
+-e git+https://gitlab.e-mips.com.ar/infra/suds_jurko-0.6.1@master#egg=suds_jurko

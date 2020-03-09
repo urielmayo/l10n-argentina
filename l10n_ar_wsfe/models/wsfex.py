@@ -8,9 +8,9 @@ from odoo.exceptions import UserError
 from odoo.addons.l10n_ar_wsfe.wsfetools.wsfex_easywsy import WSFEX
 
 
-class StockIncoterms(models.Model):
-    _name = 'stock.incoterms'
-    _inherit = 'stock.incoterms'
+class AccountIncoterms(models.Model):
+    _name = 'account.incoterms'
+    _inherit = 'account.incoterms'
 
     @api.multi
     def name_get(self):
@@ -53,7 +53,7 @@ class WsfexUomCodes(models.Model):
 
     code = fields.Integer('Code', required=True)
     name = fields.Char('Desc', required=True, size=64)
-    uom_id = fields.Many2one('product.uom', string="OpenERP UoM")
+    uom_id = fields.Many2one('uom.uom', string="OpenERP UoM")
     wsfex_config_id = fields.Many2one('wsfex.config')
 
 
@@ -86,7 +86,7 @@ class wsfex_incoterms_codes(models.Model):
 
     code = fields.Char('Code', size=5, required=True)
     name = fields.Char('Desc', required=True, size=64)
-    incoterms_id = fields.Many2one(comodel_name='stock.incoterms',
+    incoterms_id = fields.Many2one(comodel_name='account.incoterms',
                                    string="OpenERP Incoterm")
     wsfex_config_id = fields.Many2one('wsfex.config')
 

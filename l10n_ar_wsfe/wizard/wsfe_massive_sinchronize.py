@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class wsfe_massive_sinchronize(models.TransientModel):
     _name = 'wsfe.massive.sinchronize'
-    _desc = 'WSFE Massive Sinchronize'
+    _description = 'WSFE Massive Sinchronize'
 
     voucher_type = fields.Many2one('wsfe.voucher_type', 'Voucher Type',
                                    required=True)
