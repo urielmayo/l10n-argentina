@@ -7,9 +7,8 @@ from freezegun import freeze_time
 
 class TestDatePeriod:
 
-
     def get_current_date(self):
-        cnow = datetime.strftime("%y-%m-%d", "2019-03-01")
+        cnow = datetime.strptime("2019-03-01", "%Y-%m-%d")
         current_date = cnow.replace(hour=0, minute=0, second=0)
         return current_date
 
@@ -49,14 +48,15 @@ class TestDatePeriod:
         return vals
 
 
-    def cases_of_duplication(self, DP, date_from, date_to):
-        with pytest.raises(UserError,
-                match=r".*There is other period between.*"):
+    def cases_of_duplication(self, DP, date_from, date_to, fiscalyear):
+        with pytest.raises(ValidationError,
+                match=r".*Either some periods are overlapping.*"):
             DP.create({
                 'code': '03/2019',
                 'name': '03/2019',
                 'date_from': date_from,
                 'date_to': date_to,
+                'fiscalyear_id': fiscalyear.id,
             })
 
 
@@ -122,13 +122,13 @@ class TestDatePeriod:
         for case in cases:
             date_from = case['date_from']
             date_to = case['date_to']
-            self.cases_of_duplication(DP, date_from, date_to)
+            self.cases_of_duplication(DP, date_from, date_to, fiscalyear)
 
     def test_check_duration(self, DP, FY):
         date_from, date_to = self.get_dates()
         fiscalyear_vals = self._prepare_fiscal_year()
         fiscalyear = FY.create(fiscalyear_vals)
-        with pytest.raises(UserError,
+        with pytest.raises(ValidationError,
                 match=r".*The duration of the Period.*"):
             DP.create({
                 'code': '03/2019',
@@ -150,13 +150,15 @@ class TestDatePeriod:
             (0, "2020-01-01")
         ]
         for length, sdate in date_demo_lst:
-            date = datetime.strftime("%Y-%m-%d", sdate)
+            date = datetime.strptime(sdate, "%Y-%m-%d")
             period = DP.search_period_on_date(date)
             assert len(period) ==  length, "Invalid Period"
             if length:
                 date_from, date_to = self.get_start_end(date)
-                assert period.date_from == date_from and\
-                        period.date_to == date_to
+                p_from = period.date_from.strftime("%Y-%m-%d")
+                p_to = period.date_to.strftime("%Y-%m-%d")
+                assert p_from == date_from.strftime("%Y-%m-%d") and\
+                        p_to == date_to.strftime("%Y-%m-%d")
             return True
 
     def test_get_period(self, DP, FY):
@@ -171,12 +173,14 @@ class TestDatePeriod:
             (0, "2020-01-01")
         ]
         for length, sdate in date_demo_lst:
-            date = datetime.strftime("%Y-%m-%d", sdate)
+            date = datetime.strptime(sdate, "%Y-%m-%d")
             period = DP._get_period(date)
             assert len(period) ==  length, "Invalid Period"
             if length:
                 date_from, date_to = self.get_start_end(date)
-                assert period.date_from == date_from and\
-                        period.date_to == date_to
+                p_from = period.date_from.strftime("%Y-%m-%d")
+                p_to = period.date_to.strftime("%Y-%m-%d")
+                assert p_from == date_from.strftime("%Y-%m-%d") and\
+                        p_to == date_to.strftime("%Y-%m-%d")
             return True
 

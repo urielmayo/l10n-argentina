@@ -9,6 +9,7 @@ import logging
 from odoo import models, api, fields, _
 from odoo.osv import expression
 from datetime import datetime
+from odoo.exceptions import UserError, RedirectWarning
 from dateutil.relativedelta import relativedelta
 
 
@@ -80,7 +81,7 @@ class AccountFiscalYear(models.Model):
 
     def find(self, dt=None, exception=True):
         res = self.finds(dt, exception)
-        return res.id
+        return res
 
     def finds(self, dt=None, exception=True):
         ctx = self.env.context
@@ -98,7 +99,7 @@ class AccountFiscalYear(models.Model):
         fiscalyears = self.search(args)
         if not fiscalyears:
             if exception:
-                action = self.env.ref('account.action_account_fiscal_year')
+                action = self.env.ref('account.actions_account_fiscal_year')
                 msg = _("There is no period defined for this date: "\
                         "%s.\nPlease go to Configuration/Periods and "\
                         "configure a fiscal year.") % dt
