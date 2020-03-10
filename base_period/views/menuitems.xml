@@ -2,21 +2,21 @@
 <odoo>
     <data>
 
-        <menuitem id="date_period_menu_root"
-            parent="account.account_account_menu"
+        <menuitem id="date_period_root_menu"
             name="Periods"
-            />
+            sequence="4"
+            parent="account.menu_finance_configuration"/>
 
+        <menuitem id="account_fiscal_year_menu"
+            action="account.actions_account_fiscal_year"
+            name="Fiscal Year"
+            parent="base_period.date_period_root_menu"/>
 
-        <menuitem id="date_period_menu_action"
-            parent="date_period_menu_root"
+        <menuitem id="menu_action_period"
+            parent="base_period.date_period_root_menu"
             action="date_period_action"
             name="Periods"
             />
-
-        <menuitem id="account_fiscal_year_menu"
-            action="account_fiscal_year_action"
-            parent="date_period_menu_root"/>
 
     </data>
 </odoo>

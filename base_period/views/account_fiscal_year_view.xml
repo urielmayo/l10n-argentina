@@ -4,7 +4,7 @@
     <data>
 
         <!-- Fiscal Year -->
-        <record id="account_fiscal_year_view_form" model="ir.ui.view">
+        <record id="account.action_account_fiscal_year_form" model="ir.ui.view">
             <field name="name">account.fiscal.year.form</field>
             <field name="model">account.fiscal.year</field>
             <field name="type">form</field>
@@ -92,30 +92,6 @@
                             icon="terp-stock_effects-object-colorize"/>
                     </group>
                 </field>
-            </field>
-        </record>
-
-        <record id="account.action_account_fiscal_year_form" model="ir.ui.view">
-            <field name="active">False</field>
-        </record>
-
-        <record id="account_fiscal_year_action" model="ir.actions.act_window">
-            <field name="name">Fiscal Years</field>
-            <field name="res_model">account.fiscal.year</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to start a new fiscal year.
-              </p><p>
-                Define your company's financial year according to your needs. A
-                financial year is a period at the end of which a company's
-                accounts are made up (usually 12 months). The financial year is
-                usually referred to by the date in which it ends. For example,
-                if a company's financial year ends November 30, 2011, then
-                everything between December 1, 2010 and November 30, 2011
-                would be referred to as FY 2011.
-              </p>
             </field>
         </record>
 
