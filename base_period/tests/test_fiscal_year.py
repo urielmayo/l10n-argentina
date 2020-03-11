@@ -73,5 +73,3 @@ class TestFiscalYear:
         assert ref_fiscalyear.id == fiscalyear.id, "Fiscalyear not found"
         bad_fiscalyear = FY.find('2020-03-03', exception=False)
         assert not bad_fiscalyear, "Expected false to find fiscalyear"
-
-

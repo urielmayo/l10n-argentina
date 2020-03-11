@@ -46,7 +46,6 @@ class CloseDatePeriodWizard(models.TransientModel):
                 'journal_ids': [(6, 0, self.journal_ids.ids)],
             }
         )
-        date_period.close_period()
 
 
 class ReopenDatePeriodWizard(models.TransientModel):
@@ -80,7 +79,6 @@ class ReopenDatePeriodWizard(models.TransientModel):
                     'journal_ids': [(3, journal_id, 0)],
                 }
             )
-        date_period.open_period()
 
     @api.model
     def _get_default_closed_journals(self):

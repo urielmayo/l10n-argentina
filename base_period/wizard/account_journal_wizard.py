@@ -33,15 +33,13 @@ class CloseAccountJournalWizard(models.TransientModel):
     def button_open(self):
         period_data = self._build_period_data()
         self.period_id.write(period_data)
-        self.period_id.open_period()
 
     @api.multi
     def button_close(self):
         period_data = self._build_period_data(4)
         self.period_id.write(period_data)
-        self.period_id.close_period()
 
-    @api.depends('period_id')
+    @api.depends('period_id', 'period_id.journal_ids')
     def _compute_closed(self):
         account_journal_id = self._get_active_journal()
         if account_journal_id in self.period_id.journal_ids:

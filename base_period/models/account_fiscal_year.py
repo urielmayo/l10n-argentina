@@ -34,14 +34,6 @@ class AccountFiscalYear(models.Model):
     ], string='Status', readonly=True,
     copy=False, default='draft')
 
-    @api.constrains('date_to', 'date_from')
-    def _check_duration(self):
-        for reg in self:
-            if reg.date_to < reg.date_from:
-                raise UserError(_("Error!\nThe start date of a fiscal "\
-                        "year must precede its end date."))
-        return True
-
     @api.multi
     def button_create_period3(self):
         return self.create_period(interval=3)

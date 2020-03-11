@@ -11,16 +11,17 @@ class AccountInvoice(models.Model):
     period_id = fields.Many2one(
         string="Period",
         comodel_name="date.period",
-        required=True,
     )
 
     @api.model
     def create(self, vals):
+        period_obj = self.env['date.period']
         if not vals.get('period_id', False):
-            date = vals.get('date_invoice',
-                    fields.Date.context_today(self))
+            date = vals.get('date_invoice', False)
+            if not date:
+                date = fields.Date.context_today(self)
             period_date = fields.Date.from_string(date)
-            period = period_model._get_period(period_date)
+            period = period_obj._get_period(period_date)
             vals.update({
                 'period_id': period.id
             })

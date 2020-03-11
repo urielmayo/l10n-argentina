@@ -19,7 +19,9 @@ class AccountMove(models.Model):
     @api.model
     def create(self, vals):
         period_model = self.env['date.period']
-        date = vals.get('date', fields.Date.context_today(self))
+        date = vals.get('date', False)
+        if not date:
+            date = fields.Date.context_today(self)
         period_date = fields.Date.from_string(date)
         period = period_model._get_period(period_date)
         if not vals.get('period_id', False):

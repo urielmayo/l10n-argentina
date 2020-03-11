@@ -56,6 +56,8 @@ class DatePeriod(models.Model):
         string='Status',
         default='closed',
         copy=False,
+        store=True,
+        compute="_compute_period_state",
         track_visibility='onchange',
     )
 
@@ -212,7 +214,7 @@ class DatePeriod(models.Model):
             period = self.search(domain, limit=1)
 
         if not period:
-            action = self.env.ref('base_period.action_period')
+            action = self.env.ref('base_period.date_period_action')
             msg = _("There is no period defined for this date: "\
                     "%s.\nPlease go to Configuration/Periods.") % period_date
             raise RedirectWarning(msg, action.id,
@@ -240,7 +242,6 @@ class DatePeriod(models.Model):
 
     @api.multi
     def write(self, vals):
-        move_line_obj = self.env['account.move.line']
         if 'company_id' in vals:
             affected_models = [
                 'account.move',
@@ -294,25 +295,8 @@ class DatePeriod(models.Model):
                 period_state = 'closed'
         return period_state
 
-    @api.multi
-    def open_period(self):
+    @api.depends('journal_ids')
+    def _compute_period_state(self):
         for period in self:
             next_state = period.get_next_state()
-            if next_state != 'open':
-                msg = _("You cannot open this period because "\
-                        "there are journals related")
-                raise ValidationError(msg)
-            period.write({
-                'state': next_state
-            })
-        return True
-
-    def close_period(self):
-        for period in self:
-            if period.period_state == 'closed':
-                raise ValidationError(
-                    _("You cannot close this period because it is closed"))
-            period.write({
-                'state': 'next_state'
-            })
-        return True
+            period.period_state = next_state
