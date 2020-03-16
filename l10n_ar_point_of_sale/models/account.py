@@ -36,7 +36,7 @@ class AccountTax(models.Model):
 
 
 @api.multi
-def post(self):
+def post(self, invoice=False):
     invoice = self._context.get('invoice', False)
     self._post_validate()
     for move in self:
