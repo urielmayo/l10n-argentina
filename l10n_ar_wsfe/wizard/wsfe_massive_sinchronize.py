@@ -81,57 +81,61 @@ class wsfe_massive_sinchronize(models.TransientModel):
             order='internal_number desc', limit=1)
 
         # Buscamos la desincronizacion
-        last_number = int(last_invoice.internal_number.split('-')[1])
-        last_wsfe_number = conf.get_last_voucher(pos, voucher_type)
-
-        # Chequeamos si esta todo sincronizado
-        if last_number == last_wsfe_number:
-            raise Warning(
-                _('All voucher of this type and POS are sinchronized.'))
-
-        cr = self.env.cr
-        invoices = self.env['account.invoice']
-        for number in range(last_number+1, last_wsfe_number+1):
-            logger.info("Sincronizando comprobante %d" % number)
-            res = conf.get_voucher_info(pos, voucher_type, number)
-            logger.debug("Informacion obtenida de AFIP %s" % res)
-
-            # Buscamos una factura que coincida
-            invoice = self._search_invoice(res)
-
-            # No se encontro la factura
-            if not invoice:
-                raise UserError(
-                    _('Voucher Not Found!\n') +
-                    _('Voucher %d of pos %s has not been found.') %
-                    (number, self.pos_id.name))
-
-            invoices += invoice
-
-            date_invoice = time.strftime(
-                DEFAULT_SERVER_DATE_FORMAT,
-                time.strptime(str(res['CbteFch']), '%Y%m%d'))
-            cae_due_date = time.strftime(
-                DEFAULT_SERVER_DATE_FORMAT,
-                time.strptime(str(res['FchVto']), '%Y%m%d'))
-            cae = str(res['CodAutorizacion'])
-
-            invoice.wsfe_relate_invoice(pos, number, date_invoice,
-                                        cae, cae_due_date)
-
-            if self.env.context.get('commit', True):
-                cr.commit()
-
-        if invoices:
-            act_window = {
-                'name': _('Updated Invoices'),
-                'type': 'ir.actions.act_window',
-                'res_model': 'account.invoice',
-                'view_type': 'form',
-                'view_mode': 'tree,form',
-                'target': 'current',
-                'domain': [('id', 'in', invoices.ids)],
-            }
-            return act_window
+        # Verificamos antes si existe o no una factura en el sistema
+        if last_invoice:
+            last_number = int(last_invoice.internal_number.split('-')[1])
         else:
-            return {'type': 'ir.actions.act_window_close'}
+            last_invoice = 1
+            last_wsfe_number = conf.get_last_voucher(pos, voucher_type)
+
+            # Chequeamos si esta todo sincronizado
+            if last_number == last_wsfe_number:
+                raise Warning(
+                    _('All voucher of this type and POS are sinchronized.'))
+
+            cr = self.env.cr
+            invoices = self.env['account.invoice']
+            for number in range(last_number+1, last_wsfe_number+1):
+                logger.info("Sincronizando comprobante %d" % number)
+                res = conf.get_voucher_info(pos, voucher_type, number)
+                logger.debug("Informacion obtenida de AFIP %s" % res)
+
+                # Buscamos una factura que coincida
+                invoice = self._search_invoice(res)
+
+                # No se encontro la factura
+                if not invoice:
+                    raise UserError(
+                        _('Voucher Not Found!\n') +
+                        _('Voucher %d of pos %s has not been found.') %
+                        (number, self.pos_id.name))
+
+                invoices += invoice
+
+                date_invoice = time.strftime(
+                    DEFAULT_SERVER_DATE_FORMAT,
+                    time.strptime(str(res['CbteFch']), '%Y%m%d'))
+                cae_due_date = time.strftime(
+                    DEFAULT_SERVER_DATE_FORMAT,
+                    time.strptime(str(res['FchVto']), '%Y%m%d'))
+                cae = str(res['CodAutorizacion'])
+
+                invoice.wsfe_relate_invoice(pos, number, date_invoice,
+                                            cae, cae_due_date)
+
+                if self.env.context.get('commit', True):
+                    cr.commit()
+
+            if invoices:
+                act_window = {
+                    'name': _('Updated Invoices'),
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'account.invoice',
+                    'view_type': 'form',
+                    'view_mode': 'tree,form',
+                    'target': 'current',
+                    'domain': [('id', 'in', invoices.ids)],
+                }
+                return act_window
+            else:
+                return {'type': 'ir.actions.act_window_close'}

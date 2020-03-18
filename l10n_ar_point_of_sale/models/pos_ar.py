@@ -3,8 +3,6 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-import re
-
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
@@ -75,14 +73,10 @@ class PosAr(models.Model):
         """Checks that names are digits between [1, 99999]."""
 
         # Matches all-digits name from 1 to 99999
-        valid_pos_name = re.compile("^\d{1,5}$")
         for pos in self:
-            if not re.match(valid_pos_name, pos.name):
-                err = _("Error!\nThe PoS Name should be a 4-5 digit number!")
+            if not(0 < int(pos.name) <= 99999):
+                err = _("Error!\nThe PoS Name should be a Number Between 1 and 99999!")
                 raise ValidationError(err)
-
-            #if len(pos.name) < 4:
-            #    pos.name = pos.name.zfill(4)
 
     @api.onchange("number")
     def onchange_number(self):
