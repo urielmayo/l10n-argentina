@@ -107,7 +107,6 @@ class PerceptionTaxLine(models.Model):
             'amount': self.amount,
             'base': self.base,
             'account_id': self.account_id.id,
-            'analytic': self.perception_id.account_analytic_id.id,
         })
 
         return taxes
@@ -137,7 +136,7 @@ class AccountInvoice(models.Model):
             upd_lst = []
             for p in perception_ids:
                 upd_lst.append((1, p, {'partner_id': self.partner_id}))
-            res['value']['perception_ids'] = upd_lst
+            self.perception_ids = upd_lst
         return res
 
     @api.onchange('perception_ids')
@@ -173,7 +172,7 @@ class AccountInvoice(models.Model):
             'manual': False,
             'sequence': 10,
             'is_exempt': False,
-            'account_analytic_id': tax['analytic'],
+            'account_analytic_id': tax.get('analytic', False),
             'account_id': tax['account_id'],
         }
         return vals

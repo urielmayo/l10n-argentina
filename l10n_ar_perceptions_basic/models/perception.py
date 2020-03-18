@@ -3,7 +3,8 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import fields, models
+from odoo import fields, models, api, _
+from odoo.exceptions import UserError
 
 
 class PerceptionPerception(models.Model):
@@ -60,7 +61,47 @@ class PerceptionPerception(models.Model):
         ],
         default='nacional',
     )
-    account_analytic_id = fields.Many2one(
-        'account.analytic.account',
-        string='Analytic Account',
-    )
+    active = fields.Boolean('Active', default=True, store=True, readonly=False)
+
+    @api.multi
+    def unlink(self):
+        field_obj = self.env['ir.model.fields']
+        fields = field_obj.search([
+            ('relation', '=', 'perception.perception')
+        ])
+        for perception in self:
+            for field in fields:
+                model_obj = self.env[field.model]
+                if field.ttype == 'one2many':
+                    if not perception[field.relation_field]:
+                        continue
+                elif field.ttype == 'many2many':
+                    if field.relation_table:
+                        cr = self.env.cr
+                        query = """
+                            SELECT * FROM
+                        """
+                        query += field.relation_table
+                        query += """
+                            WHERE perception_id = %(perception)s
+                        """
+                        data = {
+                            'perception': perception.id
+                        }
+                        cr.execute(query, data)
+                        res = cr.fetchall()
+                        if not res:
+                            continue
+
+                    else:
+                        continue
+                else:
+                    res = model_obj.search([
+                        (field.name, '=', perception.id)
+                    ])
+                    if not res:
+                        continue
+                msg = 'Can not delete the record %s\
+                       because is used in the system.'
+                raise UserError(_(msg % self.name))
+        return super(PerceptionPerception, self).unlink()
