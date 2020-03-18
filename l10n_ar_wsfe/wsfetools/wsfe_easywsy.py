@@ -3,14 +3,14 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import _, fields
-from odoo.exceptions import UserError, ValidationError
-from odoo.addons.l10n_ar_wsfe.wsfetools.ws_afip import \
-    wsapi, AfipWS, AfipWSError, AfipWSEvent
-
-from datetime import datetime
-import time
 import logging
+import time
+from datetime import date, datetime
+
+from odoo import _, fields
+from odoo.addons.l10n_ar_wsfe.wsfetools.ws_afip import AfipWS, AfipWSError, AfipWSEvent, wsapi
+from odoo.exceptions import UserError, ValidationError
+
 _logger = logging.getLogger(__name__)
 
 
@@ -29,7 +29,7 @@ class WSFE(AfipWS):
                 'FeCAEReq': {
                     'FeCabReq': {
                         'CbteTipo': voucher_type,
-                        'PtoVta': pos,
+                        'PtoVta': pos.name,
                         'CantReg': reg_qty,
                     },
                     'FeDetReq': {
@@ -56,11 +56,9 @@ class WSFE(AfipWS):
         if not number:
             number = invoice.split_number()[1]
 
-        date_invoice = datetime.strptime(invoice.date_invoice, '%Y-%m-%d')
+        date_invoice = invoice.date_invoice
         formatted_date_invoice = date_invoice.strftime('%Y%m%d')
-        date_due = invoice.date_due and datetime.strptime(
-            invoice.date_due, '%Y-%m-%d').strftime('%Y%m%d') or \
-            formatted_date_invoice
+        date_due = invoice.date_due and invoice.date_due.strftime('%Y%m%d') or formatted_date_invoice
 
         # Chequeamos si el concepto es producto,
         # servicios o productos y servicios
@@ -404,7 +402,7 @@ class WSFE(AfipWS):
         vals = {
             'voucher_type': voucher_type_name,
             'nregs': len(res['Comprobantes']),
-            'pos_ar': '%04d' % pos,
+            'pos_ar': '%04d' % int(pos),
             'date_request': time.strftime('%Y-%m-%d %H:%M:%S'),
             'result': res['Resultado'],
             'reprocess': reprocess,
@@ -502,67 +500,65 @@ class WSFE(AfipWS):
             conf = invoice.get_ws_conf()
             fe_next_number = invoice._get_next_wsfe_number(conf=conf)
 
-            # Si es homologacion, no hacemos el chequeo del numero
-            if not conf.homologation:
-                if int(fe_next_number) != int(val):
-                    try:
-                        sync_invs = []
-                        invoices.env.cr.rollback()
-                        invoices.refresh()
-                        massive_sync_wiz = invoice.env[
-                            'wsfe.massive.sinchronize']
-                        vtype = invoice.env['wsfe.voucher_type'].search(
-                            [('code', '=', int(invoice._get_voucher_type()))])
-                        pos = invoice.env['pos.ar'].search(
-                            [('name', '=', str(invoice._get_pos()))])
-                        wiz = massive_sync_wiz.create({
-                            'voucher_type': vtype.id,
-                            'pos_id': pos.id,
-                        })
-                        act_window = wiz.sinchronize()
-                        if act_window and 'domain' in act_window:
-                            ids_domain = [x for x in act_window['domain']
-                                          if x[0] == 'id']
-                            if len(ids_domain) == 1 and \
-                                    len(ids_domain[0]) == 3:
-                                sync_ids = ids_domain[0][2]
-                                sync_invs = invoices.browse(sync_ids)
-                        if sync_invs:
-                            invoices = invoices.filtered(
-                                lambda x: x not in sync_invs)
-                        if len(invoices) > 1:
-                            massive_inv_wiz = invoices.env[
-                                'account.invoice.confirm']
-                            wiz = massive_inv_wiz.create({})
-                            ctx = {
-                                'active_ids': invoices.ids,
-                            }
-                            wiz.with_context(ctx).invoice_confirm()
-                        else:
-                            invoices.action_invoice_open()
-                    except Exception as e:
-                        sync_invs
-                        _logger.error(repr(e))
-                    finally:
-                        if sync_invs:
-                            raise UserError(
-                                _("WSFE Info!\n") +
-                                _("The current invoice was validated and " +
-                                  "other invoices were validated too due to " +
-                                  "desynchronization. " +
-                                  "\nValidated Invoices:\n" +
-                                  "%s") % ("\n").join(
-                                      invoices.browse(list(
-                                          set(sync_invs.ids +
-                                              invoices.ids))).mapped(
-                                              'internal_number')))
-                        else:
-                            raise UserError(
-                                _("WSFE Error!\n") +
-                                _("The next number in the system [%d] does " +
-                                  "not match the one obtained from " +
-                                  "AFIP WSFE [%d]") %
-                                (int(val), int(fe_next_number)))
+            if int(fe_next_number) != int(val):
+                try:
+                    sync_invs = []
+                    invoices.env.cr.rollback()
+                    invoices.refresh()
+                    massive_sync_wiz = invoice.env[
+                        'wsfe.massive.sinchronize']
+                    vtype = invoice.env['wsfe.voucher_type'].search(
+                        [('code', '=', int(invoice._get_voucher_type()))])
+                    pos = invoice.env['pos.ar'].search(
+                        [('name', '=', invoice._get_pos().name)])
+                    wiz = massive_sync_wiz.create({
+                        'voucher_type': vtype.id,
+                        'pos_id': pos.id,
+                    })
+                    act_window = wiz.sinchronize()
+                    if act_window and 'domain' in act_window:
+                        ids_domain = [x for x in act_window['domain']
+                                        if x[0] == 'id']
+                        if len(ids_domain) == 1 and \
+                                len(ids_domain[0]) == 3:
+                            sync_ids = ids_domain[0][2]
+                            sync_invs = invoices.browse(sync_ids)
+                    if sync_invs:
+                        invoices = invoices.filtered(
+                            lambda x: x not in sync_invs)
+                    if len(invoices) > 1:
+                        massive_inv_wiz = invoices.env[
+                            'account.invoice.confirm']
+                        wiz = massive_inv_wiz.create({})
+                        ctx = {
+                            'active_ids': invoices.ids,
+                        }
+                        wiz.with_context(ctx).invoice_confirm()
+                    else:
+                        invoices.action_invoice_open()
+                except Exception as e:
+                    sync_invs
+                    _logger.error(repr(e))
+                finally:
+                    if sync_invs:
+                        raise UserError(
+                            _("WSFE Info!\n") +
+                            _("The current invoice was validated and " +
+                                "other invoices were validated too due to " +
+                                "desynchronization. " +
+                                "\nValidated Invoices:\n" +
+                                "%s") % ("\n").join(
+                                    invoices.browse(list(
+                                        set(sync_invs.ids +
+                                            invoices.ids))).mapped(
+                                            'internal_number')))
+                    else:
+                        raise UserError(
+                            _("WSFE Error!\n") +
+                            _("The next number in the system [%d] does " +
+                                "not match the one obtained from " +
+                                "AFIP WSFE [%d]") %
+                            (int(val), int(fe_next_number)))
         return True
 
     @wsapi.check(NATURALS)
@@ -620,24 +616,22 @@ class WSFE(AfipWS):
     def validate_invoice_date(val, invoice, Concepto):
         if not val:
             return True
-        val_dt = datetime.strptime(val, AFIP_DATE_FORMAT)
-        val_odoo_format = val_dt.strftime(DATE_FORMAT)
+        val_date = datetime.strptime(val, AFIP_DATE_FORMAT)
         last_invoiced_date = invoice.get_last_date_invoice()
-        if last_invoiced_date and val_odoo_format < last_invoiced_date:
+        if last_invoiced_date and val_date.date() < last_invoiced_date:
             raise UserError(
                 _('WSFE Error!\n') +
                 _('There is another Invoice with a most recent date [%s] ' +
                   'for the same Point of Sale and Denomination.') %
                 last_invoiced_date)
         today = fields.Date.context_today(invoice)
-        today_dt = datetime.strptime(today, DATE_FORMAT)
-        offset = today_dt - val_dt
+        offset = today - val_date.date()
         if Concepto in [2, 3]:
             if abs(offset.days) > 10:
                 raise UserError(
                     _('WSFE Error!\n') +
                     _('Invoice Date difference with today should be less ' +
-                      'than 5 days for product sales.'))
+                      'than 10 days for product sales.'))
         else:
             if abs(offset.days) > 5:
                 raise UserError(
