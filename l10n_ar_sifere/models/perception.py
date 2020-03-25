@@ -3,5 +3,10 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from . import sifere_config  # noqa
-from . import perception  # noqa
+from odoo import fields, models
+
+
+class PerceptionPerception(models.Model):
+    _inherit = 'perception.perception'
+
+    is_bank_settlement = fields.Boolean('Is Bank Settlement')

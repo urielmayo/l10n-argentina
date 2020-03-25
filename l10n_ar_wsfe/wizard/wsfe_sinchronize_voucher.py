@@ -21,7 +21,7 @@ class wsfe_sinchronize_voucher(models.TransientModel):
     _description = "WSFE Sinchroniza Voucher"
 
     def _get_def_config(self):
-        wsfe_conf_model = self.env['wsfe.config']
+        wsfe_conf_model = self.env['wsfe.config'].with_context(company_id=self.env.user.company_id.id)
         return wsfe_conf_model.get_config()
 
     voucher_type = fields.Many2one(

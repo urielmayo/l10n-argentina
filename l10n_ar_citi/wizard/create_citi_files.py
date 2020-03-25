@@ -192,8 +192,17 @@ class ReportFilesGenerator(models.Model):
             })
 
         # PoS & Voucher ID
-        pos, voucher_id = invoice.split_number()
-        max_voucher_id = voucher_id
+        if int(voucher_type) != 66:
+            pos, voucher_id = invoice.split_number()
+            pos = str(pos)
+            voucher_id = str(voucher_id)
+            max_voucher_id = voucher_id
+            is_import_delivery = False
+        else:
+            is_import_delivery = True
+            pos = 0
+            voucher_id = invoice.internal_number.replace('-', '')
+            max_voucher_id = voucher_id
 
         # Document Type
         document_type = partner.document_type_id and \
@@ -367,8 +376,9 @@ class ReportFilesGenerator(models.Model):
                           (invoice.partner_id.name, invoice.name_get()[0][1])),
             })
         # El campo punto de venta no puede ser menor a 00001
+        is_import_delivery = data.get('is_import_delivery', False)
         if voucher_type not in other_vouchers_types and \
-                pos <= 0:
+                (not is_import_delivery and int(pos) <= 0):
             errors.append({
                 'resource': invoice,
                 'error': (_("Point of sale can't be zero or lower for " +

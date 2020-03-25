@@ -44,6 +44,8 @@
                                         attrs="{'readonly': [('parent.disable_retentions', '=', False)]}"/>
                                     <field name="state_id"
                                         attrs="{'readonly': [('parent.disable_retentions', '=', False)]}"/>
+                                    <field name="date_applied"
+                                        attrs="{'readonly': [('parent.disable_retentions', '=', False)]}"/>
                                     <field name="date"
                                         attrs="{'readonly': [('parent.disable_retentions', '=', False)]}"/>
                                     <label string="Keep it empty if the date is the same as the voucher." class="oe_grey"/>

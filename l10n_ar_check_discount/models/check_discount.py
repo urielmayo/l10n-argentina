@@ -241,6 +241,7 @@ class CheckDiscount(models.Model):
         move_vals = {
             'journal_id': self.check_config_id.discount_move_journal_id.id,
             'line_ids': [(0, False, mlv) for mlv in move_line_vals],
+            'date': self.discount_date,
         }
         move = move_model.create(move_vals)
         return move
@@ -253,6 +254,7 @@ class CheckDiscount(models.Model):
             'debit': self.amount_checks,
             'credit': 0.0,
             'currency_id': self.currency_id.id,
+            'date_maturity': self.discount_date,
         }
         blvs.append(blv)
         return blvs
@@ -267,6 +269,7 @@ class CheckDiscount(models.Model):
             'credit': sum(wallet_checks.mapped('amount')),
             'debit': 0.0,
             'currency_id': self.currency_id.id,
+            'date_maturity': self.discount_date,
         }
         clvs.append(wc_vals)
         return clvs

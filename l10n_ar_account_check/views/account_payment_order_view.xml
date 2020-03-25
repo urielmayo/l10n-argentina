@@ -48,7 +48,7 @@
                             </form>
                         </field>
                         <label for="third_check_ids"/>
-                        <field name="third_check_ids" string="Third Checks" nolabel="1" colspan="4" domain="[('state', '=', 'wallet')]">
+                        <field name="third_check_ids" string="Third Checks" nolabel="1" colspan="4" domain="[('state', '=', 'wallet'), ('company_id', '=', company_id)]">
                             <tree string="Third Checks">
                                 <field name="number"/>
                                 <field name="source_partner_id"/>

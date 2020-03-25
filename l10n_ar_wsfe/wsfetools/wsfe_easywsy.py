@@ -349,7 +349,7 @@ class WSFE(AfipWS):
         voucher_type_obj = env['wsfe.voucher_type']
         voucher_type = voucher_type_obj.search(
             [('code', '=', res['CbteTipo'])])
-        voucher_type_name = voucher_type.name
+        voucher_type_name = ', '.join(x.name for x in voucher_type)
         req_details = []
         pos = res['PtoVta']
         for index, comp in enumerate(res['Comprobantes']):
