@@ -145,13 +145,11 @@ class AccountInvoice(models.Model):
     def _get_pos(self):
         self.ensure_one()
         try:
-            pos = self.split_number()[0]
+            pos = self.pos_ar_id
         except Exception:
-            if not self.pos_ar_id:
-                err = _("Pos not found for invoice `%s` (id: %s)") % \
-                    (self.internal_number, self.id)
-                raise UserError(_("Error!\n") + err)
-            pos = int(self.pos_ar_id.name)
+            err = _("Pos not found for invoice `%s` (id: %s)") % \
+                (self.internal_number, self.id)
+            raise UserError(_("Error!\n") + err)
         return pos
 
     @api.multi
@@ -243,14 +241,13 @@ class AccountInvoice(models.Model):
 
             # Si son de Cliente
             if invtype in ('out_invoice', 'out_refund'):
-
                 pos_ar = obj_inv.pos_ar_id
                 next_number = self.get_next_invoice_number()
-
                 conf = self.get_ws_conf()
                 if conf:
                     invoice_vals['aut_cae'] = True
-
+                    if next_number == 1:
+                        next_number = self._get_next_wsfe_number(conf=conf)
                 # Si no es Factura Electronica...
                 else:
                     # Nos fijamos si el usuario dejo en
@@ -314,7 +311,7 @@ class AccountInvoice(models.Model):
             else:
                 ref = '%s [%s]' % (invoice_name, reference)
 
-            # Actulizamos el campo reference del move_id
+            # Actualizamos el campo reference del move_id
             # correspondiente a la creacion de la factura
             inv._update_reference(ref)
         return res

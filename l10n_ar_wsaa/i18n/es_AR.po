@@ -117,7 +117,7 @@ msgstr "Ceriticado de Pedido"
 #. module: l10n_ar_wsaa
 #: model:ir.ui.menu,name:l10n_ar_wsaa.wsaa_certificate_request_menu
 msgid "Certificate Requests"
-msgstr "Certificad de Pedido"
+msgstr "Certificado de Pedido"
 
 #. module: l10n_ar_wsaa
 #: model:ir.model.fields,field_description:l10n_ar_wsaa.field_wsaa_load_config__certificate

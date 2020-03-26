@@ -197,17 +197,17 @@ class AccountInvoice(models.Model):
 
         for inv in self:
             # Amount exempt
-            #inv.amount_exempt = sum(
+            # inv.amount_exempt = sum(
             #    line.price_subtotal for line in inv.invoice_line_ids
             #    if any(map(lambda x: x.is_exempt, line.invoice_line_tax_ids)),
-            #)
+            # )
             inv.amount_exempt = sum(
                 inv.invoice_line_ids.filtered(_filter_exempt).mapped(
                     "price_subtotal")
             )
 
             # Amount untaxed
-            #inv.amount_no_taxed = sum(
+            # inv.amount_no_taxed = sum(
             #    line.price_subtotal for line in inv.invoice_line_ids if
             #    not line.invoice_line_tax_ids)
             inv.amount_no_taxed = sum(
@@ -216,7 +216,7 @@ class AccountInvoice(models.Model):
             )
 
             # Amount taxed
-            #inv.amount_taxed = sum(
+            # inv.amount_taxed = sum(
             #    line.price_subtotal for line in inv.invoice_line_ids if
             #    any(map(lambda x: (x.tax_group == 'vat' and not x.is_exempt),
             #            line.invoice_line_tax_ids)))
@@ -226,7 +226,7 @@ class AccountInvoice(models.Model):
             )
 
             # Amount for taxes other than VAT
-            #inv.amount_other_taxed = sum(
+            # inv.amount_other_taxed = sum(
             #    line.price_subtotal for line in inv.invoice_line_ids if
             #    any(map(lambda x: (x.tax_group != 'vat' and not x.is_exempt),
             #            line.invoice_line_tax_ids)))

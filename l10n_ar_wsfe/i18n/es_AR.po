@@ -520,6 +520,11 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: l10n_ar_wsfe
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsfe.view_wsfe_config_form
+msgid "Invoice Date Difference from Today"
+msgstr "Cantidad de días desde Hoy hasta la Fecha de Facturación"
+
+# module: l10n_ar_wsfe
 #: model:ir.model,name:l10n_ar_wsfe.model_account_invoice_line
 msgid "Invoice Line"
 msgstr "Linea de factura"
@@ -805,6 +810,11 @@ msgid "Services"
 msgstr "Servicios"
 
 #. module: l10n_ar_wsfe
+#: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_config__services_date_difference
+msgid "Services and Products"
+msgstr "Servicios y Productos"
+
+#. module: l10n_ar_wsfe
 #: model_terms:ir.ui.view,arch_db:l10n_ar_wsfe.wsfe_account_invoice_form
 msgid "Shipping Permission"
 msgstr "Permiso de Envío"
@@ -841,10 +851,14 @@ msgid "Taxed"
 msgstr "Gravado"
 
 #. module: l10n_ar_wsfe
-#: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_config__exempt_operations_tax_ids
 #: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_config__vat_tax_ids
 msgid "Taxes"
 msgstr "Impuestos"
+
+#. module: l10n_ar_wsfe
+#: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_config__exempt_operations_tax_ids
+msgid "Taxes of Exempt Operations"
+msgstr "Impuestos de Operaciones Exentas"
 
 #. module: l10n_ar_wsfe
 #: model:ir.model.fields,help:l10n_ar_wsfe.field_wsfe_config__cuit
@@ -901,6 +915,11 @@ msgstr "IVA Impuestos"
 
 #. module: l10n_ar_wsfe
 #: model_terms:ir.ui.view,arch_db:l10n_ar_wsfe.view_wsfe_config_form
+msgid "Validations"
+msgstr "Validaciones"
+
+#. module: l10n_ar_wsfe
+#: model_terms:ir.ui.view,arch_db:l10n_ar_wsfe.view_wsfe_config_form
 msgid "Vat Taxes Mapping"
 msgstr "Impuesto de IVA"
 
@@ -908,7 +927,7 @@ msgstr "Impuesto de IVA"
 #: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_request_detail__name
 #: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfex_request_detail__invoice_id
 msgid "Voucher"
-msgstr "Voucher"
+msgstr "Comprobante"
 
 #. module: l10n_ar_wsfe
 #: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_request_detail__voucher_date
@@ -1135,4 +1154,4 @@ msgstr "o"
 #. module: l10n_ar_wsfe
 #: model:ir.model,name:l10n_ar_wsfe.model_wsfe_massive_sinchronize
 msgid "wsfe.massive.sinchronize"
-msgstr ""
+msgstr "wsfe.massive.sinchronize"

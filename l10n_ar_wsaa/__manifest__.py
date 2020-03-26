@@ -38,7 +38,7 @@
     "installable": True,
     "application": True,
     "external_dependencies": {
-        "python": ["M2Crypto"]
+        "python": ["M2Crypto", "OpenSSL"]
         }
 
 }

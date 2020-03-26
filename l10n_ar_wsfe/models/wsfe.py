@@ -3,12 +3,12 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
-from odoo.addons.l10n_ar_wsfe.wsfetools.wsfe_easywsy import WSFE
-
-from datetime import datetime
 import time
+from datetime import datetime
+
+from odoo import _, api, fields, models
+from odoo.addons.l10n_ar_wsfe.wsfetools.wsfe_easywsy import WSFE
+from odoo.exceptions import UserError
 
 
 class WsfeTaxCodes(models.Model):
@@ -54,6 +54,10 @@ class WsfeConfig(models.Model):
         domain=[('from_afip', '=', False), ('exempt_operations', '=', True)])
     wsaa_ticket_id = fields.Many2one('wsaa.ta', 'Ticket Access')
     company_id = fields.Many2one('res.company', 'Company Name', required=True)
+    services_date_difference = fields.Integer(
+        'Services and Products', default=10)
+    products_date_difference = fields.Integer(
+        'Products', default=5)
 
     _defaults = {
         'company_id': lambda self, cr, uid, context=None:

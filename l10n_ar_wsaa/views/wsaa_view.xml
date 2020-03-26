@@ -43,7 +43,10 @@
                                         <field name="name" />
                                         <field name="expiration_time" />
                                         <field name="company_id" />
-                                        <button name="action_renew" string="Renew TA" type="object" icon="terp-document-new"/>
+                                        <button name="action_renew"
+                                            string="Renew TA"
+                                            type="object"
+                                            icon="fa-refresh"/>
                                     </tree>
                                 </field>
                             </page>
