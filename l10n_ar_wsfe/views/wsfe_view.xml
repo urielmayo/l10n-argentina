@@ -72,6 +72,12 @@
                                     </form>
                                 </field>
                             </page>
+                            <page string="Validations">
+                              <group col="6" string="Invoice Date Difference from Today">
+                                <field name="services_date_difference"/>
+                                <field name="products_date_difference"/>
+                              </group>
+                            </page>                            
                         </notebook>
                     </sheet>
                 </form>

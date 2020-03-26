@@ -55,7 +55,6 @@ class WSFE(AfipWS):
         invoice.ensure_one()
         if not number:
             number = invoice.split_number()[1]
-
         date_invoice = invoice.date_invoice
         formatted_date_invoice = date_invoice.strftime('%Y%m%d')
         date_due = invoice.date_due and invoice.date_due.strftime('%Y%m%d') or formatted_date_invoice
@@ -618,6 +617,8 @@ class WSFE(AfipWS):
             return True
         val_date = datetime.strptime(val, AFIP_DATE_FORMAT)
         last_invoiced_date = invoice.get_last_date_invoice()
+        conf = invoice.get_ws_conf()
+
         if last_invoiced_date and val_date.date() < last_invoiced_date:
             raise UserError(
                 _('WSFE Error!\n') +
@@ -627,17 +628,19 @@ class WSFE(AfipWS):
         today = fields.Date.context_today(invoice)
         offset = today - val_date.date()
         if Concepto in [2, 3]:
-            if abs(offset.days) > 10:
+            if abs(offset.days) > conf.services_date_difference:
                 raise UserError(
                     _('WSFE Error!\n') +
                     _('Invoice Date difference with today should be less ' +
-                      'than 10 days for product sales.'))
+                      'than [%s] days for products and services sales.') %
+                    conf.services_date_difference)
         else:
-            if abs(offset.days) > 5:
+            if abs(offset.days) > conf.products_date_difference:
                 raise UserError(
                     _('WSFE Error!\n') +
                     _('Invoice Date difference with today should be less ' +
-                      'than 5 days for product sales.'))
+                      'than [%s] days for product sales.') %
+                    conf.products_date_difference)
         return True
 
     @wsapi.check(['MonCotiz'])
