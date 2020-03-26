@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_perception_perception_form_inherit" model="ir.ui.view">
+            <field name="name">perception.perception.form.inherit</field>
+            <field name="model">perception.perception</field>
+            <field name="inherit_id" ref="l10n_ar_perceptions.view_perception_perception_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='always_apply_padron']" position="after">
+                        <field name="is_bank_settlement"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</odoo>

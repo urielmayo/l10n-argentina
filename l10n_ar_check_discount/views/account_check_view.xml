@@ -11,6 +11,17 @@
             <field name="code">action = records.discount_checks()</field>
         </record>
 
+        <record id="view_account_third_check_form" model="ir.ui.view">
+            <field name="name">account.third.check.form.inherit</field>
+            <field name="model">account.third.check</field>
+            <field name="inherit_id" ref="l10n_ar_account_check.view_account_third_check_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='signatory_account']" position="after">
+                    <field name="discount_date" attrs="{'invisible': [('state', '!=', 'discounted')]}"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_account_check_config_form" model="ir.ui.view">
             <field name="name">account.check.config.form</field>
             <field name="model">account.check.config</field>
