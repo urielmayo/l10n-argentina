@@ -7,13 +7,14 @@
 
 from datetime import datetime
 
-from odoo import models, fields, _, api
-from odoo.exceptions import ValidationError
 import odoo.addons.decimal_precision as dp
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class AccountCheckReject(models.Model):
     _name = 'account.check.reject'
+    _description = 'Check Reject'
 
     @api.model
     def _get_journal(self):
@@ -165,6 +166,7 @@ class AccountCheckReject(models.Model):
 
 class CheckRejectExpense(models.Model):
     _name = 'check.reject.expense'
+    _description = 'Reject Expense'
 
     product_id = fields.Many2one(
         comodel_name='product.product', string='Product', required=True)
@@ -176,6 +178,7 @@ class CheckRejectExpense(models.Model):
 
 class CheckRejectIssuedCheck(models.Model):
     _name = 'check.reject.issued.check'
+    _description = 'Reject Issued Check'
 
     reject_date = fields.Date(string='Reject Date', required=True)
     note = fields.Text(string='Note')

@@ -9,6 +9,7 @@ import time
 
 class AccountAddIssuedCheck(models.Model):
     _name = 'account.add.issued.check'
+    _description = 'Add Issued Check'
 
     number = fields.Char(string='Check Number', size=20, required=True)
     amount = fields.Float(string='Amount Check', required=True)
@@ -57,8 +58,8 @@ class AccountAddIssuedCheck(models.Model):
 
 
 class AccountAddThirdCheck(models.Model):
-
     _name = 'account.add.third.check'
+    _description = 'Add Third Check'
 
     number = fields.Char(string='Check Number', size=20, required=True)
     amount = fields.Float(string='Check Amount', required=True)

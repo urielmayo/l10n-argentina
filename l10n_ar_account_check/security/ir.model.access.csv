@@ -11,3 +11,8 @@
 "access_account_add_issued_check","account.add.issued.check user","model_account_add_issued_check","account.group_account_user",1,1,1,1
 "access_account_add_third_check","account.add.third.check user","model_account_add_third_check","account.group_account_user",1,1,1,1
 "access_account_check_deposit","account.check.deposit user","model_account_check_deposit","account.group_account_user",1,1,1,1
+"access_account_checkbook_manager","account.checkbook manager","model_account_checkbook","account.group_account_manager",1,1,1,1
+"access_account_checkbook_user","account.checkbook user","model_account_checkbook","account.group_account_user",1,0,0,0
+"access_account_checkbook_check_manager","account.checkbook.check manager","model_account_checkbook_check","account.group_account_manager",1,1,1,1
+"access_account_checkbook_check_user","account.checkbook.check user","model_account_checkbook_check","account.group_account_user",1,0,0,0
+"access_wizard_create_check_user","wizard.create.check manager","model_wizard_create_check","account.group_account_manager",1,1,1,1

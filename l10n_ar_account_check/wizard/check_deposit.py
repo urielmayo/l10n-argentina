@@ -12,6 +12,7 @@ from odoo.exceptions import UserError
 
 class AccountCheckDeposit(models.Model):
     _name = 'account.check.deposit'
+    _description = 'Check Deposit'
 
     @api.model
     def _get_journal(self):
