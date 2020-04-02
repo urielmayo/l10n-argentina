@@ -29,23 +29,16 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-
         "wizard/annull_checks_view.xml",
-
-
         "wizard/view_check_deposit.xml",
         "wizard/view_check_reject.xml",
         "wizard/add_checks_view.xml",
         "wizard/accredit_checks_view.xml",
-
         "views/account_check_view.xml",
         "wizard/create_checkbook_view.xml",
-
-
         "views/checkbook_view.xml",
         "views/account_payment_order_view.xml",
         "views/account_voucher_view.xml",
-
         "views/partner_view.xml",
     ],
     "installable": True,
