@@ -272,9 +272,9 @@
             <field name="arch" type="xml">
                 <form string="Third Checks">
                     <header>
-                        <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet' class="oe_highlight" groups="account.group_account_invoice,treasury_manager"/>
+                        <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet' class="oe_highlight" groups="account.group_account_invoice,account.group_account_manager,l10n_ar_account_check.treasury_manager"/>
                         <button name="check_to_wallet" type='object' string='Back to Wallet'
-                            class="btn-secondary" groups="account.group_account_invoice,treasury_manager"
+                            class="btn-secondary" groups="account.group_account_invoice,account.group_account_manager,l10n_ar_account_check.treasury_manager"
                             attrs="{'invisible': [('state','in', ('draft', 'wallet'))]}"
                             confirm="You are going to delete an account move. Are you sure?"/>
                         <field name="state" widget="statusbar" statusbar_visible="wallet,deposited,delivered" statusbar_colors='{"wallet":"blue","rejected":"red","cancel":"red"}'/>
