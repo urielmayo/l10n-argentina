@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <menuitem id="menu_treasury_root" name="Treasury" sequence="60" groups="account.group_account_user"/>
+        <menuitem id="menu_treasury_root" name="Treasury" sequence="60" groups="treasury_manager"/>
         <menuitem id="menu_treasury_issued_check_menu" name="Issued Checks" parent="menu_treasury_root" sequence="10"/>
         <menuitem id="menu_treasury_configuration" name="Configuration" parent="menu_treasury_root" sequence="30"/>
 
@@ -199,7 +199,7 @@
 
         <!-- Tesoreria/Cheques/Cheques Emitidos -->
 
-	<record id="account_issued_check_action" model="ir.actions.act_window">
+	    <record id="account_issued_check_action" model="ir.actions.act_window">
             <field name="name">Issued Checks</field>
             <field name="res_model">account.issued.check</field>
             <field name="view_type">form</field>
@@ -272,9 +272,9 @@
             <field name="arch" type="xml">
                 <form string="Third Checks">
                     <header>
-                        <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet' class="oe_highlight" groups="account.group_account_invoice,account.group_account_manager"/>
+                        <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet' class="oe_highlight" groups="account.group_account_invoice,treasury_manager"/>
                         <button name="check_to_wallet" type='object' string='Back to Wallet'
-                            class="btn-secondary" groups="account.group_account_invoice,account.group_account_manager"
+                            class="btn-secondary" groups="account.group_account_invoice,treasury_manager"
                             attrs="{'invisible': [('state','in', ('draft', 'wallet'))]}"
                             confirm="You are going to delete an account move. Are you sure?"/>
                         <field name="state" widget="statusbar" statusbar_visible="wallet,deposited,delivered" statusbar_colors='{"wallet":"blue","rejected":"red","cancel":"red"}'/>
@@ -437,8 +437,6 @@
             </field>
         </record>
 
-
-
         <!-- Tesoreria/Cheques/Cheques Emitidos -->
 
         <record id="account_third_check_action" model="ir.actions.act_window">
@@ -472,8 +470,6 @@
             <field name="domain">[('endorsement_date','!=',False)]</field>
         </record>
 
-
-
         <menuitem id="menu_treasury_third_check_menu"
             name="Third Checks"
             parent="menu_treasury_root"
@@ -484,7 +480,6 @@
             name="Third Checks"
             sequence="5"
             parent="menu_treasury_third_check_menu"/>
-
 
         <menuitem id="menu_treasury_third_check_calendar_payment"
             action="account_third_check_action_calendar_payment_date"

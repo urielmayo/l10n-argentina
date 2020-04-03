@@ -41,7 +41,7 @@
             sequence="20"
             name="Create Checkbook"
             parent="l10n_ar_account_check.menu_treasury_configuration"
-            groups="account.group_account_user"/>
+            groups="treasury_user"/>
 
     </data>
 </odoo>

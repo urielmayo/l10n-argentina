@@ -28,6 +28,7 @@
         "l10n_ar_account_payment_order",
     ],
     "data": [
+        "security/account_check_security.xml",
         "security/ir.model.access.csv",
         "wizard/annull_checks_view.xml",
         "wizard/view_check_deposit.xml",

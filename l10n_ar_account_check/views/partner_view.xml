@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
         <record id="res_partner_bank_view_form_check" model="ir.ui.view">
             <field name="name">res.partner.bank.form.check.inherit</field>
             <field name="model">res.partner.bank</field>
@@ -13,5 +14,6 @@
                 </field>
             </field>
         </record>
+
     </data>
 </odoo>
