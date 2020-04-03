@@ -348,21 +348,14 @@
             <field name="arch" type="xml">
                 <search string="Third Checks...">
                     <group>
-                        <filter icon="terp-folder-green" name="cartera"
-                            string="In Wallet" domain="[('state','=','wallet')]"/>
-                        <filter icon="gtk-go-forward" name="delivered"
-                            string="Delivered" domain="[('state','=','delivered')]"/>
-                        <filter icon="gtk-jump-to" name="deposit"
-                            string="Deposited" domain="[('state','=','deposited')]"/>
-                        <filter icon="gtk-cancel" name="rejected"
-                            string="Rejected" domain="[('state','=','rejected')]"/>
-                        <filter icon="gtk-cancel" name="cancel"
-                            string="Cancelled" domain="[('state','=','cancel')]"/>
+                        <filter name="cartera" string="In Wallet" domain="[('state','=','wallet')]"/>
+                        <filter name="delivered" string="Delivered" domain="[('state','=','delivered')]"/>
+                        <filter name="deposit" string="Deposited" domain="[('state','=','deposited')]"/>
+                        <filter name="rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+                        <filter name="cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
                         <separator orientation="vertical"/>
-                        <filter icon="terp-check" string="Common" name="common"
-                            domain="[('type','=', 'common')]"/>
-                        <filter icon="terp-gnome-cpu-frequency-applet+" string="Post-dated"
-                            name="post_dated" domain="[('type','=', 'postdated')]"/>
+                        <filter string="Common" name="common" domain="[('type','=', 'common')]"/>
+                        <filter string="Post-dated" name="post_dated" domain="[('type','=', 'postdated')]"/>
                         <field name="number" select="1" string="Check Number"/>
                         <field name="issue_date"/>
                         <field name="origin"/>
@@ -377,22 +370,35 @@
                         <field name="amount"/>
                     </group>
                     <group expand="0" string="Group By..." colspan="4">
-                        <filter string="Source Partner" icon="terp-partner"
-                            name="source_partner" domain="[]" context="{'group_by':'source_partner_id'}"/>
-                        <filter string="Destiny Partner" icon="terp-partner"
+                        <filter string="Source Partner" name="source_partner"
+                            domain="[]"
+                            context="{'group_by':'source_partner_id'}"
+                            />
+                        <filter string="Destiny Partner" name="destiny_partner"
                             domain="[('state','not in', ('draft', 'wallet', 'deposited')), ('endorsement_date','!=',False)]"
-                            context="{'group_by':'destiny_partner_id'}" name="destiny_partner" />
-                        <filter string="Payment Date" icon="terp-go-month" domain="[]"
-                            context="{'group_by':'payment_date'}" help="Payment Date" name="payment_date" />
-                        <filter string="Endorsement Date" icon="terp-go-month" domain="[('endorsement_date','!=',False)]"
-                            context="{'group_by':'endorsement_date'}" help="Endorsement Date" name="endorsement_date" />
+                            context="{'group_by':'destiny_partner_id'}"
+                            />
+                        <filter string="Payment Date" name="payment_date"
+                            domain="[]"
+                            context="{'group_by':'payment_date'}" help="Payment Date"
+                            />
+                        <filter string="Endorsement Date" name="endorsement_date"
+                            domain="[('endorsement_date','!=',False)]"
+                            context="{'group_by':'endorsement_date'}" help="Endorsement Date"
+                            />
                         <separator orientation="vertical"/>
-                        <filter string="Bank" icon="terp-accessories-archiver" domain="[('state','!=','draft')]"
-                            context="{'group_by':'bank_id'}" name="bank" />
-                        <filter string="Deposit Slip" icon="terp-stock_effects-object-colorize" domain="[]"
-                            context="{'group_by':'deposit_slip'}" name="deposit_slip"/>
-                        <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]"
-                            context="{'group_by':'state'}" name="state"/>
+                        <filter string="Bank" name="bank"
+                            domain="[('state','!=','draft')]"
+                            context="{'group_by':'bank_id'}"
+                            />
+                        <filter string="Deposit Slip" name="deposit_slip"
+                            domain="[]"
+                            context="{'group_by':'deposit_slip'}"
+                            />
+                        <filter string="State" name="state"
+                            domain="[]"
+                            context="{'group_by':'state'}"
+                            />
                     </group>
                 </search>
             </field>
