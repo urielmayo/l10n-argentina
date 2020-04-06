@@ -503,7 +503,7 @@ class wsfe_config(osv.osv):
                 detalle['FchServDesde'] = formatted_date_invoice
                 detalle['FchServHasta'] = formatted_date_invoice
                 detalle['FchVtoPago'] = date_due
-            elif inv.fiscal_type_id.id == wsfcred_type:
+            elif inv.fiscal_type_id.id == wsfcred_type and inv.type == 'out_invoice':
                 detalle['FchVtoPago'] = date_due
 
             # Obtenemos la moneda de la factura
