@@ -15,12 +15,25 @@ class ResCity(models.Model):
         ret = []
         for city in self:
             if city.state_id:
-                ret.append((city.id, "%s (%s)" % (city.name,
+                ret.append((city.id, "[%s] %s (%s)" % (city.zip_code or '', city.name,
                                                   city.state_id.name or '')))
             else:
                 ret.append((city.id, city.name))
 
         return ret
+
+    @api.model
+    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+        if len(args) == 1 and args[0][0] == 'name':
+            name = args[0][2]
+            args = [
+                '|',
+                ['zip_code', '=ilike', name + '%'],
+                ['name', 'ilike', name]
+            ]
+        res = super()._search(
+            args=args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+        return res
 
     @api.onchange("state_id")
     def onchange_state_id(self):
