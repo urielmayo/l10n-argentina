@@ -14,7 +14,6 @@ addon | version | summary
 [base_period](base_period/) | 11.0.1.0.0 | base_period
 [base_vat_ar](base_vat_ar/) | 11.0.1.0.0 | base_vat_ar
 [l10n_ar_account_check](l10n_ar_account_check/) | 11.0.1.0.0 | Account Checks
-[l10n_ar_account_create_check](l10n_ar_account_create_check/) | 11.0.1.0.0 | Checkbook Management
 [l10n_ar_account_payment_order](l10n_ar_account_payment_order/) | 11.0.1.0.0 | Payments for ARGENTINA
 [l10n_ar_base_country_state](l10n_ar_base_country_state/) | 11.0.1.0.0 | Base Argentina's States (aka Provinces)
 [l10n_ar_chart_of_account](l10n_ar_chart_of_account/) | 11.0.1.0.0 | Argentina - Chart of Account

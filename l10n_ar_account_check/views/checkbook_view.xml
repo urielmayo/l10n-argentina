@@ -50,7 +50,7 @@
             <field name="model">account.checkbook</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Checkbooks" colors="grey:state=='closed';">
+                <tree string="Checkbooks" create="false" colors="grey:state=='closed';">
                     <field name="name"/>
                     <field name="bank_account_id"/>
                     <field name="bank_id"/>
@@ -88,14 +88,20 @@
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                         </group>
-                        <notebook colspan="4">
+                        <notebook>
                             <page string="Checks">
+                            <group>
                                 <label for="check_ids" class="oe_title"/>
-                                <field name="check_ids" nolabel="1" colspan="4" widget="many2many_tags"/>
+                                <field name="check_ids" widget="many2many_tags" nolabel="1"/>
+                            </group>                                
+                            <group>                            
                                 <label for="annulled_checks" class="oe_title"/>
-                                <field name="annulled_checks" nolabel="1" colspan="4" widget="many2many_tags"/>
+                                <field name="annulled_checks" widget="many2many_tags" nolabel="1"/>
+                            </group>
+                            <group>                                                            
                                 <label for="issued_check_ids"/>
-                                <field name="issued_check_ids" colspan="4" nolabel="1"/>
+                                <field name="issued_check_ids" nolabel="1"/>
+                            </group>                                
                             </page>
                         </notebook>
                     </sheet>

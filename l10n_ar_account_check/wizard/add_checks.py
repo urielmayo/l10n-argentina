@@ -3,12 +3,14 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import models, fields, api
 import time
+
+from odoo import api, fields, models
 
 
 class AccountAddIssuedCheck(models.Model):
     _name = 'account.add.issued.check'
+    _description = 'Add Issued Check'
 
     number = fields.Char(string='Check Number', size=20, required=True)
     amount = fields.Float(string='Amount Check', required=True)
@@ -57,8 +59,8 @@ class AccountAddIssuedCheck(models.Model):
 
 
 class AccountAddThirdCheck(models.Model):
-
     _name = 'account.add.third.check'
+    _description = 'Add Third Check'
 
     number = fields.Char(string='Check Number', size=20, required=True)
     amount = fields.Float(string='Check Amount', required=True)
