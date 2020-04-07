@@ -50,7 +50,7 @@
             <field name="model">account.checkbook</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Checkbooks" colors="grey:state=='closed';">
+                <tree string="Checkbooks" create="false" colors="grey:state=='closed';">
                     <field name="name"/>
                     <field name="bank_account_id"/>
                     <field name="bank_id"/>

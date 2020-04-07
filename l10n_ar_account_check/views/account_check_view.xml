@@ -246,7 +246,7 @@
             <field name="model">account.third.check</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Third Checks">
+                <tree string="Third Checks" create="false">
                     <field name="number"/>
                     <field name="source_partner_id"/>
                     <field name="issue_date"/>
