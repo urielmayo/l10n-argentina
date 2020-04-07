@@ -25,6 +25,7 @@
     "license": "AGPL-3",
     "description": "Allows to manage checks.",
     "depends": [
+        "account",
         "l10n_ar_account_payment_order",
     ],
     "data": [
