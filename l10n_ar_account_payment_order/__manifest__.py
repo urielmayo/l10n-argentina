@@ -25,9 +25,9 @@
     "license": "AGPL-3",
     "description": "Payment Order document with argentinian payment methods.",
     "depends": [
-        "base",
-        "account",
-        "analytic",
+        # "base",
+        # "account",
+        # "analytic",
         "base_period",
     ],
     "data": [

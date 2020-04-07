@@ -5,9 +5,9 @@
 
 from datetime import datetime
 
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
 from odoo.addons import decimal_precision as dp
-from odoo.exceptions import RedirectWarning, ValidationError, UserError
+from odoo.exceptions import RedirectWarning, UserError, ValidationError
 from odoo.tools import float_compare
 
 

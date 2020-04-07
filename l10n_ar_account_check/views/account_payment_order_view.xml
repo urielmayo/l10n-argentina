@@ -3,12 +3,11 @@
     <data>
 
         <!-- Payment-->
-
 	<record id="account_payment_order_view_form_voucher_check" model="ir.ui.view">
             <field name="name">account.payment.order.check.form.inherit</field>
             <field name="model">account.payment.order</field>
             <field name="type">form</field>
-            <field name="inherit_id" ref="l10n_ar_account_payment_order.account_payment_order_view_form_receipt"/>
+            <field name="inherit_id" ref="l10n_ar_account_payment_order.account_payment_order_view_form_vendor"/>
             <field name="arch" type="xml">
                 <page name="payment_information" position="after">
                     <page string="Checks">
@@ -71,7 +70,7 @@
             <field name="name">account.payment.order.form.receipt.inherit</field>
             <field name="model">account.payment.order</field>
             <field name="type">form</field>
-            <field name="inherit_id" ref="l10n_ar_account_payment_order.account_payment_order_view_form_vendor"/>
+            <field name="inherit_id" ref="l10n_ar_account_payment_order.account_payment_order_view_form_receipt"/>
             <field name="arch" type="xml">
                 <page name="payment_information" position="after">
                     <page string="Checks">

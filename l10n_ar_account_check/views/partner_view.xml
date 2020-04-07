@@ -9,9 +9,15 @@
             <field name="type">form</field>
             <field name="priority">10</field>
             <field name="arch" type="xml">
+                
                 <field name="acc_number" position="after">
                     <field name="account_id"/>
                 </field>
+
+                <field name="bank_id" position="attributes">
+                    <attribute name="required">True</attribute>
+                </field>                
+
             </field>
         </record>
 

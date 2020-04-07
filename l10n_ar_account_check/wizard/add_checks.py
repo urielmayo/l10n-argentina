@@ -3,8 +3,9 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import models, fields, api
 import time
+
+from odoo import api, fields, models
 
 
 class AccountAddIssuedCheck(models.Model):
