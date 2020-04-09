@@ -89,9 +89,10 @@ class AccountCheckReject(models.Model):
             elif check.state == 'wallet':
                 account_id = config.account_id.id
 
-            name = _('Check Rejected') + ' ' + check.number + ' '
-            name += datetime.strptime(
-                wizard.reject_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+            date_format = self.env["res.lang"].search([("code", "=", self.env.user.lang)]).date_format
+            rejected_date = wizard.reject_date.strftime(date_format)
+            name = _('Check Rejected %s %s') % (check.number, rejected_date)
+
             invoice_line_vals = {
                 'name': name,
                 'quantity': 1,

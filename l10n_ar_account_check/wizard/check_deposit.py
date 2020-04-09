@@ -6,7 +6,7 @@
 import time
 from datetime import datetime
 
-from odoo import api, models, fields, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -96,9 +96,9 @@ class AccountCheckDeposit(models.Model):
         third_check_obj = self.env['account.third.check']
         move_line_obj = self.env['account.move.line']
 
-        period_date = datetime.strptime(self.date, '%Y-%m-%d').date()
-        period_id = period_obj._get_period(period_date).id
+        period_id = period_obj._get_period(self.date).id
         deposit_date = self.date or time.strftime('%Y-%m-%d')
+
         if not self.bank_account_id.account_id:
             raise UserError(_("Error! You have to configure an account on \
                 Bank Account %s: %s") % (
