@@ -90,8 +90,7 @@ class AccountCheckReject(models.Model):
                 account_id = config.account_id.id
 
             name = _('Check Rejected') + ' ' + check.number + ' '
-            name += datetime.strptime(
-                wizard.reject_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+            name += wizard.reject_date.strftime('%d/%m/%Y')
             invoice_line_vals = {
                 'name': name,
                 'quantity': 1,
