@@ -3,8 +3,8 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-import re
 import logging
+import re
 
 from odoo import _, api, exceptions, fields, models
 from odoo.exceptions import UserError, except_orm
@@ -41,6 +41,17 @@ class AccountInvoice(models.Model):
         help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")  # noqa
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')
+
+    @api.one
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        default = dict(default or {})
+        default.update({
+            'aut_cae': False,
+            'cae': '',
+            'cae_due_date': False,
+            })
+        return super(AccountInvoice, self).copy(default)
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
