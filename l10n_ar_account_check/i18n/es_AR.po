@@ -18,11 +18,6 @@ msgstr ""
 "X-Generator: Poedit 2.3\n"
 
 #. module: l10n_ar_account_check
-#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_payment_order___used_issued_check_ids
-msgid " Used Issued Check"
-msgstr " Cheque Propio Usado"
-
-#. module: l10n_ar_account_check
 #: selection:account.add.issued.check,clearing:0
 #: selection:account.add.third.check,clearing:0
 #: selection:account.issued.check,clearing:0
@@ -1173,8 +1168,8 @@ msgstr "o"
 #: code:addons/l10n_ar_account_check/wizard/check_reject.py:69
 #, python-format
 msgid ""
-" ERROR! There is no check                     configuration for this Company!"
-msgstr " ERROR! No hay configuración de cheques para esta empresa!"
+"ERROR! There is no check                     configuration for this Company!"
+msgstr "ERROR! No hay configuración de cheques para esta empresa!"
 
 #. module: l10n_ar_account_check
 #: code:addons/l10n_ar_account_check/models/account_check.py:446
@@ -1411,3 +1406,29 @@ msgid ""
 msgstr ""
 "Error! No puede devolver a la cartera un cheque si no está en estado "
 "Entregado"
+
+#. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/wizard/create_checkbook.py:43
+#, python-format
+msgid ""
+"Error creating Checkbook!\n"
+"End number                         cannot be lower than Start number"
+msgstr ""
+"Error al crear la chequera!!\n"
+"El numero final                         no puede ser inferior al numero inicial"
+
+#. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/models/checkbook.py:102
+#, python-format
+msgid ""
+"Error!\n"
+"You cannot delete this checkbook                         because it has Issued Checks"
+msgstr ""
+"Error!\n"
+"No puede eliminar esta chequera                         porque tiene cheques emitidos"
+
+#. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/wizard/check_rejected.py:94
+#, python-format
+msgid "Check Rejected %s %s"
+msgstr "Cheque Rechazado %s %s"

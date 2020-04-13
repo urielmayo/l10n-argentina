@@ -58,7 +58,7 @@ class AccountCheckReject(models.Model):
             config = check_config_obj.search(
                 [('company_id', '=', check.company_id.id)])
             if not config:
-                raise ValidationError(_(' ERROR! There is no check \
+                raise ValidationError(_('ERROR! There is no check \
                     configuration for this Company!'))
 
             inv_account_id = config.receivable_rejected_account_id
