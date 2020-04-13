@@ -439,7 +439,7 @@ class AccountThirdCheck(models.Model):
             ('company_id', '=', voucher.company_id.id)])
         if not len(config):
             raise UserError(
-                _(' ERROR! There is no check configuration for this Company!'))
+                _('ERROR! There is no check configuration for this Company!'))
 
         # TODO: Chequear que funcione bien en
         # multicurrency estas dos lineas de abajo
@@ -567,7 +567,7 @@ class AccountThirdCheck(models.Model):
                 ('third_check_ids', '=', check.id),
                 ('state', '!=', 'cancel')])
             if len(voucher) > 1:
-                raise UserError(_('There are more than one voucher referenced to check %s.' %check.number))
+                raise UserError(_('There are more than one voucher referenced to check %s.') % check.number)
 
             if not check.endorsement_date:
                 vals['endorsement_date'] = voucher.date or \

@@ -3,7 +3,7 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -20,7 +20,7 @@ class AccountPaymentOrder(models.Model):
     third_check_receipt_ids = fields.One2many(
         comodel_name='account.third.check',
         inverse_name='source_payment_order_id',
-        string='Third Checks',
+        string='Third Checks Receipt',
         readonly=True, required=False,
         states={'draft': [('readonly', False)]})
     third_check_ids = fields.Many2many(
