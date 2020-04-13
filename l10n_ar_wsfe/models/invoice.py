@@ -3,8 +3,8 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-import re
 import logging
+import re
 
 from odoo import _, api, exceptions, fields, models
 from odoo.exceptions import UserError, except_orm
@@ -17,13 +17,13 @@ class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
     aut_cae = fields.Boolean(
-        'Autorizar', default=False,
+        'Autorizar', default=False, copy=False,
         help='Pedido de autorizacion a la AFIP')
     cae = fields.Char(
-        string='CAE/CAI', size=32, required=False,
+        string='CAE/CAI', size=32, required=False, copy=False,
         help='CAE (Codigo de Autorizacion Electronico assigned by AFIP.)')
     cae_due_date = fields.Date(
-        'CAE Due Date', required=False,
+        'CAE Due Date', required=False, copy=False,
         help='Fecha de vencimiento del CAE')
     associated_inv_ids = fields.Many2many(
         'account.invoice', 'account_invoice_associated_rel',
