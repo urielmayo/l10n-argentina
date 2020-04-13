@@ -17,13 +17,13 @@ class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
     aut_cae = fields.Boolean(
-        'Autorizar', default=False,
+        'Autorizar', default=False, copy=False,
         help='Pedido de autorizacion a la AFIP')
     cae = fields.Char(
-        string='CAE/CAI', size=32, required=False,
+        string='CAE/CAI', size=32, required=False, copy=False,
         help='CAE (Codigo de Autorizacion Electronico assigned by AFIP.)')
     cae_due_date = fields.Date(
-        'CAE Due Date', required=False,
+        'CAE Due Date', required=False, copy=False,
         help='Fecha de vencimiento del CAE')
     associated_inv_ids = fields.Many2many(
         'account.invoice', 'account_invoice_associated_rel',
@@ -41,17 +41,6 @@ class AccountInvoice(models.Model):
         help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")  # noqa
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')
-
-    @api.one
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        default = dict(default or {})
-        default.update({
-            'aut_cae': False,
-            'cae': '',
-            'cae_due_date': False,
-            })
-        return super(AccountInvoice, self).copy(default)
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
