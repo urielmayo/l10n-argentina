@@ -3,7 +3,7 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import api, exceptions, fields, models, _
+from odoo import _, api, exceptions, fields, models
 from odoo.exceptions import UserError
 
 
@@ -23,7 +23,6 @@ class AccountCheckbook(models.Model):
             state = 'closed'
         else:
             state = 'open'
-
         return state
 
     @api.depends("check_ids", "check_ids.state", "state")
@@ -150,6 +149,13 @@ class CheckbookCheck(models.Model):
 
         return self.write({'state': 'annulled'})
 
+    def restore_check(self):
+        for check in self:
+            if not check.state == 'annulled':
+                raise exceptions.ValidationError(
+                    _("Can't restore not Annulled checks!"))
+        return self.write({'state': 'draft'})
+
 
 class AccountIssuedCheck(models.Model):
     _inherit = 'account.issued.check'
@@ -200,7 +206,7 @@ class AccountIssuedCheck(models.Model):
         if a:
             checkbook_check_obj.browse(a).write({'state': 'done'})
         return super(AccountIssuedCheck, self).create(vals)
-    
+
     @api.multi
     def unlink(self):
         if not self:
