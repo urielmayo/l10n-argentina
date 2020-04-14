@@ -7,18 +7,37 @@
             <field name="model">wizard.annull.checks</field>
             <field name="priority" eval="8"/>
             <field name="arch" type="xml">
-                <form string="Select checks" col="4" version="7.0">
-                    <footer>
-                        <h3>
-                            <label for="checkbook_id" string="Checkbook: "/>
-                            <field name="checkbook_id" readonly="1"/>
-                            <field name="checks" widget="many2many_tags" options="{'no_create': True}"
-                                domain="[('checkbook_id', '=', checkbook_id), ('state', '=', 'draft')]"/>
-                        </h3>
-                    </footer>
+                <form string="Select checks" col="4">
+                    <h3>
+                        <label for="checkbook_id" string="Checkbook: "/>
+                        <field name="checkbook_id" readonly="1"/>
+                        <field name="checks" widget="many2many_tags" options="{'no_create': True}"
+                            domain="[('checkbook_id', '=', checkbook_id), ('state', '=', 'draft')]"/>
+                    </h3>
                     <footer>
                         <button type="special" special="cancel" string="Cancel"/>
-                        <button type="object" string="Annull" name="button_annull_checks" class="oe_highlight"
+                        <button type="object" string="Annull"
+                            name="button_annull_checks" class="oe_highlight"
+                            confirm="Are you sure you want to continue?"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_restore_checks_view_form" model="ir.ui.view">
+            <field name="name">wizard.restore.checks.form</field>
+            <field name="model">wizard.annull.checks</field>
+            <field name="arch" type="xml">
+                <form string="Select checks" col="4">
+                    <h3>
+                        <label for="checkbook_id" string="Checkbook: "/>
+                        <field name="checkbook_id" readonly="1"/>
+                        <field name="checks" widget="many2many_tags" options="{'no_create': True}" domain="[('checkbook_id', '=', checkbook_id), ('state', '=', 'annulled')]"/>
+                    </h3>
+                    <footer>
+                        <button type="special" special="cancel" string="Cancel"/>
+                        <button type="object" string="Restore Check"
+                            name="button_restore_checks" class="oe_highlight"
                             confirm="Are you sure you want to continue?"/>
                     </footer>
                 </form>
@@ -26,11 +45,20 @@
         </record>
 
         <record id="wizard_annull_checks_wizard_action" model="ir.actions.act_window">
-            <field name="name">Select checks</field>
+            <field name="name">Select check to Cancel</field>
             <field name="res_model">wizard.annull.checks</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="context">{}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="wizard_restore_checks_wizard_action" model="ir.actions.act_window">
+            <field name="name">Select check to Restore</field>
+            <field name="res_model">wizard.annull.checks</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_restore_checks_view_form"/>
             <field name="target">new</field>
         </record>
 

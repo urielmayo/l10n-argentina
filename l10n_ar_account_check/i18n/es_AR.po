@@ -14,8 +14,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"Language: es_AR\n"
-"X-Generator: Poedit 2.3\n"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_payment_order___used_issued_check_ids
+msgid " Used Issued Check"
+msgstr "Cheques Emitidos"
 
 #. module: l10n_ar_account_check
 #: selection:account.add.issued.check,clearing:0
@@ -140,7 +143,7 @@ msgstr "Anular"
 #. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_checkbook_view_form
 msgid "Annull Checks"
-msgstr "Anuar Cheques"
+msgstr "Anular Cheques"
 
 #. module: l10n_ar_account_check
 #: selection:account.checkbook.check,state:0
@@ -154,6 +157,7 @@ msgstr "Cheques Anulados"
 
 #. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_annull_checks_view_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_restore_checks_view_form
 msgid "Are you sure you want to continue?"
 msgstr "Está seguro que desea continuar?"
 
@@ -227,11 +231,13 @@ msgstr "Calendario por Fecha de Pago"
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.view_wizard_accredit_checks_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_annull_checks_view_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_create_check_view_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_restore_checks_view_form
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: l10n_ar_account_check
-#: selection:account.issued.check,state:0 selection:account.third.check,state:0
+#: selection:account.issued.check,state:0
+#: selection:account.third.check,state:0
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_search
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
 msgid "Cancelled"
@@ -275,9 +281,6 @@ msgstr "Fecha del Cheque"
 #: model:ir.model,name:l10n_ar_account_check.model_account_check_deposit
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_check_deposit_form_view
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_check_view_form
-#: code:addons/l10n_ar_account_check/wizard/check_deposit.py:144
-#: code:addons/l10n_ar_account_check/wizard/check_deposit.py:158
-#, python-format
 msgid "Check Deposit"
 msgstr "Depósito de Cheque"
 
@@ -338,6 +341,7 @@ msgstr "Número de Chequera"
 
 #. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_annull_checks_view_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_restore_checks_view_form
 msgid "Checkbook:"
 msgstr "Chequera:"
 
@@ -716,6 +720,7 @@ msgstr "Cheque Propio"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__issued_checks
 #: model:ir.ui.menu,name:l10n_ar_account_check.menu_treasury_issued_check
 #: model:ir.ui.menu,name:l10n_ar_account_check.menu_treasury_issued_check_menu
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_checkbook_view_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_tree
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_payment_order_view_form_voucher_check
@@ -861,9 +866,6 @@ msgstr "Empresa"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_check_config__receivable_rejected_account_id
-#: code:addons/l10n_ar_account_check/models/account_check.py:44
-#: model:ir.model.fields,help:l10n_ar_account_check.field_account_check_config_receivable_rejected_account_id
-#, python-format
 msgid "Partner's account in debit note generation."
 msgstr "Cuenta contable del cliente en la generación de la nota de débito."
 
@@ -963,13 +965,32 @@ msgid "Rejected Check Account"
 msgstr "Cuenta de Cheques Rechazados"
 
 #. module: l10n_ar_account_check
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_restore_checks_view_form
+msgid "Restore Check"
+msgstr "Restaurar Cheque"
+
+#. module: l10n_ar_account_check
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_checkbook_view_form
+msgid "Restore Checks"
+msgstr "Restaurar Cheques"
+
+#. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_search
 msgid "Search Issued Checks"
 msgstr "Buscar Cheques Propios"
 
 #. module: l10n_ar_account_check
 #: model:ir.actions.act_window,name:l10n_ar_account_check.wizard_annull_checks_wizard_action
+msgid "Select check to Cancel"
+msgstr "Seleccionar el Cheque a Cancelar"
+
+#. module: l10n_ar_account_check
+#: model:ir.actions.act_window,name:l10n_ar_account_check.wizard_restore_checks_wizard_action
+msgid "Select check to Restore"
+msgstr "Seleccionar el Cheque a Restaurar"
+
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_annull_checks_view_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_restore_checks_view_form
 msgid "Select checks"
 msgstr "Seleccionar Cheque"
 
@@ -1082,6 +1103,7 @@ msgid "Total"
 msgstr "Total"
 
 #. module: l10n_ar_account_check
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_checkbook_view_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_tree
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_payment_order_view_form_voucher_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_check_view_tree
@@ -1141,6 +1163,11 @@ msgstr "Menu Crear Cheque"
 #: model:ir.model,name:l10n_ar_account_check.model_wizard_annull_checks
 msgid "Wizard to annull checks related to one Checkbook"
 msgstr "Menu para anular cheques relacionados a una Chequera"
+
+#. module: l10n_ar_account_check
+#: model:ir.model,name:l10n_ar_account_check.model_wizard_restore_checks
+msgid "Wizard to restore checks related to one Checkbook"
+msgstr "Menu para restaurar cheques relacionados con una Chequera"
 
 #. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_check_view_form

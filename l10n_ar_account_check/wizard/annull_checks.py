@@ -22,8 +22,11 @@ class WizardAnnullChecks(models.TransientModel):
                               column1='wiz_id', column2='check_id',
                               string='Checks', required=True)
 
-    @api.multi
     def button_annull_checks(self):
         self.checks.annull_check()
         state = self.checkbook_id.calc_state()
         return self.checkbook_id.write({"state": state})
+
+    def button_restore_checks(self):
+        self.checks.restore_check()
+        return self.checkbook_id.write({"state": "open"})

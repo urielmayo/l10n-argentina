@@ -68,8 +68,11 @@
             <field name="arch" type="xml">
                 <form string="Checkbook" version="7.0">
                     <header>
-                        <button string="Annull Checks" type="action" name="%(wizard_annull_checks_wizard_action)d"
-                            class="oe_highlight"/>
+                        <button string="Annull Checks" type="action"
+                            name="%(wizard_annull_checks_wizard_action)d" class="oe_highlight"/>
+                        <button string="Restore Checks" type="action"
+                            name="%(wizard_restore_checks_wizard_action)d" class="oe_highlight"
+                            attrs="{'invisible': [('annulled_checks', '=', [])]}"/>
                         <field name="state" statusbar_visible=" " widget="statusbar"/>
                     </header>
                     <sheet>
@@ -100,7 +103,20 @@
                             </group>
                             <group>                                                            
                                 <label for="issued_check_ids"/>
-                                <field name="issued_check_ids" nolabel="1"/>
+                                <field name="issued_check_ids" nolabel="1">
+                                    <tree string="Issued Checks">
+                                        <field name="number"/>
+                                        <field name="check_id"/>
+                                        <field name="receiving_partner_id"/>
+                                        <field name="issue_date"/>
+                                        <field name="payment_date"/>
+                                        <field name="account_bank_id"/>
+                                        <field name="bank_id"/>
+                                        <field name="payment_order_id"/>
+                                        <field name="state"/>
+                                        <field name="amount" sum="Total Amount" />
+                                    </tree>
+                                </field>
                             </group>                                
                             </page>
                         </notebook>
