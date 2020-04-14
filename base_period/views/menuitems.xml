@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <odoo>
-<data>
+    <data>
 
-    <menuitem id="menu_action_period"
-        parent="account.account_account_menu"
-        action="action_period"
-        name="Periods"
-        />
+        <menuitem id="date_period_root_menu"
+            name="Periods"
+            sequence="4"
+            parent="account.menu_finance_configuration"/>
 
-</data>
+        <menuitem id="account_fiscal_year_menu"
+            action="account.actions_account_fiscal_year"
+            name="Fiscal Year"
+            parent="base_period.date_period_root_menu"/>
+
+        <menuitem id="menu_action_period"
+            parent="base_period.date_period_root_menu"
+            action="date_period_action"
+            name="Periods"
+            />
+
+    </data>
 </odoo>

@@ -33,43 +33,43 @@ msgid "<strong>Select the period to open/close:</strong>"
 msgstr "<strong>Seleccione el período a abrir/cerrar:</strong>"
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:105
+#: code:addons/base_period/models/account_move.py:97
 #, python-format
 msgid "Can't create an account move line on a closed period."
 msgstr "No puede crear líneas de asientos contables en un Perído ya cerrado."
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:43
+#: code:addons/base_period/models/account_move.py:35
 #, python-format
 msgid "Can't create an account move on a closed period."
 msgstr "No puede crear asientos contables en un Perído ya cerrado."
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:131
+#: code:addons/base_period/models/account_move.py:123
 #, python-format
 msgid "Can't delete an account move line on a closed period."
 msgstr "No puede elminiar líneas de asientos contables en un Perído ya cerrado."
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:78
+#: code:addons/base_period/models/account_move.py:70
 #, python-format
 msgid "Can't delete an account move on a closed period."
 msgstr "No puede eliminar asientos contables en un Perído ya cerrado."
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:120
+#: code:addons/base_period/models/account_move.py:112
 #, python-format
 msgid "Can't edit an account move line on a closed period."
 msgstr "No puede editar líneas de asientos contables en un Perído ya cerrado."
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:54
+#: code:addons/base_period/models/account_move.py:46
 #, python-format
 msgid "Can't edit an account move on a closed period."
 msgstr "No puede editar asientos contables en un Perído ya cerrado."
 
 #. module: base_period
-#: code:addons/base_period/models/account_move.py:69
+#: code:addons/base_period/models/account_move.py:61
 #, python-format
 msgid "Can't edit an account move to a closed period."
 msgstr "No puede editar asientos contables en un Perído ya cerrado."
@@ -80,6 +80,11 @@ msgstr "No puede editar asientos contables en un Perído ya cerrado."
 #: model_terms:ir.ui.view,arch_db:base_period.reopen_date_period_wizard_view
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: base_period
+#: model_terms:ir.actions.act_window,help:base_period.account_fiscal_year_action
+msgid "Click to start a new fiscal year."
+msgstr "Click para comenzar un nuevo año fiscal."
 
 #. module: base_period
 #: model_terms:ir.ui.view,arch_db:base_period.close_account_journal_wizard_view
@@ -97,6 +102,7 @@ msgstr "Cerrar período"
 #. module: base_period
 #: selection:date.period,period_state:0
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__closed
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_search
 msgid "Closed"
 msgstr "Cerrado"
 
@@ -108,11 +114,29 @@ msgid "Closed Journals"
 msgstr "Diarios Cerrados"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__code
 #: model:ir.model.fields,field_description:base_period.field_date_period__code
 msgid "Code"
 msgstr "Código"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__company_id
+#: model:ir.model.fields,field_description:base_period.field_date_period__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: base_period
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
+msgid "Create 3 Months Periods"
+msgstr "Crear Periodos Trimestrales"
+
+#. module: base_period
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
+msgid "Create Monthly Periods"
+msgstr "Crear Periodos Mensuales"
+
+#. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__create_uid
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__create_uid
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard__create_uid
 #: model:ir.model.fields,field_description:base_period.field_date_period__create_uid
@@ -121,12 +145,13 @@ msgid "Created by"
 msgstr "Creado por"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__create_date
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__create_date
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard__create_date
 #: model:ir.model.fields,field_description:base_period.field_date_period__create_date
 #: model:ir.model.fields,field_description:base_period.field_reopen_date_period_wizard__create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_period
 #: model_terms:ir.ui.view,arch_db:base_period.view_account_invoice_form_inherit
@@ -140,46 +165,143 @@ msgid "Date Period (L10N AR)"
 msgstr "Períodos Contables (Localización Argentina)"
 
 #. module: base_period
+#: model_terms:ir.actions.act_window,help:base_period.account_fiscal_year_action
+msgid "Define your company's financial year according to your needs. A\n"
+"                financial year is a period at the end of which a company's\n"
+"                accounts are made up (usually 12 months). The financial year is\n"
+"                usually referred to by the date in which it ends. For example,\n"
+"                if a company's financial year ends November 30, 2011, then\n"
+"                everything between December 1, 2010 and November 30, 2011\n"
+"                would be referred to as FY 2011."
+msgstr "Defina el ejercicio fiscal para su compañía de acuerdo a sus necesidades. \n"
+"Un ejercicio fiscal es un periodo al final del cual  se realiza el balance \n"
+"(normalmente 12 meses). Normalmente, el ejercicio fiscal se referencia por \n"
+"la fecha en la que acaba. Por ejemplo, si el ejercicio fiscal de una empresa \n"
+"acaba el 30 de noviembre de 2011,  todo el periodo comprendido entre el \n"
+"1 de diciembre de 2010 y el 30 de noviembre de 2011 sería referido como EF 2011.\n"
+
+#. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__display_name
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__display_name
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard__display_name
 #: model:ir.model.fields,field_description:base_period.field_date_period__display_name
 #: model:ir.model.fields,field_description:base_period.field_reopen_date_period_wizard__display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: base_period
+#: selection:account.fiscal.year,state:0
+msgid "Done"
+msgstr "Realizado"
+
+#. module: base_period
+#: selection:account.fiscal.year,state:0
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__date_to
 #: model:ir.model.fields,field_description:base_period.field_date_period__date_to
 msgid "End Date"
 msgstr "Fecha finalización"
 
 #. module: base_period
-#: code:addons/base_period/models/date_period.py:102
+#: code:addons/base_period/models/date_period.py:309
 #, python-format
-msgid ""
-"Error\n"
+msgid "Error\n"
+" You can not change the company a period with associates records.\n"
+" Found this ones:\n"
+"%s\n"
+" For the period %s [ %s ]. "
+msgstr "Error\n"
+"No se puede cambiar la compañía de un periodo que tiene registros asociados \n"
+" Registros Encontrados:\n"
+"%s\n"
+" Para el periodo %s [ %s ]. "
+
+#. module: base_period
+#: code:addons/base_period/models/date_period.py:194
+#, python-format
+msgid "Error\n"
 " You can not unlink a period with associates records.\n"
 " Found this ones:\n"
 "%s\n"
 " For the period %s [ %s ]. "
-msgstr ""
-"Error\n"
+msgstr "Error\n"
 " No puede eliminar un Período con registros asociados\n"
 " Registros asociados:\n"
 "%s\n"
 " Para el período %s [ %s ]. "
 
 #. module: base_period
+#: code:addons/base_period/models/date_period.py:89
+#, python-format
+msgid "Error!\n"
+"The duration of the Period(s) is/are invalid."
+msgstr "Error!\n"
+"La duración del periodo no es válida "
+
+#. module: base_period
+#: code:addons/base_period/models/date_period.py:95
+#, python-format
+msgid "Error!\n"
+"The period is invalid. Either some periods are overlapping or the period'sdates are not matching the scope of the fiscal year."
+msgstr "Error!\n"
+"El periodo es inválido. Algunos períodos se superponen o las fechas del período no coinciden con el alcance del año fiscal. "
+
+#. module: base_period
+#: code:addons/base_period/models/account_fiscal_year.py:44
+#, python-format
+msgid "Error!\n"
+"The start date of a fiscal year must precede its end date."
+msgstr "Error!\n"
+"La fecha de inicio de un año fiscal debe preceder a su fecha de finalización."
+
+#. module: base_period
+#: model:ir.model,name:base_period.model_account_fiscal_year
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__name
+#: model:ir.model.fields,field_description:base_period.field_date_period__fiscalyear_id
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_search
+msgid "Fiscal Year"
+msgstr "Ejercicio fiscal"
+
+#. module: base_period
+#: model:ir.actions.act_window,name:base_period.account_fiscal_year_action
+#: model:ir.ui.menu,name:base_period.account_fiscal_year_menu
+msgid "Fiscal Years"
+msgstr "Ejercicio fiscal"
+
+#. module: base_period
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
+msgid "Fiscal year"
+msgstr "Ejercicio Fiscal"
+
+#. module: base_period
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_tree
+msgid "Fiscalyear"
+msgstr "Año Fiscal"
+
+#. module: base_period
+#: code:addons/base_period/models/account_fiscal_year.py:110
+#: code:addons/base_period/models/date_period.py:295
+#, python-format
+msgid "Go to the configuration panel"
+msgstr "Ir al panel de configuración"
+
+#. module: base_period
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_search
 #: model_terms:ir.ui.view,arch_db:base_period.view_period_search
 msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__id
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__id
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard__id
 #: model:ir.model.fields,field_description:base_period.field_date_period__id
 #: model:ir.model.fields,field_description:base_period.field_reopen_date_period_wizard__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: base_period
 #: model:ir.model,name:base_period.model_stock_inventory
@@ -210,6 +332,7 @@ msgid "Journals"
 msgstr "Diarios"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year____last_update
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard____last_update
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard____last_update
 #: model:ir.model.fields,field_description:base_period.field_date_period____last_update
@@ -218,14 +341,16 @@ msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__write_uid
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__write_uid
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard__write_uid
 #: model:ir.model.fields,field_description:base_period.field_date_period__write_uid
 #: model:ir.model.fields,field_description:base_period.field_reopen_date_period_wizard__write_uid
 msgid "Last Updated by"
-msgstr "Última actualización realizada por"
+msgstr "Última actualización por"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__write_date
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__write_date
 #: model:ir.model.fields,field_description:base_period.field_close_date_period_wizard__write_date
 #: model:ir.model.fields,field_description:base_period.field_date_period__write_date
@@ -255,6 +380,7 @@ msgstr "Nombre"
 
 #. module: base_period
 #: selection:date.period,period_state:0
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_search
 #: model_terms:ir.ui.view,arch_db:base_period.close_account_journal_wizard_view
 msgid "Open"
 msgstr "Abrir"
@@ -267,6 +393,17 @@ msgid "Open/Close Period"
 msgstr "Abrir/Cerrar Período"
 
 #. module: base_period
+#: code:addons/base_period/models/account_fiscal_year.py:62
+#, python-format
+msgid "Opening Period"
+msgstr "Período de apertura"
+
+#. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_date_period__special
+msgid "Opening/Closing Period"
+msgstr "Periodo de Apertura/Cierre"
+
+#. module: base_period
 #: selection:date.period,period_state:0
 msgid "Partialy Closed"
 msgstr "Parcialmente Cerrado"
@@ -274,7 +411,7 @@ msgstr "Parcialmente Cerrado"
 #. module: base_period
 #: model_terms:ir.ui.view,arch_db:base_period.view_period_search
 msgid "Partner"
-msgstr "Empresa"
+msgstr "Partner"
 
 #. module: base_period
 #: model:ir.actions.act_window,name:base_period.action_period
@@ -283,6 +420,7 @@ msgstr "Empresa"
 #: model:ir.model.fields,field_description:base_period.field_account_move_line__period_id
 #: model:ir.model.fields,field_description:base_period.field_close_account_journal_wizard__period_id
 #: model:ir.model.fields,field_description:base_period.field_stock_inventory__period_id
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
 #: model_terms:ir.ui.view,arch_db:base_period.view_account_invoice_filter_inherit
 #: model_terms:ir.ui.view,arch_db:base_period.view_period_form
 #: model_terms:ir.ui.view,arch_db:base_period.view_period_search
@@ -291,7 +429,10 @@ msgid "Period"
 msgstr "Período"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__period_ids
 #: model:ir.ui.menu,name:base_period.menu_action_period
+#: model:ir.ui.menu,name:base_period.menu_period_root
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
 msgid "Periods"
 msgstr "Períodos"
 
@@ -308,17 +449,25 @@ msgid "Reopen Period"
 msgstr "Reabrir Período"
 
 #. module: base_period
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_search
+msgid "Search Fiscalyear"
+msgstr "Busqueda de Años Fiscales"
+
+#. module: base_period
 #: model_terms:ir.ui.view,arch_db:base_period.view_period_search
 msgid "Search Period"
 msgstr "Buscar Período"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__date_from
 #: model:ir.model.fields,field_description:base_period.field_date_period__date_from
 msgid "Start Date"
 msgstr "Fecha de inicio"
 
 #. module: base_period
+#: model:ir.model.fields,field_description:base_period.field_account_fiscal_year__state
 #: model:ir.model.fields,field_description:base_period.field_date_period__period_state
+#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_search
 msgid "Status"
 msgstr "Estado"
 
@@ -326,6 +475,27 @@ msgstr "Estado"
 #: model:ir.model.fields,field_description:base_period.field_date_period__inventory_ids
 msgid "Stock Inventory"
 msgstr "Inventario de Stock"
+
+#. module: base_period
+#: code:addons/base_period/models/account_fiscal_year.py:106
+#, python-format
+msgid "There is no period defined for this date: %s.\n"
+"Please go to Configuration/Periods and configure a fiscal year."
+msgstr "No hay un periodo definido para esta fecha: %s. \n"
+"Por favor, vaya a la configuración de los periodos y configure un ejercicio fiscal"
+
+#. module: base_period
+#: code:addons/base_period/models/date_period.py:292
+#, python-format
+msgid "There is no period defined for this date: %s.\n"
+"Please go to Configuration/Periods."
+msgstr "No hay un periodo definido para esta fecha: %s. \n"
+"Por favor, vaya a la configuración de los periodos"
+
+#. module: base_period
+#: model:ir.model.fields,help:base_period.field_date_period__special
+msgid "These periods can overlap."
+msgstr "Estos períodos pueden superponerse."
 
 #. module: base_period
 #: model:ir.model,name:base_period.model_close_account_journal_wizard
@@ -353,8 +523,21 @@ msgid "You are going to reopen closed periods. Are you sure?"
 msgstr "¿Está seguro de reabrir estos Períodos?"
 
 #. module: base_period
+#: code:addons/base_period/models/date_period.py:390
+#, python-format
+msgid "You cannot close this period because it is closed"
+msgstr "No se puede cerrar un periodo que ya fue cerrado."
+
+#. module: base_period
+#: code:addons/base_period/models/date_period.py:378
+#, python-format
+msgid "You cannot open this period because there are journals related"
+msgstr "No se puede abrir un periodo porque hay diarios relacionados"
+
+#. module: base_period
 #: model_terms:ir.ui.view,arch_db:base_period.close_account_journal_wizard_view
 #: model_terms:ir.ui.view,arch_db:base_period.close_date_period_wizard_view
 #: model_terms:ir.ui.view,arch_db:base_period.reopen_date_period_wizard_view
 msgid "or"
 msgstr "o"
+

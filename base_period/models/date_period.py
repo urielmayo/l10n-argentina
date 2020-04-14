@@ -3,20 +3,29 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from dateutil.relativedelta import relativedelta
-
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError, RedirectWarning
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DSDF
+
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 
 class DatePeriod(models.Model):
     _name = 'date.period'
     _description = 'Date Period (L10N AR)'
 
+
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
+
     name = fields.Char(string="Name", required=True)
     code = fields.Char(string="Code", size=7, required=True)
     date_from = fields.Date(string="Start Date", required=True)
     date_to = fields.Date(string="End Date", required=True)
+    special = fields.Boolean(string='Opening/Closing Period',
+            help="These periods can overlap.")
     invoice_ids = fields.One2many(
         comodel_name="account.invoice",
         inverse_name="period_id",
@@ -37,6 +46,7 @@ class DatePeriod(models.Model):
         inverse_name="period_id",
         string="Stock Inventory",
     )
+
     period_state = fields.Selection(
         [
             ('open', 'Open'),
@@ -44,12 +54,13 @@ class DatePeriod(models.Model):
             ('closed', 'Closed'),
         ],
         string='Status',
-        compute="_compute_period_state",
-        default='open',
+        default='closed',
         copy=False,
         store=True,
+        compute="_compute_period_state",
         track_visibility='onchange',
     )
+
     journal_ids = fields.Many2many(
         comodel_name='account.journal',
         relation='date_period_journal_rel',
@@ -58,34 +69,66 @@ class DatePeriod(models.Model):
         string='Journals',
     )
 
-    @api.depends('journal_ids')
-    def _compute_period_state(self):
-        # Count all active journals
-        active_journal_qry = """
-        SELECT COUNT(*) FROM account_journal WHERE active = true
-        """
-        self.env.cr.execute(active_journal_qry)
-        total_active_journal = self.env.cr.fetchone()[0]
+    fiscalyear_id = fields.Many2one(
+        'account.fiscal.year',
+        string='Fiscal Year',
+        required=True,
+        select=True
+    )
 
-        period_journal_qry = """
-        SELECT COUNT(*)
-        FROM date_period_journal_rel AS rel
-        LEFT JOIN account_journal AS aj
-            ON rel.journal_id = aj.id
-        WHERE aj.active = true
-            AND rel.close_period_id = %s
-        """
+    company_id = fields.Many2one(
+        'res.company',
+        related='fiscalyear_id.company_id',
+        string='Company',
+        store=True,
+        readonly=True,
+        default=lambda self: self._get_company(),
+    )
 
-        for dp in self:
-            self.env.cr.execute(period_journal_qry, (dp.id,))
-            related_journal_qty = self.env.cr.fetchone()[0]
-            if related_journal_qty:
-                if related_journal_qty == total_active_journal:
-                    dp.period_state = 'closed'
-                else:
-                    dp.period_state = 'partial'
-            else:
-                dp.period_state = 'open'
+    @api.constrains('date_from', 'date_to')
+    def _check_duration(self):
+        for period in self:
+            if period.date_to < period.date_from:
+                raise UserError(
+                    _('Error!\nThe duration of the Period(s) is/are invalid.'))
+        return True
+
+    @api.constrains('fiscalyear_id', 'special', 'company_id')
+    def _check_year_limit(self):
+
+        msg = _("Error!\nThe period is invalid. Either "\
+                "some periods are overlapping or the period\'s" \
+                "dates are not matching the scope of the fiscal year.")
+
+        for period in self:
+            if period.special or not period.fiscalyear_id:
+                continue
+
+            dt_format = "%Y-%m-%d"
+
+            year_date_from = period.fiscalyear_id.date_from
+            year_date_to = period.fiscalyear_id.date_to
+            period_date_from = period.date_from
+            period_date_to = period.date_to
+
+            if year_date_to < period_date_to or \
+               year_date_to < period_date_from or \
+               year_date_from > period_date_from or \
+               year_date_from > period_date_to:
+                raise UserError(msg)
+
+            pids = self.search([
+                ('date_to','>=', period.date_from),
+                ('date_from','<=', period.date_to),
+                ('special','=',False),
+                ('id','<>', period.id)
+            ])
+            for pid in pids:
+                pid_company = pid.fiscalyear_id.company_id
+                period_company = period.fiscalyear_id.company_id
+                if period_company.id == pid_company.id:
+                    raise UserError(msg)
+        return True
 
     @api.multi
     def unlink(self):
@@ -135,22 +178,6 @@ class DatePeriod(models.Model):
 
         return recs.name_get()
 
-    def _prepare_period_data(self, period_date):
-        period_code = period_date.strftime("%m/%Y")
-        first_day = period_date + relativedelta(day=1)
-        last_day = period_date + relativedelta(
-            day=1,
-            months=+1,
-            days=-1,
-        )
-
-        return {
-            'name': period_code,
-            'code': period_code,
-            'date_from': first_day,
-            'date_to': last_day,
-        }
-
     def search_period_on_date(self, p_date):
         """Search for date.period on date ``p_date``.
 
@@ -167,30 +194,109 @@ class DatePeriod(models.Model):
 
         return self.search(domain)
 
-    def create_period(self, p_date):
-        month_period_map = {}
-        for month_nbr in range(1, 13):
-            period_date = p_date + relativedelta(month=month_nbr)
-            period = self.search_period_on_date(period_date)
-            if not period:
-                period_data = self._prepare_period_data(
-                    period_date,
-                )
-                period = self.create(period_data)
-
-            month_period_map[month_nbr] = period
-
-        # Return the period for the date that was passed as argument
-        intended_period = month_period_map[p_date.month]
-        del month_period_map
-        return intended_period
-
+    @api.model
     def _get_period(self, period_date):
-        """Search for period on date ``period_date``. If we don't find it we create it."""
+        ctx = self.env.context
+        ddate = period_date.strftime(DSDF)
+        domain = [
+            ('date_from', '<=', ddate),
+            ('date_to', '>=', ddate)
+        ]
+        company_id = self.env.user.company_id.id
+        if 'company_id' in ctx:
+            company_id = ctx.get('company_id', False)
+        domain.append(('company_id', '=', company_id))
 
-        # Search for period, if we don't find it we create it
-        period = self.search_period_on_date(period_date)
+        period = False
+        if 'account_period_prefer_normal' in ctx:
+            period = self.search(domain + [('special', '=', False)], limit=1)
         if not period:
-            period = self.create_period(period_date)
+            period = self.search(domain, limit=1)
 
+        if not period:
+            action = self.env.ref('base_period.date_period_action')
+            msg = _("There is no period defined for this date: "\
+                    "%s.\nPlease go to Configuration/Periods.") % period_date
+            raise RedirectWarning(msg, action.id,
+                    _('Go to the configuration panel'))
         return period
+
+    @api.multi
+    def _check_company_period(self, affected_models):
+        for record in self:
+            search_dict = {}
+            for model in affected_models:
+                searched = self.env[model].search([
+                    ('period_id', '=', record.id)])
+                if searched:
+                    search_dict[model] = searched
+            if search_dict:
+                raise ValidationError(
+                    _("Error\n You can not change the company a period with " +
+                      "associates records.\n Found this ones:\n%s\n" +
+                      " For the period %s [ %s ]. ") %
+                    (("\n").join(
+                        [repr(x.sorted()) for x in search_dict.values()]),
+                     record.name, record))
+        return True
+
+    @api.multi
+    def write(self, vals):
+        if 'company_id' in vals:
+            affected_models = [
+                'account.move',
+                'account.invoice',
+                'stock.inventory',
+            ]
+            affected_models = self._hook_affected_models(affected_models)
+            self._check_company_period(affected_models)
+        return super(DatePeriod, self).write(vals)
+
+    @api.model
+    def get_active_journal(self):
+        # Count all active journals
+        active_journal_qry = """
+            SELECT COUNT(*)
+            FROM account_journal
+            WHERE active = true
+        """
+        self.env.cr.execute(active_journal_qry)
+        total_active_journal = self.env.cr.fetchone()[0]
+        return total_active_journal
+
+    @api.multi
+    def get_close_journal(self):
+        self.ensure_one()
+        period_journal_qry = """
+            SELECT COUNT(*)
+            FROM date_period_journal_rel AS rel
+            LEFT JOIN account_journal AS aj
+                ON rel.journal_id = aj.id
+            WHERE aj.active = true
+                AND rel.close_period_id = %s
+        """
+        self.env.cr.execute(period_journal_qry, (self.id,))
+        related_journal_qty = self.env.cr.fetchone()[0]
+        return related_journal_qty
+
+    @api.multi
+    def get_next_state(self):
+        self.ensure_one()
+        all_journal_qty = self.get_active_journal()
+        related_journal_qty = self.get_close_journal()
+        if related_journal_qty:
+            if related_journal_qty == all_journal_qty:
+                period_state = 'closed'
+            else:
+                period_state = 'partial'
+        else:
+            period_state = 'open'
+            if self.period_state == 'open':
+                period_state = 'closed'
+        return period_state
+
+    @api.depends('journal_ids')
+    def _compute_period_state(self):
+        for period in self:
+            next_state = period.get_next_state()
+            period.period_state = next_state

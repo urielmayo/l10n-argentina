@@ -17,9 +17,10 @@
         "stock",
     ],
     "data": [
-        "wizards/account_journal_wizard_view.xml",
-        "wizards/date_period_wizard_view.xml",
+        "wizard/account_journal_wizard_view.xml",
+        "wizard/date_period_wizard_view.xml",
         "views/date_period_view.xml",
+        "views/account_fiscal_year_view.xml",
         "views/account_invoice_view.xml",
         "views/account_move_view.xml",
         "views/account_journal_view.xml",

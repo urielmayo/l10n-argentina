@@ -29,19 +29,19 @@ class CloseDatePeriodWizard(models.TransientModel):
 
     def _get_active_date_period(self):
         active_ids = self.env.context.get('active_ids')
-        date_period_id = self.env['date.period'].browse(active_ids)
-        return date_period_id
+        date_period = self.env['date.period'].browse(active_ids)
+        return date_period
 
     @api.model
     def _get_default_closed_journals(self):
-        date_period_id = self._get_active_date_period()
-        return date_period_id.journal_ids.ids
+        date_period = self._get_active_date_period()
+        return date_period.journal_ids.ids
 
     @api.multi
     def button_close(self):
-        date_period_id = self._get_active_date_period()
+        date_period = self._get_active_date_period()
         self.journal_ids += self.closed_journal_ids
-        date_period_id.write(
+        date_period.write(
             {
                 'journal_ids': [(6, 0, self.journal_ids.ids)],
             }
@@ -71,10 +71,10 @@ class ReopenDatePeriodWizard(models.TransientModel):
 
     @api.multi
     def button_reopen(self):
-        date_period_id = self.env["close.date.period.wizard"].\
+        date_period = self.env["close.date.period.wizard"].\
             _get_active_date_period()
         for journal_id in self.journal_ids.ids:
-            date_period_id.write(
+            date_period.write(
                 {
                     'journal_ids': [(3, journal_id, 0)],
                 }

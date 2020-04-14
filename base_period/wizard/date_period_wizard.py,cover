@@ -1,0 +1,86 @@
+  ##############################################################################
+  #   Copyright (c) 2019 Eynes/E-MIPS (www.eynes.com.ar)
+  #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+  ##############################################################################
+  
+> from odoo import api, fields, models
+  
+  
+> class CloseDatePeriodWizard(models.TransientModel):
+>     _name = 'close.date.period.wizard'
+>     _description = "Wizard to close journals related to a period"\
+>         " (from Date Period form view)"
+  
+>     journal_ids = fields.Many2many(
+>         comodel_name='account.journal',
+>         relation='close_period_journal_rel',
+>         column1='close_period_id',
+>         column2='journal_id',
+>         string='Journals',
+>     )
+>     closed_journal_ids = fields.Many2many(
+>         comodel_name='account.journal',
+>         relation='already_closed_period_journal_rel',
+>         column1='close_period_id',
+>         column2='journal_id',
+>         default=lambda s: s._get_default_closed_journals(),
+>         string='Closed Journals',
+>     )
+  
+>     def _get_active_date_period(self):
+!         active_ids = self.env.context.get('active_ids')
+!         date_period = self.env['date.period'].browse(active_ids)
+!         return date_period
+  
+>     @api.model
+>     def _get_default_closed_journals(self):
+!         date_period = self._get_active_date_period()
+!         return date_period.journal_ids.ids
+  
+>     @api.multi
+>     def button_close(self):
+!         date_period = self._get_active_date_period()
+!         self.journal_ids += self.closed_journal_ids
+!         date_period.write(
+!             {
+!                 'journal_ids': [(6, 0, self.journal_ids.ids)],
+!             }
+!         )
+  
+  
+> class ReopenDatePeriodWizard(models.TransientModel):
+>     _name = 'reopen.date.period.wizard'
+>     _description = "Wizard to reopen journals related to a period"\
+>         " (from Date Period form view)"
+  
+>     journal_ids = fields.Many2many(
+>         comodel_name='account.journal',
+>         relation='reopen_period_journal_rel',
+>         column1='reopen_period_id',
+>         column2='journal_id',
+>         string='Journals',
+>     )
+>     closed_journal_ids = fields.Many2many(
+>         comodel_name='account.journal',
+>         relation='reopen_already_closed_period_journal_rel',
+>         column1='reopen_period_id',
+>         column2='journal_id',
+>         default=lambda s: s._get_default_closed_journals(),
+>         string='Closed Journals',
+>     )
+  
+>     @api.multi
+>     def button_reopen(self):
+!         date_period = self.env["close.date.period.wizard"].\
+!             _get_active_date_period()
+!         for journal_id in self.journal_ids.ids:
+!             date_period.write(
+!                 {
+!                     'journal_ids': [(3, journal_id, 0)],
+!                 }
+!             )
+  
+>     @api.model
+>     def _get_default_closed_journals(self):
+!         return self.env["close.date.period.wizard"].\
+!             _get_default_closed_journals()
