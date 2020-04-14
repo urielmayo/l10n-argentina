@@ -1047,7 +1047,7 @@ msgstr "Primer número de cheque"
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_search
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
 msgid "State"
-msgstr "Provincia"
+msgstr "Estado"
 
 #. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_check_view_form
