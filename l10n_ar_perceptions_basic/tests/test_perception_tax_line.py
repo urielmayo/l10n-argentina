@@ -58,6 +58,9 @@ class TestPerceptionTaxLine:
         account_id = perception_tax_line.perception_id.tax_id.account_id
         state_id = perception_tax_line.perception_id.state_id
         perception_tax_line._onchange_perception()
+        # _onchange_perception() is supposed to set
+        # name, account_id and state_id of the
+        # perception of perception_tax_line
         assert perception_tax_line.name == name
         assert perception_tax_line.account_id == account_id
         assert perception_tax_line.state_id == state_id
@@ -72,4 +75,7 @@ class TestPerceptionTaxLine:
             'base': perception_tax_line.base,
             'account_id': perception_tax_line.account_id.id
         }
+        # compute_all() is supposed to return
+        # a list of dictionaries with
+        # taxes information
         assert taxes[0] == values

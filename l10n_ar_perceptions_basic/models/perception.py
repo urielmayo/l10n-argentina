@@ -61,7 +61,7 @@ class PerceptionPerception(models.Model):
         ],
         default='nacional',
     )
-    active = fields.Boolean('Active', default=True, store=True, readonly=False)
+    active = fields.Boolean('Active', default=True)
 
     @api.multi
     def unlink(self):
@@ -69,6 +69,8 @@ class PerceptionPerception(models.Model):
         fields = field_obj.search([
             ('relation', '=', 'perception.perception')
         ])
+        msg = ('Can not delete the record %s '
+               'because is used in %s on %s.')
         for perception in self:
             for field in fields:
                 model_obj = self.env[field.model]
@@ -78,13 +80,9 @@ class PerceptionPerception(models.Model):
                 elif field.ttype == 'many2many':
                     if field.relation_table:
                         cr = self.env.cr
-                        query = """
-                            SELECT * FROM
-                        """
-                        query += field.relation_table
-                        query += """
-                            WHERE perception_id = %(perception)s
-                        """
+                        select = 'SELECT * FROM'
+                        where = 'WHERE perception_id = %(perception)s'
+                        query = ' '.join([select, field.relation_table, where])
                         data = {
                             'perception': perception.id
                         }
@@ -92,7 +90,6 @@ class PerceptionPerception(models.Model):
                         res = cr.fetchall()
                         if not res:
                             continue
-
                     else:
                         continue
                 else:
@@ -101,7 +98,8 @@ class PerceptionPerception(models.Model):
                     ])
                     if not res:
                         continue
-                msg = 'Can not delete the record %s\
-                       because is used in the system.'
-                raise UserError(_(msg % self.name))
+                raise UserError(_(msg % (
+                    perception.name, field.model_id.name,
+                    field.field_description
+                )))
         return super(PerceptionPerception, self).unlink()

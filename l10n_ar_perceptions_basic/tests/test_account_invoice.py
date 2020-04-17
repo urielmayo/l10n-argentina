@@ -54,12 +54,13 @@ class TestAccountInvoice:
             'partner_id': partner.id
         })
         account_invoice._onchange_partner_id()
+        # _onchange_partner_id is supposed to set
+        # the new partner on all related perceptions (perception.tax.line).
+        # here we assert if the related perception has the new partner
         assert perception.partner_id == partner
 
     def test_onchange_perception_ids(self, env):
         account_invoice = self.create_account_invoice(env)
-        account_invoice._onchange_perception_ids()
-        assert not account_invoice.tax_line_ids
         perception = self.create_perception_tax_line(env, account_invoice.id)
         account_invoice._onchange_perception_ids()
         tax_line_name = account_invoice.tax_line_ids.mapped('name')
@@ -68,10 +69,15 @@ class TestAccountInvoice:
     def test_finalize_invoice_move_lines(self, env):
         account_invoice = self.create_account_invoice(env)
         perception = self.create_perception_tax_line(env, account_invoice.id)
+        # we make sure he does not have date
         assert not perception.date
         account_invoice.finalize_invoice_move_lines({})
+        # if the perception of account invoice does not have
+        # date_invoice this function will create one with current date
         assert perception.date == fields.Date.context_today(account_invoice)
         perception.date = False
         account_invoice.date_invoice = '2019-06-27'
         account_invoice.finalize_invoice_move_lines({})
+        # and then we assert that the perception date is the same
+        # as the date_invoice of account_invoice
         assert perception.date == account_invoice.date_invoice
