@@ -2,8 +2,8 @@
 <odoo>
     <data>
 
-        <record id="view_pos_fiscal_position_form" model="ir.ui.view">
-            <field name="name">account.fiscal.position.form.inherit</field>
+        <record id="account_fiscal_position_view_from" model="ir.ui.view">
+            <field name="name">account.fiscal.position.form.pos</field>
             <field name="model">account.fiscal.position</field>
             <field name="type">form</field>
             <field name="inherit_id" ref="account.view_account_position_form"/>

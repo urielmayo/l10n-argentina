@@ -12,7 +12,7 @@ class PosAr(models.Model):
     _name = "pos.ar"
     _description = "Point of Sale for Argentina"
 
-    name = fields.Char(string='Number', required=True)
+    name = fields.Char(string='Number', required=True, size=5)
     number = fields.Integer(
         string='Number',
         compute="_calc_number",
@@ -74,11 +74,56 @@ class PosAr(models.Model):
 
         # Matches all-digits name from 1 to 99999
         for pos in self:
+            if not pos.name or not pos.name.isdigit():
+                raise ValidationError(
+                        _("Error! The PoS Name should be a Number"))
+
             if not(0 < int(pos.name) <= 99999):
                 err = _("Error!\nThe PoS Name should be a Number Between 1 and 99999!")
                 raise ValidationError(err)
 
-    @api.onchange("number")
-    def onchange_number(self):
-        name = str(self.number).zfill(4)
-        self.name = name
+            #Only 4 or 5 characters
+            if not (4 <= len(pos.name) <= 5):
+                raise ValidationError(_("The PoS Name should be a 4-5 digit number!"))
+
+            #check duplicated
+            regs = self.search([
+                ('name', '=', pos.name),
+                ('id', '!=', pos.id),
+            ])
+            if regs:
+                raise ValidationError(_("Error! The PoS is duplicated"))
+
+    @api.multi
+    def unlink(self):
+        affected_models = [
+            'account.invoice',
+        ]
+        affected_models = self._hook_affected_models(affected_models)
+        self._check_affected_models(affected_models)
+
+        return super().unlink()
+
+    @api.multi
+    def _hook_affected_models(self, affected_models):
+        return affected_models
+
+    @api.multi
+    def _check_affected_models(self, affected_models):
+        for record in self:
+            search_dict = {}
+            for model in affected_models:
+                searched = self.env[model].search([
+                    ('pos_ar_id', '=', record.id)
+                ])
+                if searched:
+                    search_dict[model] = searched
+
+            if search_dict:
+                raise ValidationError(
+                    _("Error\n You can not unlink a point of sale with "
+                      "associates records.\n Found this ones:\n%s\n"
+                      " For point of sale %s [ %s ]. ") %
+                    (("\n").join(
+                        [repr(x.sorted()) for x in search_dict.values()]),
+                     record.name, record))

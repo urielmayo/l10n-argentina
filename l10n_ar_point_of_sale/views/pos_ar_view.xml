@@ -11,8 +11,7 @@
                     <h1>Point of Sale AR
                         <div>
                             <label for="number" string="Number" class="oe_edit_only"/>
-                            <field name="number" class="oe_edit_only" required="1" readonly="0"/>
-                            <field name="name" class="oe_read_only"/>
+                            <field name="name" required="1"/>
                         </div>
                     </h1>
                     <group>
@@ -54,7 +53,7 @@
         </field>
     </record>
 
-    <record id="action_pos_ar_view_tree" model="ir.actions.act_window">
+    <record id="pos_ar_action_tree" model="ir.actions.act_window">
         <field name="name">Point of Sale</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">pos.ar</field>
@@ -62,7 +61,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <record id="action_pos_ar_view_form" model="ir.actions.act_window">
+    <record id="pos_ar_action_form" model="ir.actions.act_window">
         <field name="name">Point of Sale</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">pos.ar</field>

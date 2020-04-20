@@ -25,7 +25,7 @@ msgstr "ANA"
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_invoice_tax__tax_id
 msgid "Account Tax"
-msgstr "Cuenta de impuestos"
+msgstr "Cuenta de Impuestos"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_pos_ar__active
@@ -105,7 +105,7 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:249
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:253
 #, python-format
 msgid "Credit Note can only be cancelled in these states: %s!"
 msgstr "¡Una Nota de Crédito sólo puede ser cancelada en estos estados: %s!"
@@ -151,8 +151,8 @@ msgid "Denomination for Invoices"
 msgstr "Denominación para facturas"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:314
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:334
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:319
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:339
 #, python-format
 msgid "Denomination not set in invoice"
 msgstr "La Denominación no está completa en la Factura."
@@ -178,41 +178,95 @@ msgid "Display Name"
 msgstr "Nombre mostrado"
 
 #. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/invoice_denomination.py:81
+#, python-format
+msgid "Error\n"
+" You can not unlink a denomination with associates records.\n"
+" Found this ones:\n"
+"%s\n"
+" For denomination %s [ %s ]. "
+msgstr "Error\n"
+" No se puede elimiar una denominacion con registros asociados.\n"
+" Se encontraron los siguientes:\n"
+"%s\n"
+" Para la denominacion %s [ %s ]. "
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/partner.py:76
+#, python-format
+msgid "Error\n"
+" You can not unlink a fiscal position with associates records.\n"
+" Found this ones:\n"
+"%s\n"
+" For fiscal position %s [ %s ]. "
+msgstr "Error\n"
+" No se puede elimiar una posicion fiscal con registros asociados.\n"
+" Se encontraron los siguientes:\n"
+"%s\n"
+" Para la posicion fiscal %s [ %s ]. "
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/pos_ar.py:124
+#, python-format
+msgid "Error\n"
+" You can not unlink a point of sale with associates records.\n"
+" Found this ones:\n"
+"%s\n"
+" For point of sale %s [ %s ]. "
+msgstr "Error\n"
+" No se puede elimiar un punto de venta con registros asociados.\n"
+" Se encontraron los siguientes:\n"
+"%s\n"
+" Para el punto de venta %s [ %s ]. "
+
+#. module: l10n_ar_point_of_sale
 #: code:addons/l10n_ar_point_of_sale/models/sale.py:47
 #, python-format
-msgid ""
-"Error\n"
+msgid "Error\n"
 "Check the Fiscal Position Configuration. Order[#%s] %s"
-msgstr ""
-"Error\n"
+msgstr "Error\n"
 "Revise la Configuración de la Posición Fiscal. Pedido[#%s] %s"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/pos_ar.py:81
+#: code:addons/l10n_ar_point_of_sale/models/pos_ar.py:82
 #, python-format
-msgid ""
-"Error!\n"
-"The PoS Name should be a 4-5 digit number!"
-msgstr ""
-"¡Error!\n"
-"¡El número del PdV debe ser de 4 ó 5 dígitos!"
+msgid "Error!\n"
+"The PoS Name should be a Number Between 1 and 99999!"
+msgstr "Error!\n"
+"¡El número del PdV debe estar entre 1 y 99999!"
 
 #. module: l10n_ar_point_of_sale
 #: code:addons/l10n_ar_point_of_sale/models/sale.py:33
 #, python-format
-msgid ""
-"Error!\n"
+msgid "Error!\n"
 "You need to set up a Shop and/or a Fiscal Position"
-msgstr ""
-"¡Error!\n"
+msgstr "¡Error!\n"
 "Debe configurar un Almacén y/o una Posición Fiscal"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:289
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:303
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:294
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:308
 #, python-format
 msgid "Error! The Invoice is duplicated."
 msgstr "¡Error! La Factura está Duplicada."
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/pos_ar.py:79
+#, python-format
+msgid "Error! The PoS Name should be a Number"
+msgstr "Error! Formato invalido para el numero del PdV"
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/pos_ar.py:95
+#, python-format
+msgid "Error! The PoS is duplicated"
+msgstr "Error! El PdV esta duplicado"
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/pos_ar.py:87
+#, python-format
+msgid "The PoS Name should be a 4-5 digit number!"
+msgstr "¡El número del PdV debe ser de 4 ó 5 dígitos!"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_tax__is_exempt
@@ -229,7 +283,12 @@ msgstr "Posición fiscal"
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_invoice_denomination__id
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_pos_ar__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
+
+#. module: l10n_ar_point_of_sale
+#: model:ir.model,name:l10n_ar_point_of_sale.model_iibb_situation
+msgid "IIBB Situation"
+msgstr "Situación IIBB"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.actions.act_window,name:l10n_ar_point_of_sale.action_iibb_situation
@@ -332,7 +391,7 @@ msgstr "Última actualización el"
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_invoice__local
 msgid "Local"
-msgstr "Local"
+msgstr ""
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_fiscal_position__local
@@ -402,20 +461,20 @@ msgstr "Percepción"
 #: code:addons/l10n_ar_point_of_sale/models/account.py:56
 #, python-format
 msgid "Please define a sequence for the credit notes"
-msgstr "Por favor defina la secuencia para las Notas de Crédito."
+msgstr "Por favor, defina una secuencia para las notas de credito"
 
 #. module: l10n_ar_point_of_sale
 #: code:addons/l10n_ar_point_of_sale/models/account.py:64
 #, python-format
 msgid "Please define a sequence on the journal."
-msgstr "Por favor defina la secuencia para el diario."
+msgstr "Por favor, defina una secuencia para el diario"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.actions.act_window,name:l10n_ar_point_of_sale.action_pos_ar_view_form
 #: model:ir.actions.act_window,name:l10n_ar_point_of_sale.action_pos_ar_view_tree
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_invoice__pos_ar_id
 msgid "Point of Sale"
-msgstr "Terminal Punto de Venta"
+msgstr "Punto de Venta"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.ui.menu,name:l10n_ar_point_of_sale.menu_pos_ar_root
@@ -429,7 +488,7 @@ msgid "Point of Sale for Argentina"
 msgstr "Punto de venta para Argentina"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:321
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:326
 #, python-format
 msgid "Point of sale has not the same denomination as the invoice."
 msgstr "El Punto de Venta no tiene la misma Denominación que la Factura."
@@ -529,27 +588,33 @@ msgid "Taxes"
 msgstr "Impuestos"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:442
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:447
 #, python-format
 msgid "The Invoice Number should be filled"
 msgstr "El número de la Factura debería estar lleno."
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:432
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:449
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:437
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:454
 #, python-format
 msgid "The Invoice Number should be the format XXXX[X]-XXXXXXXX"
 msgstr "El numero de factura debe ser de formato XXXX[X]-XXXXXXXX"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:328
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:341
+#: code:addons/l10n_ar_point_of_sale/models/partner.py:44
+#, python-format
+msgid "The fiscal position is duplicated"
+msgstr "Error! La posicion fiscal esta duplicada"
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:333
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:346
 #, python-format
 msgid "The invoice denomination does not corresponds with this fiscal position."
 msgstr "La Denominación de la Factura no se corresponde con la de la Posición Fiscal."
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:349
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:354
 #, python-format
 msgid "The invoice fiscal position is not the same as the partner's fiscal position."
 msgstr "La Posición Fiscal de la Factura no es la misma que la del Contacto."
@@ -615,12 +680,14 @@ msgid "XXXX[X]-XXXXXXXX"
 msgstr "XXXX[X]-XXXXXXXX"
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/models/invoice.py:318
+#: code:addons/l10n_ar_point_of_sale/models/invoice_denomination.py:52
+#, python-format
+msgid "You cannot duplicate denominations"
+msgstr "Error! La denominacion esta duplicada"
+
+#. module: l10n_ar_point_of_sale
+#: code:addons/l10n_ar_point_of_sale/models/invoice.py:323
 #, python-format
 msgid "You have to select a Point of Sale."
 msgstr "Debe seleccionar un Punto de Venta."
 
-#. module: l10n_ar_point_of_sale
-#: model:ir.model,name:l10n_ar_point_of_sale.model_iibb_situation
-msgid "iibb.situation"
-msgstr "Situación IIBB"
