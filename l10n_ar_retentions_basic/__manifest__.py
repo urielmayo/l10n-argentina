@@ -20,12 +20,13 @@
 {
     "name": "Retentions for ARGENTINA (Retenciones)",
     "category": "L10N AR",
-    "version": "12.0.1.0.0",
+    "version": "12.0.2.0.0",
     "author": "Eynes/E-MIPS",
     "license": "AGPL-3",
     "description": "Implementation of Retentions Taxes for Argentina",
     "depends": [
         "l10n_ar_retentions_perceptions_common",
+        "l10n_ar_account_payment_order",
     ],
     "data": [
         "security/res_groups_data.xml",
