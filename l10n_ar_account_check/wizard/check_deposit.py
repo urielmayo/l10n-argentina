@@ -114,7 +114,7 @@ class AccountCheckDeposit(models.Model):
                 raise UserError(_("Error! The selected checks must to be in \
                     cartera.\nCheck %s is not in wallet") % (check.number))
 
-            if check.payment_date > deposit_date:
+            if check.payment_date and fields.Date.from_string(check.payment_date) > fields.Date.from_string(deposit_date):
                 raise UserError(_("Cannot deposit! You cannot deposit check %s \
                     because Payment Date is greater than \
                     Deposit Date.") % (check.number))
