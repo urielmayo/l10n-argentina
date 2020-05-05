@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <!-- Payment-->
+    <!-- Payment-->
 	<record id="account_payment_order_view_form_voucher_check" model="ir.ui.view">
             <field name="name">account.payment.order.check.form.inherit</field>
             <field name="model">account.payment.order</field>
@@ -65,7 +65,6 @@
         </record>
 
         <!-- Receipt -->
-
         <record id="vendor_receipt_check_view_form" model="ir.ui.view">
             <field name="name">account.payment.order.form.receipt.inherit</field>
             <field name="model">account.payment.order</field>

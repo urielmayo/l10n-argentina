@@ -27,7 +27,7 @@
     "depends": [
         "base",
         "l10n_ar_account_payment_order",
-        "l10n_ar_account_create_check",
+        "l10n_ar_account_check",
     ],
     "data": [
         "security/ir.model.access.csv",

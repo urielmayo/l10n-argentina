@@ -80,7 +80,7 @@ class AccountPaymentOrder(models.Model):
 
 class AccountPaymentOrderConceptLine(models.Model):
     _name = "account.payment.order.concept.line"
-    _desc = "Account Payment Order Concept Line"
+    _description = "Account Payment Order Concept Line"
 
     name = fields.Char(string='Description', size=128)
     journal_id = fields.Many2one(

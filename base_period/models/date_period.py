@@ -3,12 +3,13 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError, UserError, RedirectWarning
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DSDF
+from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
-from datetime import datetime
+
+from odoo import _, api, fields, models
+from odoo.exceptions import RedirectWarning, UserError, ValidationError
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DSDF
 
 
 class DatePeriod(models.Model):
@@ -104,8 +105,6 @@ class DatePeriod(models.Model):
             if period.special or not period.fiscalyear_id:
                 continue
 
-            dt_format = "%Y-%m-%d"
-
             year_date_from = period.fiscalyear_id.date_from
             year_date_to = period.fiscalyear_id.date_to
             period_date_from = period.date_from
@@ -118,10 +117,10 @@ class DatePeriod(models.Model):
                 raise UserError(msg)
 
             pids = self.search([
-                ('date_to','>=', period.date_from),
-                ('date_from','<=', period.date_to),
-                ('special','=',False),
-                ('id','<>', period.id)
+                ('date_to', '>=', period.date_from),
+                ('date_from', '<=', period.date_to),
+                ('special', '=', False),
+                ('id', '<>', period.id)
             ])
             for pid in pids:
                 pid_company = pid.fiscalyear_id.company_id
@@ -267,6 +266,8 @@ class DatePeriod(models.Model):
     @api.multi
     def get_close_journal(self):
         self.ensure_one()
+        if type(self.id) != int:
+            return False
         period_journal_qry = """
             SELECT COUNT(*)
             FROM date_period_journal_rel AS rel

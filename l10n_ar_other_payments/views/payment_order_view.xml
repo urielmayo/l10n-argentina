@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+	<!-- Customer Other Payments -->
 	<record id="other_payment_view_form" model="ir.ui.view">
 		<field name="name">account.payment.order.other.payment.form</field>
 		<field name="model">account.payment.order</field>
@@ -221,7 +222,6 @@
 		<field name="view_id" ref="other_payment_view_form"/>
 		<field name="act_window_id" ref="other_payments_action"/>
 	</record>
-
 
 	<record id="other_receipts_action" model="ir.actions.act_window">
 		<field name="name">Other Receipts</field>
