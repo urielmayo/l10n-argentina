@@ -3,7 +3,8 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import models, fields
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class RetentionRetention(models.Model):
@@ -57,3 +58,74 @@ class RetentionRetention(models.Model):
         default='nacional',
     )
     active = fields.Boolean('Active', default=True)
+
+    @api.multi
+    def unlink(self):
+        affected_models = [
+            'res.partner',
+            'res.partner.retention',
+            'res.partner.advance.retention'
+            'retention.tax.application',
+            'retention.tax.line',
+            'account.payment.order',
+            'account.fiscal.position',
+        ]
+        affected_models = self._hook_affected_models(affected_models)
+        self._check_affected_models(affected_models)
+
+        return super().unlink()
+
+    @api.multi
+    def _hook_affected_models(self, affected_models):
+        return affected_models
+
+    @api.multi
+    def _check_model(self, model):
+        try:
+            self.env[model]
+            return True
+        except Exception:
+            return False
+
+    @api.multi
+    def _check_affected_models(self, affected_models):
+        affected_models = list(filter(self._check_model, affected_models))
+        for record in self:
+            search_dict = {}
+            for model in affected_models:
+                model_obj = self.env[model]
+                try:
+                    model_obj.retention_id
+                    name = 'retention_id'
+                except AttributeError:
+                    try:
+                        model_obj.retention_ids
+                        name = 'retention_ids'
+                    except AttributeError:
+                        continue
+                searched = self.env[model].search([
+                    (name, '=', record.id)
+                ])
+                if searched:
+                    search_dict[model] = {
+                        'description': searched._description,
+                        'field_name': name,
+                        'field_desc': searched._fields.get(name).string,
+                    }
+
+            if search_dict:
+                msg = _('The operation cannot be completed:')
+                msg += '\n'
+                msg += _(
+                    '- Create/update: a mandatory field is not set.\n'
+                    '- Delete: another model requires the record being '
+                    'deleted. If possible, archive it instead.'
+                )
+                msg += '\n\n'
+                for key in search_dict.keys():
+                    msg += '{} {} ({}), {} {} ({})\n'.format(
+                        _('Model:'), search_dict[key]['description'], key,
+                        _('Field:'), search_dict[key]['field_desc'],
+                        search_dict[key]['field_name'],
+                    )
+                raise ValidationError(msg)
