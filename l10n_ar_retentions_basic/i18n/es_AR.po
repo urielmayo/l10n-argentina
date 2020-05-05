@@ -29,13 +29,13 @@ msgid "Amount Total"
 msgstr "Total"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_retention_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_retention_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Amounts"
 msgstr "Cantidad"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Applied"
 msgstr "Aplicadas"
 
@@ -66,8 +66,8 @@ msgid "Certificate No."
 msgstr "N° de Certificado"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.actions.act_window,help:l10n_ar_retentions_basic.action_retention_tax_supported_tree
-#: model:ir.actions.act_window,help:l10n_ar_retentions_basic.action_retention_tax_tree
+#: model:ir.actions.act_window,help:l10n_ar_retentions_basic.retention_tax_line_action_tree_supported
+#: model:ir.actions.act_window,help:l10n_ar_retentions_basic.retention_tax_line_action_tree
 msgid "Click to create a retention."
 msgstr "Click para crear una Retención"
 
@@ -95,7 +95,7 @@ msgstr "Creado en"
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line_date
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Date"
 msgstr "Fecha"
 
@@ -116,12 +116,12 @@ msgid "Gross Income"
 msgstr "Ingreso"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Group By..."
 msgstr "Agrupar por..."
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.actions.act_window,help:l10n_ar_retentions_basic.action_retention_retention_tree
+#: model:ir.actions.act_window,help:l10n_ar_retentions_basic.retention_retention_action_tree
 msgid "Here you can define Retentions and their configuration to be used in Customer Payents or Supplier Payments."
 msgstr "Defina las retenciones y su configuración que serán utilizadas en los cobros a clientes y pagos a proveedores"
 
@@ -132,8 +132,8 @@ msgid "ID"
 msgstr "ID (identificación)"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_retention_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_retention_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Information"
 msgstr "Información"
 
@@ -143,8 +143,8 @@ msgid "Jurisdiccion"
 msgstr "Jurisdiccion"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_retention_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_retention_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Keep it empty if the date is the same as the voucher."
 msgstr "Dejar vacío si la fecha es la misma que la del comprobante."
 
@@ -197,7 +197,7 @@ msgid "Profit"
 msgstr "Beneficio"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Province"
 msgstr "Provincia"
 
@@ -214,7 +214,7 @@ msgstr "Referencia"
 #. module: l10n_ar_retentions_basic
 #: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_retention_name
 #: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line_name
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Retention"
 msgstr "Retentción"
 
@@ -225,36 +225,36 @@ msgid "Retention Configuration"
 msgstr "Configuración de la retención"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_retention_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_retention_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Retention Lines"
 msgstr "Líneas de retención"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.actions.act_window,name:l10n_ar_retentions_basic.action_retention_tax_tree
+#: model:ir.actions.act_window,name:l10n_ar_retentions_basic.retention_tax_line_action_tree
 msgid "Retention Tax Applied"
 msgstr "Impuesto de retención aplicado"
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.model,name:l10n_ar_retentions_basic.model_retention_tax_line
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_form
 msgid "Retention Tax Line"
 msgstr "Línea de impuesto de retención"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_tree
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_tree
 msgid "Retention Tax Lines"
 msgstr "Líneas de impuesto de retención"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.actions.act_window,name:l10n_ar_retentions_basic.action_retention_tax_supported_tree
+#: model:ir.actions.act_window,name:l10n_ar_retentions_basic.retention_tax_line_action_tree_supported
 msgid "Retention Tax Supported"
 msgstr "Retenciones de impuestos soportadas"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_retention_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_retention_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Retention Type"
 msgstr "Tipo de retención"
 
@@ -264,21 +264,21 @@ msgid "Retention configuration used for this                                    
 msgstr "Configuración de Retenciones usadas para este impuesto, donde todas las configuraciones habitan. Cuentas, Código de Impuestos, etc."
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.actions.act_window,name:l10n_ar_retentions_basic.action_retention_retention_tree
+#: model:ir.actions.act_window,name:l10n_ar_retentions_basic.retention_retention_action_tree
 #: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_account_payment_order_retention_ids
 #: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_retention_menu
 #: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_root_menu
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_retention_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_retention_filter
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_retention_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_retention_tree
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_retention_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_filter
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_form
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_tree
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Retentions"
 msgstr "Retenciones"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_tax_line_applied_menu
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_tax_line_menu_applied
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Retentions Applied"
 msgstr "Retenciones aplicadas"
 
@@ -288,8 +288,8 @@ msgid "Retentions Manager"
 msgstr "Adm. de Retenciones"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_tax_line_supported_menu
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_tax_line_menu_supported
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Retentions Supported"
 msgstr "Retenciones soportadas"
 
@@ -300,7 +300,7 @@ msgid "State/Province"
 msgstr "Provincia"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_retention_tax_line_search
+#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Supported"
 msgstr "Soportada"
 
