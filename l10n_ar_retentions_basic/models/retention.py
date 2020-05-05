@@ -49,7 +49,6 @@ class RetentionRetention(models.Model):
         ],
         required=True,
     )
-
     jurisdiccion = fields.Selection([
             ('nacional', 'Nacional'),
             ('provincial', 'Provincial'),
@@ -57,3 +56,4 @@ class RetentionRetention(models.Model):
         ],
         default='nacional',
     )
+    active = fields.Boolean('Active', default=True)
