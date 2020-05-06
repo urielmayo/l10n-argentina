@@ -60,5 +60,53 @@
             <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_B"/>
         </record>
 
+        <record id="voucher_electronic_credit_A" model="wsfe.voucher_type">
+            <field name="name">Factura de Crédito Electrónica A</field>
+            <field name="code">201</field>
+            <field name="voucher_model">invoice</field>
+            <field name="document_type">out_invoice</field>
+            <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_A"/>
+        </record>
+
+        <record id="voucher_electronic_debit_note_A" model="wsfe.voucher_type">
+            <field name="name">Nota de Débito Electrónica A</field>
+            <field name="code">202</field>
+            <field name="voucher_model">invoice</field>
+            <field name="document_type">out_debit</field>
+            <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_A"/>
+        </record>
+
+        <record id="voucher_electronic_credit_note_A" model="wsfe.voucher_type">
+            <field name="name">Nota de Crédito Electrónica A</field>
+            <field name="code">203</field>
+            <field name="voucher_model">invoice</field>
+            <field name="document_type">out_refund</field>
+            <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_A"/>
+        </record>
+
+        <record id="voucher_electronic_credit_B" model="wsfe.voucher_type">
+            <field name="name">Factura de Crédito Electrónica B</field>
+            <field name="code">206</field>
+            <field name="voucher_model">invoice</field>
+            <field name="document_type">out_invoice</field>
+            <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_B"/>
+        </record>
+
+        <record id="voucher_electronic_debit_note_B" model="wsfe.voucher_type">
+            <field name="name">Nota de Débito Electrónica B</field>
+            <field name="code">207</field>
+            <field name="voucher_model">invoice</field>
+            <field name="document_type">out_debit</field>
+            <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_B"/>
+        </record>
+
+        <record id="voucher_electronic_credit_note_B" model="wsfe.voucher_type">
+            <field name="name">Nota de Crédito Electrónica B</field>
+            <field name="code">208</field>
+            <field name="voucher_model">invoice</field>
+            <field name="document_type">out_refund</field>
+            <field name="denomination_id" ref="l10n_ar_point_of_sale.denomination_B"/>
+        </record>
+
     </data>
 </openerp>

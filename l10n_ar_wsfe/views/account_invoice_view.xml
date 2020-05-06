@@ -88,7 +88,7 @@
                             </field>
                         </group>
                     </page>
-                    <page string="WSFE Requests" attrs="{'invisible': [('wsfe_request_ids', '=', [])]}">
+                    <page string="WSFE Requests">
                         <field name="wsfe_request_ids" readonly="1">
                             <tree string="WSFE Request Details">
                                 <field name="voucher_date"/>
