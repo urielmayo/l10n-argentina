@@ -42,9 +42,9 @@
         parent="account.account_account_menu"
         sequence="1"/>
     <menuitem id="account.menu_action_account_journal_form"
-        parent="account_journal_menu_subroot" sequence="1"/>
+        parent="account_journal_menu_subroot" name="Journals" sequence="1"/>
     <menuitem id="account.menu_action_account_bank_journal_form"
-        parent="account_journal_menu_subroot" sequence="3"/>
+        parent="account_journal_menu_subroot" name="Bank Accounts" sequence="3"/>
 
 
     <menuitem id="account_tax_menu_subroot"
@@ -52,9 +52,9 @@
         parent="account.account_account_menu"
         sequence="2"/>
     <menuitem id="account.menu_action_tax_form"
-        parent="account_tax_menu_subroot" sequence="1"/>
+        parent="account_tax_menu_subroot" name="Taxes" sequence="1"/>
     <menuitem id="account.menu_action_account_fiscal_position_form"
-        parent="account_tax_menu_subroot" sequence="3"/>
+        parent="account_tax_menu_subroot" name="Fiscal Positions" sequence="3"/>
     <menuitem id="iibb_situation_menu"
         name="IIBB Situations"
         parent="account_tax_menu_subroot"
@@ -79,7 +79,7 @@
         sequence="20"
         />
     <menuitem id="base_vat_ar.menu_document_type"
-        parent="account_invoice_menu_subroot"
+        parent="account_invoice_menu_subroot" name="Document Types"
         />
 
 
