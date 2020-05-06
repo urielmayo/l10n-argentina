@@ -1,3 +1,6 @@
 *.pyc
 *.swp
 *.swo
+coverage/
+__pycache__/
+*,cover

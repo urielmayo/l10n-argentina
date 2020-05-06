@@ -247,8 +247,9 @@ class AccountInvoice(models.Model):
         allowed_states = self.env.context.get("cancel_states", states)
         for inv in self:
             if inv.type == "out_refund" and inv.state not in allowed_states:
+                field_vals = self.fields_get(['state'])
                 state_tags = [_(tag) for state, tag in
-                              self._columns["state"].selection
+                              field_vals['state']['selection']
                               if state in allowed_states]
                 err = _("Credit Note can only be "
                         "cancelled in these states: %s!")
@@ -286,7 +287,8 @@ class AccountInvoice(models.Model):
                     ('internal_number', '!=', False),
                     ('internal_number', '!=', ''),
                     ('internal_number', '=', invoice.internal_number),
-                    ('type', '=', invoice.type), ('state', '!=', 'cancel')])
+                    ('type', '=', invoice.type),
+                ])
 
                 if count > 1:
                     raise ValidationError(
@@ -300,7 +302,7 @@ class AccountInvoice(models.Model):
                     ('internal_number', '!=', ''),
                     ('internal_number', '=', invoice.internal_number),
                     ('type', '=', invoice.type),
-                    ('state', '!=', 'cancel')])
+                ])
 
                 if count > 1:
                     raise ValidationError(

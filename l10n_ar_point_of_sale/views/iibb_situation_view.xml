@@ -13,7 +13,7 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_iibb_situation">
+        <record id="iibb_situation_action" model="ir.actions.act_window">
             <field name="name">IIBB Situations</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">iibb.situation</field>
