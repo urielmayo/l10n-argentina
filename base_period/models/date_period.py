@@ -266,7 +266,7 @@ class DatePeriod(models.Model):
     @api.multi
     def get_close_journal(self):
         self.ensure_one()
-        if type(self.id) != int:
+        if isinstance(self.id, models.NewId):
             return False
         period_journal_qry = """
             SELECT COUNT(*)
