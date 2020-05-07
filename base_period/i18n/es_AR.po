@@ -493,6 +493,12 @@ msgstr "No hay un periodo definido para esta fecha: %s. \n"
 "Por favor, vaya a la configuración de los periodos"
 
 #. module: base_period
+#: code:addons/base_period/models/account_fiscal_year.py:48
+#, python-format
+msgid "There is other fiscal year with same code or name"
+msgstr "Hay otro año fiscal con el mismo codigo o nombre."
+
+#. module: base_period
 #: model:ir.model.fields,help:base_period.field_date_period__special
 msgid "These periods can overlap."
 msgstr "Estos períodos pueden superponerse."

@@ -47,6 +47,14 @@
                                         <field name="special"/>
                                     </group>
                                 </form>
+                                <tree string="Period">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="date_from"/>
+                                    <field name="date_to"/>
+                                    <field name="special"/>
+                                    <field name="period_state"/>
+                                </tree>
                             </field>
                         </group>
                     </sheet>

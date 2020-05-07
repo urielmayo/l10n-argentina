@@ -34,6 +34,20 @@ class AccountFiscalYear(models.Model):
     ], string='Status', readonly=True,
     copy=False, default='draft')
 
+    @api.constrains('name', 'code')
+    def _check_duplicated_name(self):
+        for fy in self:
+            fys = self.search([
+                ('id', '!=', fy.id),
+                '|',
+                ('code', '=', fy.code),
+                ('name', '=', fy.name),
+            ])
+            if fys:
+                raise UserError(
+                        _("There is other fiscal year " \
+                            "with same code or name"))
+
     @api.multi
     def button_create_period3(self):
         return self.create_period(interval=3)
@@ -119,4 +133,3 @@ class AccountFiscalYear(models.Model):
         fiscalyears = self.search(
                 expression.AND([domain, args]), limit=limit)
         return fiscalyears.name_get()
-
