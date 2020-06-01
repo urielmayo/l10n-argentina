@@ -14,6 +14,7 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DSDF
 
 class DatePeriod(models.Model):
     _name = 'date.period'
+    _order = "date_from desc"
     _description = 'Date Period (L10N AR)'
 
 
