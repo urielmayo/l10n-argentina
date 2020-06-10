@@ -1,34 +1,37 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* base_vat_ar
+#	* base_vat_ar
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 11.0\n"
+"Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-16 14:40+0000\n"
-"PO-Revision-Date: 2019-08-16 11:41-0300\n"
+"POT-Creation-Date: 2020-06-10 13:01+0000\n"
+"PO-Revision-Date: 2020-06-10 13:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"Language: es_AR\n"
-"X-Generator: Poedit 2.0.6\n"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_afip_code
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__afip_code
 msgid "Afip code"
-msgstr "Código AFIP"
+msgstr "Codigo AFIP"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_check_duplicated
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__check_duplicated
 msgid "Check Duplicated"
-msgstr "Chequear Duplicados"
+msgstr "Chequear duplicado"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_code
+#: model_terms:ir.actions.act_window,help:base_vat_ar.act_open_res_document_type_view
+msgid "Click to create a new Document type"
+msgstr "Clickear para crear un nuevo tipo de documento"
+
+#. module: base_vat_ar
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__code
 msgid "Code"
 msgstr "Código"
 
@@ -38,10 +41,10 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_partner_dst_cuit_id
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_users_dst_cuit_id
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_partner__dst_cuit_id
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_users__dst_cuit_id
 msgid "Country CUIT"
-msgstr "Países CUIT"
+msgstr "CUIT pais"
 
 #. module: base_vat_ar
 #: model:ir.model,name:base_vat_ar.model_res_country_state
@@ -49,80 +52,86 @@ msgid "Country state"
 msgstr "Provincia"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_create_uid
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_create_uid
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__create_uid
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_create_date
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_create_date
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__create_date
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_vat_ar
 #: model:ir.model,name:base_vat_ar.model_dst_cuit_codes
 msgid "DST CUIT Codes"
-msgstr "Países CUIT"
+msgstr "Codigos CUIT pais"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_name
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__name
 msgid "Desc"
 msgstr "Desc"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_display_name
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_display_name
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__display_name
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
 
 #. module: base_vat_ar
-#: model:ir.ui.view,arch_db:base_vat_ar.view_partner_document_type_form
+#: model_terms:ir.ui.view,arch_db:base_vat_ar.view_partner_document_type_form
 msgid "Document Type..."
-msgstr "Tipo de documento..."
+msgstr "Tipo de documento ..."
 
 #. module: base_vat_ar
-#: model:ir.actions.act_window,name:base_vat_ar.action_res_document_type
+#: model:ir.actions.act_window,name:base_vat_ar.act_open_res_document_type_view
 #: model:ir.model,name:base_vat_ar.model_res_document_type
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_name
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_partner_document_type_id
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_users_document_type_id
-#: model:ir.ui.view,arch_db:base_vat_ar.view_res_document_type_form
-#: model:ir.ui.view,arch_db:base_vat_ar.view_res_document_type_tree
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__name
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_partner__document_type_id
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_users__document_type_id
 #: model:ir.ui.menu,name:base_vat_ar.menu_document_type
+#: model_terms:ir.ui.view,arch_db:base_vat_ar.view_res_document_type_form
+#: model_terms:ir.ui.view,arch_db:base_vat_ar.view_res_document_type_search
+#: model_terms:ir.ui.view,arch_db:base_vat_ar.view_res_document_type_tree
 msgid "Document type"
 msgstr "Tipo de documento"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_dst_cuit
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_partner_dst_cuit
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_users_dst_cuit
+#: model_terms:ir.actions.act_window,help:base_vat_ar.act_open_res_document_type_view
+msgid "Document types for Argentina"
+msgstr "Tipos de documentos para Argentina"
+
+#. module: base_vat_ar
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__dst_cuit
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_partner__dst_cuit
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_users__dst_cuit
 msgid "Enable DST CUIT"
-msgstr "Habilitar Países CUIT"
+msgstr "Habilitar DST CUIT"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_id
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_id
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__id
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__id
 msgid "ID"
-msgstr "ID (identificación)"
+msgstr ""
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes___last_update
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type___last_update
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes____last_update
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type____last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_write_uid
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_write_uid
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__write_uid
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__write_uid
 msgid "Last Updated by"
-msgstr "Última actualización de"
+msgstr "Última actualización por"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes_write_date
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_write_date
+#: model:ir.model.fields,field_description:base_vat_ar.field_dst_cuit_codes__write_date
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: base_vat_ar
 #: sql_constraint:res.country.state:0
@@ -130,24 +139,25 @@ msgid "Repeated state name. Please check the states list."
 msgstr "Nombre de provincia repetido. Por favor revise su lista de provincias."
 
 #. module: base_vat_ar
-#: code:addons/base_vat_ar/models/partner.py:126
+#: code:addons/base_vat_ar/models/partner.py:132
 #, python-format
 msgid "The Vat does not seems to be correct."
 msgstr "El NIF no parece ser correcto."
 
 #. module: base_vat_ar
-#: code:addons/base_vat_ar/models/partner.py:100
+#: code:addons/base_vat_ar/models/partner.py:99
 #, python-format
 msgid "The Vat only supports numbers."
 msgstr "El NIF solo soporta números."
 
 #. module: base_vat_ar
-#: code:addons/base_vat_ar/models/partner.py:72
+#: code:addons/base_vat_ar/models/partner.py:70
 #, python-format
 msgid "There is another partner with same VAT Information"
 msgstr "Existe otra compañía con la misma información de NIF"
 
 #. module: base_vat_ar
-#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type_verification_required
+#: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__verification_required
 msgid "Verification required"
-msgstr "Requiere Verificación"
+msgstr "Verificacion requerida"
+
