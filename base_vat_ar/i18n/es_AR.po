@@ -160,4 +160,3 @@ msgstr "Existe otra compañía con la misma información de NIF"
 #: model:ir.model.fields,field_description:base_vat_ar.field_res_document_type__verification_required
 msgid "Verification required"
 msgstr "Verificacion requerida"
-
