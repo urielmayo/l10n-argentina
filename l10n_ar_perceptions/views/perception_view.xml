@@ -263,7 +263,7 @@
             <field name="name">perception.tax.line.concept.tree</field>
             <field name="model">perception.tax.line</field>
             <field name="type">tree</field>
-            <field name="inherit_id" ref="l10n_ar_perceptions_basic.view_perception_tax_line_tree"/>
+            <field name="inherit_id" ref="l10n_ar_perceptions_basic.perception_tax_line_view_tree"/>
             <field name="arch" type="xml">
                 <data>
                     <field name="date" position="after">
@@ -277,7 +277,7 @@
         <record id="view_perception_tax_line_concept_search" model="ir.ui.view">
             <field name="name">perception.tax.line.concept.search</field>
             <field name="model">perception.tax.line</field>
-            <field name="inherit_id" ref="l10n_ar_perceptions_basic.view_perception_tax_line_search"/>
+            <field name="inherit_id" ref="l10n_ar_perceptions_basic.perception_tax_line_view_search"/>
             <field name="arch" type="xml">
                 <data>
                     <field name="invoice_id" position="before">
