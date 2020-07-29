@@ -4,4 +4,3 @@
 ##############################################################################
 
 from . import res_city  # noqa
-from . import partner  # noqa
