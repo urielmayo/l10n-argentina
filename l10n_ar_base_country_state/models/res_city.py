@@ -8,6 +8,7 @@ from odoo import models, fields, api
 
 class ResCity(models.Model):
     _name = 'res.city'
+    _inherit = 'res.city'
     _description = 'Cities'
 
     @api.multi
@@ -31,9 +32,6 @@ class ResCity(models.Model):
     def default_country_id(self):
         return self.env.ref("base.ar").id
 
-    name = fields.Char(string='City', size=64, required=True)
-    zip_code = fields.Char(string='Zip', size=24)
     afip_code = fields.Char(string='AFIP Code', size=16)
     country_id = fields.Many2one(
         'res.country', string='Country', default=default_country_id)
-    state_id = fields.Many2one('res.country.state', string='Country State')
