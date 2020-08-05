@@ -107,7 +107,6 @@ class PerceptionTaxLine(models.Model):
             'amount': self.amount,
             'base': self.base,
             'account_id': self.account_id.id,
-            'analytic': self.perception_id.account_analytic_id.id,
         })
 
         return taxes
@@ -129,15 +128,16 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def _onchange_partner_id(self):
-        #If partner changes set the partner_id for existent perceptions
+        # If partner changes set the partner_id for existent perceptions
         res = super(AccountInvoice, self)._onchange_partner_id()
 
         perception_ids = self.perception_ids.ids
         if self.partner_id and perception_ids:
-            upd_lst = []
-            for p in perception_ids:
-                upd_lst.append((1, p, {'partner_id': self.partner_id}))
-            res['value']['perception_ids'] = upd_lst
+            upd_lst = [
+                (1, p, {'partner_id': self.partner_id})
+                for p in perception_ids
+            ]
+            self.perception_ids = upd_lst
         return res
 
     @api.onchange('perception_ids')
@@ -153,7 +153,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
-        #If not date write the invoice date
+        # If not date write the invoice date
         for p in self.perception_ids:
             if not p.date:
                 date = self.date_invoice or fields.Date.context_today(self)
@@ -162,8 +162,8 @@ class AccountInvoice(models.Model):
         return super().finalize_invoice_move_lines(move_lines)
 
     def prepare_perception_tax_line_vals(self, tax):
-        #Prepare values to create a perception.tax.line
-        #Tax parameter is the output of perception.tax.line.compute_all().
+        # Prepare values to create a perception.tax.line
+        # Tax parameter is the output of perception.tax.line.compute_all().
         vals = {
             'invoice_id': self.id,
             'name': tax['name'],
@@ -173,12 +173,10 @@ class AccountInvoice(models.Model):
             'manual': False,
             'sequence': 10,
             'is_exempt': False,
-            'account_analytic_id': tax['analytic'],
+            'account_analytic_id': tax.get('analytic', False),
             'account_id': tax['account_id'],
         }
         return vals
-
-
 
     @api.multi
     def get_taxes_values(self):
