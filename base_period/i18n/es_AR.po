@@ -126,12 +126,12 @@ msgid "Company"
 msgstr "Compañía"
 
 #. module: base_period
-#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
+#: model_terms:ir.ui.view,arch_db:account.action_account_fiscal_year_form
 msgid "Create 3 Months Periods"
 msgstr "Crear Periodos Trimestrales"
 
 #. module: base_period
-#: model_terms:ir.ui.view,arch_db:base_period.account_fiscal_year_view_form
+#: model_terms:ir.ui.view,arch_db:account.action_account_fiscal_year_form
 msgid "Create Monthly Periods"
 msgstr "Crear Periodos Mensuales"
 
