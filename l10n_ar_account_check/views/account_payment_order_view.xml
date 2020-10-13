@@ -97,6 +97,7 @@
                                         <field name="type"/>
                                         <field name="amount"/>
                                         <field name="bank_id"/>
+                                        <field name="is_electronic"/>
                                         <field name="crossed"/>
                                         <field name="not_order"/>
                                     </group>

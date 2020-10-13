@@ -106,6 +106,7 @@ class AccountIssuedCheck(models.Model):
          ('rejected', 'Rejected')],
         string='State',
         default='draft')
+    is_electronic = fields.Boolean('Electronic Check', readonly=True)
 
     @api.depends('clearance_move_id')
     def _compute_accredit_state(self):
@@ -421,6 +422,7 @@ class AccountThirdCheck(models.Model):
         comodel_name='account.journal',
         string='Deposit Journal',
         readonly=True, compute='_compute_deposit_journal_id')
+    is_electronic = fields.Boolean('Electronic Check', readonly=True)
 
     @api.depends('deposit_move_id')
     def _compute_deposit_journal_id(self):
