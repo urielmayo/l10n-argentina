@@ -78,6 +78,7 @@
                     <field name="amount" sum="Total Amount" />
                     <field name="type" invisible="1"/>
                     <field name="state"/>
+                    <field name="is_electronic"/>
                 </tree>
             </field>
         </record>
@@ -113,6 +114,7 @@
                                 <field name="payment_date" attrs="{'invisible': [('type', '=', 'common')], 'required': [('type','=','postdated')]}"/>
                                 <field name="reject_date" attrs="{'invisible': [('state', '!=', 'rejected')]}"/>
                                 <field name="account_bank_id" domain="[('bank_id', '=', bank_id)]" required="1"/>
+                                <field name="is_electronic"/>
                                 <field name="crossed"/>
                                 <field name="not_order"/>
                             </group>
@@ -207,6 +209,16 @@
             <field name="search_view_id" ref="view_account_issued_check_filter"/>
         </record>
 
+        <record model="ir.actions.act_window" id="action_issued_electronic_check">
+            <field name="name">Electronic Issued Checks</field>
+            <field name="res_model">account.issued.check</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_electronic', '=', 'True')]</field>
+            <field name="context">{'default_is_electronic': True}</field>
+            <field name="search_view_id" ref="view_account_issued_check_filter"/>
+        </record>
+
         <record id="action_issued_check_calendar_payment_date" model="ir.actions.act_window">
             <field name="name">Issued Checks by Payment Date</field>
             <field name="res_model">account.issued.check</field>
@@ -227,6 +239,13 @@
             parent="menu_treasury_issued_check_menu"
             />
 
+        <menuitem
+            action="action_issued_electronic_check"
+            id="menu_electronic_issued_check"
+            name="Electronic Checks"
+            parent="menu_treasury_issued_check_menu"
+        />
+
         <menuitem id="menu_treasury_issued_check_calendar_payment"
             action="action_issued_check_calendar_payment_date"
             name="Calendar By Payment Date"
@@ -246,7 +265,7 @@
             <field name="model">account.third.check</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Third Checks">
+                <tree create="false" string="Third Checks">
                     <field name="number"/>
                     <field name="source_partner_id"/>
                     <field name="issue_date"/>
@@ -260,6 +279,7 @@
                     <field name="deposit_slip"/>
                     <field name="type"/>
                     <field name="state"/>
+                    <field name="is_electronic" readonly="True"/>
                 </tree>
             </field>
         </record>
@@ -270,7 +290,7 @@
             <field name="type">form</field>
             <field name="priority">10</field>
             <field name="arch" type="xml">
-                <form string="Third Checks">
+                <form create="false" edit="false" string="Third Checks">
                     <header>
                         <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet' class="oe_highlight" groups="account.group_account_invoice,account.group_account_manager"/>
                         <button name="check_to_wallet" type='object' string='Back to Wallet'
@@ -292,6 +312,7 @@
                                 <field name="amount"/>
                                 <field name="source_partner_id"/>
                                 <field name="destiny_partner_id" attrs="{'invisible': [('state', 'not in', ('delivered', 'rejected'))]}"/>
+                                <field name="is_electronic" readonly="True"/>
                             </group>
                             <group>
                                 <field name="receipt_date"/>
@@ -472,7 +493,15 @@
             <field name="domain">[('endorsement_date','!=',False)]</field>
         </record>
 
-
+        <record model="ir.actions.act_window" id="action_third_electronic_check">
+            <field name="name">Electronic Third Checks</field>
+            <field name="res_model">account.third.check</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_electronic', '=', 'True')]</field>
+            <field name="view_id" eval="view_account_third_check_tree"/>
+            <field name="search_view_id" ref="view_third_checks_search"/>
+        </record>
 
         <menuitem id="menu_treasury_third_check_menu"
             name="Third Checks"
@@ -500,6 +529,13 @@
             action="action_third_check_calendar_endorsement_date"
             name="Calendar By Endorsement Date"
             parent="menu_treasury_third_check_menu"/>
+
+        <menuitem
+            action="action_third_electronic_check"
+            id="menu_electronic_third_check"
+            name="Electronic Checks"
+            parent="menu_treasury_third_check_menu"
+        />
 
     </data>
 </odoo>
