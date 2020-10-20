@@ -405,7 +405,7 @@ class wsfex_config(models.Model):
         token, sign = conf.wsaa_ticket_id.get_token_sign()
 
         _wsfex = wsfex(self.cuit, token, sign, self.url)
-        res = _wsfex.FEXGetPARAM("Tipo_Cbte")
+        res = _wsfex.FEXGetPARAM("Cbte_Tipo")
 
         wsfex_param_obj = self.env['wsfex.voucher_type.codes']
 
@@ -459,7 +459,8 @@ class wsfex_config(models.Model):
         _wsfex = wsfex(conf.cuit, token, sign, conf.url)
 
         # Agregamos la info que falta
-        details['Tipo_cbte'] = voucher_type
+        #details['Tipo_cbte'] = voucher_type
+        details['Cbte_Tipo'] = voucher_type
         details['Punto_vta'] = pos
         res = _wsfex.FEXAuthorize(details)
 
@@ -642,6 +643,15 @@ class wsfex_config(models.Model):
 
             # TODO: Agregar permisos
             shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
+            tipo_cbte = voucher_type_obj.get_voucher_type(inv)
+            #_logger.info('export_type %s, tipo_cbte %s' % (inv.export_type_id.code, tipo_cbte))
+            if inv.export_type_id.code in [2,4] and tipo_cbte == '19':
+                shipping_perm = ''
+            fecha_pago = inv.date_due.replace('-','')
+
+            if tipo_cbte in ('20','21'):
+                shipping_perm = ''
+                fecha_pago = ''
 
             Cmp = {
                 'invoice_id' : inv.id,
@@ -661,7 +671,8 @@ class wsfex_config(models.Model):
                 'Moneda_ctz' : curr_rate,
                 'Imp_total' : inv.amount_total,
                 'Idioma_cbte' : 1,
-                'Items' : items
+                'Items' : items,
+                'Fecha_pago' : formatted_date_invoice,
             }
 
             # Datos No Obligatorios

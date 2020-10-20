@@ -29,7 +29,7 @@ import logging
 
 logger = logging.getLogger('suds.client')
 logger.setLevel(logging.DEBUG)
- 
+
 WSFEXURLv1_HOMO = "https://wswhomo.afip.gov.ar/wsfex/service.asmx?wsdl"
 WSAAURL = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms?wsdl" # homologacion (pruebas)
 
@@ -61,7 +61,7 @@ class WSFEX:
 
         # Creamos el cliente
         self._create_client(token, sign)
- 
+
     def _create_client(self, token, sign):
         try:
             self.client = Client(self.wsfexurl)
@@ -125,7 +125,14 @@ class WSFEX:
     def FEXGetLast_CMP(self, pto_venta, tipo_cbte):
 
         # Llamamos a la funcion
-        result = self.client.service.FEXGetLast_CMP(self.argauth, pto_venta, tipo_cbte)
+        cls_lastCMP = self.client.factory.create('ClsFEX_LastCMP')
+        cls_lastCMP.Token = self.argauth.Token
+        cls_lastCMP.Sign = self.argauth.Sign
+        cls_lastCMP.Cuit = self.argauth.Cuit
+        cls_lastCMP.Pto_venta = pto_venta
+        cls_lastCMP.Cbte_Tipo = tipo_cbte
+
+        result = self.client.service.FEXGetLast_CMP(cls_lastCMP)
         logger.debug('Result =>\n %s', result)
 
         res = {}
@@ -185,7 +192,7 @@ class WSFEX:
     def FEXAuthorize(self, Cmp):
         if not self.connected:
             self._create_client()
-        
+
         fexrequest = self.client.factory.create('ns0:ClsFEXRequest')
         for k, v in Cmp.iteritems():
             if k == 'Items':
