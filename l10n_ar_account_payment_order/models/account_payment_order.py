@@ -69,7 +69,7 @@ class AccountPaymentOrder(models.Model):
         comodel_name='res.currency', string='Currency',
         compute='_get_journal_currency')
     amount = fields.Float(
-        string='Tax Amount', digits=dp.get_precision('Account'),
+        string='Tax Amount',
         default=lambda s: s._get_amount(), states={
             'cancel': [('readonly', True)],
             'posted': [('readonly', True)],
@@ -1145,7 +1145,7 @@ class AccountPaymentOrderLine(models.Model):
         comodel_name='res.partner', string='Partner',
         related='payment_order_id.partner_id')
     untax_amount = fields.Float(string='Untax Amount')
-    amount = fields.Float(string='Amount', digits=dp.get_precision('Account'))
+    amount = fields.Float(string='Amount')
     reconcile = fields.Boolean(string='Full Reconcile')
     type = fields.Selection(
         string='Dr/Cr', selection=[
@@ -1162,10 +1162,10 @@ class AccountPaymentOrderLine(models.Model):
     date_due = fields.Date(
         string='Due Date', related='move_line_id.date_maturity', readonly=True)
     amount_original = fields.Float(
-        string='Original Amount', digits=dp.get_precision('Account'),
+        string='Original Amount',
         compute='_compute_balance', store=True)
     amount_unreconciled = fields.Float(
-        string='Open Balance', digits=dp.get_precision('Account'),
+        string='Open Balance',
         compute='_compute_balance', store=True)
     company_id = fields.Many2one(
         comodel_name='res.company', string='Company',
@@ -1246,11 +1246,11 @@ class AccountPaymentModeLine(models.Model):
     payment_mode_id = fields.Many2one(
         comodel_name='account.journal', string='Payment Method')
     amount = fields.Float(
-        string='Amount', digits=(16, 2), default=0.0, required=False,
+        string='Amount', default=0.0, required=False,
         help='Payment amount in the company currency')
     amount_currency = fields.Float(
         string='Amount in Partner Currency',
-        digits=(16, 2), required=False,
+        required=False,
         help='Payment amount in the partner currency')
     currency_id = fields.Many2one(
         comodel_name='res.currency', compute='_compute_currency',

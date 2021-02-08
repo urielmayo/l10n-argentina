@@ -81,10 +81,14 @@ class ReportFilesGenerator(models.Model):
         res = cr.fetchall()
         if not len(res):
             return {
-                'errors': 'Applicable Retentions for export not found. ' +
-                '\nHINT: Is there any IIBB retentions supported for this ' +
-                'period?',
-                'resource': self.period_id,
+                'state': False,
+                'files': [],
+                'errors': [{
+                    'error': 'Applicable Retentions for export not found. ' +
+                    '\nHINT: Is there any IIBB retentions supported for this ' +
+                    'period?',
+                    'resource': self.period_id,
+                }],
             }
         retention_ids = [retention_ids[0] for retention_ids in res]
 
@@ -280,11 +284,15 @@ class ReportFilesGenerator(models.Model):
         res = cr.fetchall()
         if not len(res):
             return {
-                'errors': _(
-                    'Applicable Perception for export not found. \n ' +
-                    'HINT: Is there any IIBB perception supported for ' +
-                    'this period?'),
-                'resource': self.period_id,
+                'state': False,
+                'files': [],
+                'errors': [{
+                    'error': _(
+                        'Applicable Perception for export not found. \n ' +
+                        'HINT: Is there any IIBB perception supported for ' +
+                        'this period?'),
+                    'resource': self.period_id,
+                }],
             }
         perception_ids = [perception_ids[0] for perception_ids in res]
 
@@ -325,7 +333,7 @@ class ReportFilesGenerator(models.Model):
             nro_doc_percibido = tax_line.partner_id.vat
             if not nro_doc_percibido:
                 errors.append({
-                    'errors': 'Partner VAT not found',
+                    'error': 'Partner VAT not found',
                     'resource': tax_line.partner_id,
                 })
             if '-' not in nro_doc_percibido and len(nro_doc_percibido) == 11:
@@ -338,7 +346,7 @@ class ReportFilesGenerator(models.Model):
                 jurisdiction_code = 0
                 if not sifere_config.ignore_jurisdiction:
                     errors.append({
-                        'errors': 'Jurisdiction cannot be found',
+                        'error': 'Jurisdiction cannot be found',
                         'resource': tax_line.perception_id,
                     })
             else:

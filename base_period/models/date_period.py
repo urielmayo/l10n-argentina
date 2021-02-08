@@ -106,6 +106,9 @@ class DatePeriod(models.Model):
         ]
         period = self.search(domain)
         if not period:
-            self.create_period(period_date)
+            # self.create_period(period_date)
+            raise ValidationError('El periodo para el cual intenta ingresar el documento \
+                    no existe, por favor verifique la fecha con cuidado \
+                    o solicite al responsable de administración que cree el periodo correspondiente')
             period = self.search(domain)
         return period

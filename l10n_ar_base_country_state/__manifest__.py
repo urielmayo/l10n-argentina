@@ -30,7 +30,6 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        "data/country_state_data.xml",
         "wizard/wizard_install_argentinean_cities_view.xml",
         "views/partner_view.xml",
         "views/res_city_view.xml",
