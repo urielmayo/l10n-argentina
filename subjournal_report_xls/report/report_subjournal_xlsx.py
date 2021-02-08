@@ -152,13 +152,8 @@ class SubjournalXlsx(models.AbstractModel):
             JOIN res_partner p ON p.id = i.partner_id
             JOIN account_account a ON a.id = l.account_id
             JOIN account_fiscal_position afp ON afp.id = i.fiscal_position_id
-            LEFT JOIN account_move_line_account_tax_rel amlatr
-            ON (amlatr.account_move_line_id,amlatr.account_tax_id)=(
-                SELECT account_move_line_id, account_tax_id
-                FROM account_move_line_account_tax_rel amlatr
-                WHERE account_move_line_id=l.id
-                LIMIT 1
-            )
+            LEFT JOIN (select account_move_line_id, account_tax_id from account_move_line_account_tax_rel where ctid in (select min(ctid) from account_move_line_account_tax_rel group by account_move_line_id)) amlatr 
+            ON amlatr.account_move_line_id = l.id
             INNER JOIN res_company lc
             ON i.company_id = lc.id
             WHERE i.type IN %(inv_type)s
@@ -517,3 +512,4 @@ class SubjournalXlsx(models.AbstractModel):
             'criteria': '=',
             'value': 0,
             'format': footer_format})
+
