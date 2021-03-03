@@ -278,7 +278,7 @@ class invoice(osv.osv):
 
     _constraints = [
         (_check_duplicate, 'Error! The Invoice is duplicated.', ['denomination_id', 'pos_ar_id', 'type', 'is_debit_note', 'internal_number', 'voucher_type_id']),
-        (_check_amount_total, 'Error! The total amount cannot be negative',['amount_total']),
+        #(_check_amount_total, 'Error! The total amount cannot be negative',['amount_total']),
     ]
 
     def _check_fiscal_values(self, cr, uid, inv):

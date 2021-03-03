@@ -778,8 +778,8 @@ class wsfex_config(osv.osv):
                 raise osv.except_osv(_("WSFEX Error!"), _("There is no UoM Code defined for %s in line %s") % (line.uos_id.name, line.name))
 
             uom_code = uom_code_obj.read(cr, uid, uom_code_ids[0], {'code'}, context=context)['code']
-            amount_discount = line.price_unit * (line.discount or 0.0) / 100.0
-            amount_discount = float_round(amount_discount, 6)
+            amount_discount_unit = line.price_unit * (line.discount or 0.0) / 100.0
+            amount_discount = line.quantity * float_round(amount_discount_unit, 2)
 
             items.append({
                 'Pro_codigo' : i,#product_code,

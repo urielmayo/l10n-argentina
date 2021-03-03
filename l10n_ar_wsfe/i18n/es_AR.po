@@ -411,7 +411,7 @@ msgstr "WSFEX Incoterms"
 #. module: l10n_ar_wsfe
 #: field:account.invoice,fecred_state:0
 msgid "FECred Status"
-msgstr "FECred Status"
+msgstr "Estado FE Crédito"
 
 #. module: l10n_ar_wsfe
 #: field:wsfe.config,wsaa_ticket_id:0
@@ -470,7 +470,7 @@ msgstr "unknown"
 #: selection:wsfe.request.detail,result:0
 #: selection:wsfex.request.detail,result:0
 msgid "Rejected"
-msgstr "Rejected"
+msgstr "Rechazada"
 
 #. module: l10n_ar_wsfe
 #: code:addons/l10n_ar_wsfe/wsfe.py:343
@@ -496,7 +496,7 @@ msgstr "Use Electronic Credit Invoice?"
 #. module: l10n_ar_wsfe
 #: selection:account.invoice,fecred_state:0
 msgid "Accepted"
-msgstr "Accepted"
+msgstr "Aceptada"
 
 #. module: l10n_ar_wsfe
 #: code:addons/l10n_ar_wsfe/wsfex.py:213
@@ -517,7 +517,7 @@ msgstr "WSFE Request"
 #. module: l10n_ar_wsfe
 #: field:wsfe.request.detail,request_id:0
 msgid "Request"
-msgstr "Request"
+msgstr "Petición"
 
 #. module: l10n_ar_wsfe
 #: view:wsfe.config:0
@@ -527,7 +527,7 @@ msgstr "VAT Taxes"
 #. module: l10n_ar_wsfe
 #: field:account.invoice.optional,value:0
 msgid "Value"
-msgstr "Value"
+msgstr "Valor"
 
 #. module: l10n_ar_wsfe
 #: field:account.invoice,export_type_id:0

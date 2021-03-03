@@ -39,7 +39,7 @@ class stock_picking(osv.osv):
 
             if pick.type == 'out':
                 new_pick_name = seq_obj.next_by_code(cr, uid, 'stock.picking.out.ar')
-                self.write(cr, uid, delivered_pick_id, {'name': new_pick_name}, context=context)
+                #self.write(cr, uid, delivered_pick_id, {'name': new_pick_name}, context=context)
         return res
  
 stock_picking()
