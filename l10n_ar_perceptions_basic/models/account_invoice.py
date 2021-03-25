@@ -126,7 +126,7 @@ class AccountInvoice(models.Model):
         },
     )
 
-    @api.multi
+    @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
         # If partner changes set the partner_id for existent perceptions
         res = super(AccountInvoice, self)._onchange_partner_id()
