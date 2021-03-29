@@ -2,7 +2,7 @@
 <odoo>
     <menuitem id="retention_root_menu"
         name="Retentions"
-        parent="l10n_ar_point_of_sale.menu_tax_subroot"
+        parent="l10n_ar_point_of_sale.account_tax_menu_subroot"
         sequence="20"/>
 
     <menuitem id="retention_retention_menu"
@@ -13,13 +13,13 @@
 
     <menuitem id="retention_tax_line_menu_applied"
         name="Retentions Applied"
-        parent="l10n_ar_point_of_sale.menu_taxes_payables"
+        parent="l10n_ar_point_of_sale.taxes_payables_menu"
         sequence="30"
         action="retention_tax_line_action_tree"/>
 
     <menuitem id="retention_tax_line_menu_supported"
         name="Retentions Supported"
-        parent="l10n_ar_point_of_sale.menu_taxes_receivables"
+        parent="l10n_ar_point_of_sale.taxes_receivables_menu"
         sequence="30"
         action="retention_tax_line_action_tree_supported"/>
 </odoo>
