@@ -278,12 +278,39 @@
             <field name="act_window_id" ref="account_invoice_action_debit_note"/>
         </record>
 
+<!--
         <record id="account.action_invoice_tree2" model="ir.actions.act_window">
             <field name="name">Vendor Bills</field>
             <field name="res_model">account.invoice</field>
             <field name="context">{'default_type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
             <field name="domain">[('type','=','in_invoice'),('is_debit_note', '=', False)]</field>
         </record>
+-->
+        
+        
+
+        <record id="account.action_vendor_bill_template" model="ir.actions.act_window">
+            <field name="name">Vendor Bills</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','=','in_invoice'),('is_debit_note', '=', False)]</field>
+            <field name="context">{
+								'default_type': 'in_invoice', 
+								'type': 'in_invoice', 
+								'journal_type': 'purchase',
+								'default_is_debit_note': False}
+								</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Record a new vendor bill
+              </p>
+            </field>
+        </record>
+        
 
         <record id="account_invoice_action_debit_note_supp" model="ir.actions.act_window">
             <field name="name">Supplier Debit Notes</field>
@@ -299,7 +326,8 @@
                 'default_is_debit_note': True
             }</field>
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
-            <field name="help">With Supplier Debit Notes you can manage the debit notes for your suppliers. A debit note is a document that increases the value of the debt or account balance, either by an error in billing, interest for late payment, or any other circumstance that means the increase in the balance of an account.</field>
+            <field name="help">With Supplier Debit Notes you can manage the debit notes for your suppliers. 
+            A debit note is a document that increases the value of the debt or account balance, either by an error in billing, interest for late payment, or any other circumstance that means the increase in the balance of an account.</field>
         </record>
 
         <record id="account_invoice_action_view_tree_debit_note_supp" model="ir.actions.act_window.view">
