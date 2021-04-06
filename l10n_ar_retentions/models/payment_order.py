@@ -138,7 +138,7 @@ class AccountPaymentOrder(models.Model):
                 advance_ret, taxapp, ret_vals, base, amount)
             create_vals.append(retention_line_vals)
             new_ret_amount += amount
-            _logger.info("Retentions to create: %s" % pf(retention_line_vals))
+            _logger.info("Retentions to create 2: %s" % pf(retention_line_vals))
         if create_vals:
             self.retention_ids = [(0, 0, val) for val in create_vals]
         return new_ret_amount
@@ -395,7 +395,7 @@ class AccountPaymentOrder(models.Model):
                    self.income_line_ids.mapped('amount')):
                 vals = po.calculate_retentions()
 
-                _logger.info("Retentions to create: %s" % pf(vals))
+                _logger.info("Retentions to create 1: %s" % pf(vals))
                 po.retention_ids = [(0, 0, val) for val in vals]
             else:
                 if not po.amount:

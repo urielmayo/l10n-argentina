@@ -53,6 +53,7 @@ class res_partner_retention(models.Model):
 
 class ResPartnerAdvanceRetention(models.Model):
     _name = "res.partner.advance.retention"
+    _description = "Retention advanced defined in Partner"
 
     retention_id = fields.Many2one(
         comodel_name='retention.retention',

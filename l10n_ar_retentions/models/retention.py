@@ -399,6 +399,7 @@ class RetentionActivity(models.Model):
 
 class RetentionTaxApplication(models.Model):
     _name = "retention.tax.application"
+    _description = "Retention configuration for activity or concept"
 
     name = fields.Char('Description', size=128)
     reg_code = fields.Integer('Reg. Code')
@@ -495,7 +496,8 @@ class RetentionTaxApplication(models.Model):
         # Obtenemos las fechas de mes calendario
         # al que corresponde este voucher
 
-        dt = datetime.strptime(date, DSDF)
+        # dt = datetime.strptime(date, DSDF)
+        dt = datetime.strptime(str(date),DSDF)
         date_start = (dt + relatived(day=1)).strftime(DSDF)
         date_finish = (dt + relatived(day=31)).strftime(DSDF)
         return date_start, date_finish
