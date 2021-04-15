@@ -127,10 +127,12 @@
                     <field name="vat" filter_domain="['|', ('vat', 'like', self), ('name_partner', 'ilike', self)]"/>
                     <field name="group_retention_id"/>
                     <field name="group_perception_id"/>
+<!--
                     <group expand="0" string="Group By..." groups="account.group_account_manager">
                         <filter string="Retention Group" domain="[]" context="{'group_by':'group_retention_id'}"/>
                         <filter string="Perception Group" domain="[]" context="{'group_by':'group_perception_id'}"/>
                     </group>
+-->
                 </search>
             </field>
         </record>

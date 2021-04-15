@@ -3,11 +3,11 @@
     <data>
 
         <record id="padron_import_wizard" model="ir.ui.view">
-            <field name="name">Import zip file with percentages of retentions and perceptions</field>
+            <field name="name">padron.import.wizard</field>
             <field name="model">padron.import</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Import zip" version="7.0">
+                <form string="Import zip">
                     <label string="This wizard allows you to upload zip files from ARBA / AGIP Agency and process it" colspan="4"/>
                     <separator string="AGIP Zip File" colspan="4"/>
                     <group>
