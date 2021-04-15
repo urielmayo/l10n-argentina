@@ -216,7 +216,8 @@ class retention_retention(models.Model):
                 tapp_domain = [
                     ('retention_id', '=', retention.id),
                     ('concept_id', 'in', concepts.ids),
-                    ('activity_id', '=', activity and activity.id)]
+                    # ~ ('activity_id', '=', activity and activity.id)]
+                    ]
                 iibb_domain = []
                 if retention.type == 'gross_income':
                     iibb_domain.append(

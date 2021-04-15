@@ -102,13 +102,14 @@ class res_partner(models.Model):
         partner_retentions = {}
         for p_ret in self.retention_ids:
             excluded_percent = p_ret.excluded_percent
-            ddate = dt.strftime(operation_date, DSDF)
-            tzd = fields.Datetime.context_timestamp(self, ddate)
+            # ~ ddate = dt.strftime(operation_date, DSDF)
+            ddate = dt.strftime(operation_date, "%Y-%m-%d %H:%M:%S")
+            # ~ tzd = fields.Datetime.context_timestamp(self, ddate)
             # Chequeamos que la retencion este en un periodo valido
             if not (not p_ret.ex_date_from and not p_ret.ex_date_to) or \
-                    (p_ret.ex_date_from <= tzd and not p_ret.ex_date_to) or \
-                    (not p_ret.ex_date_from and tzd <= p_ret.ex_date_to) or \
-                    (p_ret.ex_date_from <= tzd <= p_ret.ex_date_to):
+                    (p_ret.ex_date_from <= operation_date and not p_ret.ex_date_to) or \
+                    (not p_ret.ex_date_from and operation_date <= p_ret.ex_date_to) or \
+                    (p_ret.ex_date_from <= operation_date <= p_ret.ex_date_to):
                 excluded_percent = False
 
             retention = {
