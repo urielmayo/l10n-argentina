@@ -40,7 +40,7 @@ class AccountPayment(models.Model):
         """
 
         invoices = self.mapped("invoice_ids")
-        return ', '.join(name or '' for _id, name in invoices.name_get())
+        return ', '.join(inv.internal_number or '' for inv in invoices)
 
     def _prepare_statement_line_data(self):
         # Si el voucher no tiene partner, ponemos el de la compania
@@ -119,10 +119,10 @@ class AccountPayment(models.Model):
             return True
 
         for st in lines:
-            if st.statement_id.state == 'confirm':
+            if st.statement_id.state == 'confirm' or st.state == 'confirm':
                 if raise_error:
                     err = _(
-                        """You can't cancel a Payment with confirmed Bank Statements
+                        """You can't cancel a Payment with confirmed Bank Statements Line
 
                         HINT: Click on the 'Bank Statements' button your left.
                         """

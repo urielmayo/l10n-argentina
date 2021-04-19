@@ -115,7 +115,7 @@ class AccountPaymentModeLine(models.Model):
 
         invoices = self.mapped("payment_order_id").mapped(
             "line_ids").mapped("invoice_id")
-        return ', '.join(name or '' for _id, name in invoices.name_get())
+        return ', '.join(inv.internal_number or '' for inv in invoices)
 
     def _prepare_statement_line_data(self):
         payment_order = self.payment_order_id
@@ -148,5 +148,6 @@ class AccountPaymentModeLine(models.Model):
             'line_type': line_type,
             'amount': amount,
             'state': 'open',
+            'currency_id': journal.currency_id.id or payment_order.journal_id.currency_id.id,
         }
         return st_line_data
