@@ -507,7 +507,7 @@ msgid "Debit Note "
 msgstr "Nota de débito "
 
 #. module: l10n_ar_point_of_sale
-#: code:addons/l10n_ar_point_of_sale/invoice.py:45
+#: code:addons/l10n_ar_point_of_sale/invoice.py:46
 #, python-format
 msgid "CI "
 msgstr "FAC "
