@@ -393,6 +393,7 @@ class AccountPaymentOrder(models.Model):
                 continue
             if any(self.debt_line_ids.mapped('amount') +
                    self.income_line_ids.mapped('amount')):
+                po.retention_ids = False
                 vals = po.calculate_retentions()
 
                 _logger.info("Retentions to create 1: %s" % pf(vals))

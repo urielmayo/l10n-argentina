@@ -241,7 +241,10 @@
         </record>
 
         <record id="account.action_invoice_tree1" model="ir.actions.act_window">
-            <field name="context">{'default_type': 'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="context">{
+								'default_type': 'out_invoice', 
+								'journal_type': 'sale',
+								'use_internal_number':True}</field>
             <field name="domain">[('type','=','out_invoice'),('is_debit_note', '=', False)]</field>
         </record>
 
@@ -301,7 +304,8 @@
 								'default_type': 'in_invoice', 
 								'type': 'in_invoice', 
 								'journal_type': 'purchase',
-								'default_is_debit_note': False}
+								'default_is_debit_note': False,
+								'use_internal_number':True}
 								</field>
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
             <field name="help" type="html">
