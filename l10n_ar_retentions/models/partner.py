@@ -20,8 +20,8 @@ class res_partner_retention(models.Model):
     activity_id = fields.Many2one('retention.activity', 'Activity')
     percent = fields.Float('Percent', default=0.00)
     excluded_percent = fields.Float('Percentage of Exclusion')
-    ex_date_from = fields.Date('From date')
-    ex_date_to = fields.Date('To date')
+    ex_date_from = fields.Date('From date', required=True)
+    ex_date_to = fields.Date('To date', required=True)
     exclusion_certificate = fields.Binary(string='Exclusion Certificate')
     exclusion_date_certificate = fields.Date(
         'Exclusion General Resolution Date')

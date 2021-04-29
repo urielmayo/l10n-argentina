@@ -1,0 +1,273 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* l10n_ar_other_payments
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-04 20:14+0000\n"
+"PO-Revision-Date: 2020-05-04 20:14+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_ar_other_payments
+#: model:ir.actions.act_window,help:l10n_ar_other_payments.action_other_payments
+msgid ""
+"<p class=\"oe_view_nocontent_create\">\n"
+"                Click to register a purchase receipt.\n"
+"              </p><p>\n"
+"                When the purchase receipt is confirmed, you can record the\n"
+"                supplier payment related to this purchase receipt.\n"
+"              </p>\n"
+"            "
+msgstr ""
+"<p class=\"oe_view_nocontent_create\">\n"
+"                Click to register a purchase receipt.\n"
+"              </p><p>\n"
+"                When the purchase receipt is confirmed, you can record the\n"
+"                supplier payment related to this purchase receipt.\n"
+"              </p>\n"
+"            "
+
+#. module: l10n_ar_other_payments
+#: code:addons/l10n_ar_other_payments/account_voucher.py:76
+#, python-format
+msgid ""
+"Cannot validate a voucher that has difference between credit and debit. "
+"Difference Amount must be 0.0."
+msgstr ""
+"No puede validar un comprobante que tiene una diferencia entre crédito y "
+"débito. El monto de diferencia debe ser 0.0."
+""
+
+#. module: l10n_ar_other_payments
+#: code:addons/l10n_ar_other_payments/account_voucher.py:70
+#, python-format
+msgid "You cannot validate a voucher with amount of 0.0."
+msgstr "No puede validar un comprobante con monto 0.0."
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__account_id
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__amount
+msgid "Amount"
+msgstr "Importe"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__account_analytic_id
+msgid "Analytic Account"
+msgstr "Cuenta Analítica"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Are you sure to unreconcile and cancel this record ?"
+msgstr "Está seguro que desea desconciliar y cancelar este registro?"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Cancel Receipt"
+msgstr "Cancelar Comprobante"
+
+#. module: l10n_ar_other_payments
+#: code:addons/l10n_ar_other_payments/account_voucher.py:110
+#, python-format
+msgid "Cannot validate a voucher with cash and box not open."
+msgstr "No puede validar un comprobante con efectivo si tiene la caja cerrada."
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Checks"
+msgstr "Cheques"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.actions.act_window,help:l10n_ar_other_payments.other_payments_action
+msgid "Click to register a purchase receipt."
+msgstr "Registrar un comprobantes de compra"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.actions.act_window,help:l10n_ar_other_payments.other_receipts_action
+msgid "Click to register a receipt."
+msgstr "Registrar un comprobante"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__id
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Issued Checks"
+msgstr "Cheques Propios"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__journal_id
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Journal"
+msgstr "Diario"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Journal Items"
+msgstr "Apuntes contables"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line____last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Lines"
+msgstr "Líneas"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order__concept_line_ids
+msgid "Other Concepts"
+msgstr "Otros Conceptos"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Other Payment"
+msgstr "Otro Pago"
+
+#. module: l10n_ar_other_payments
+#: model:ir.actions.act_window,name:l10n_ar_other_payments.other_payments_action
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order__other_payment
+#: model:ir.ui.menu,name:l10n_ar_other_payments.action_other_payments_menu
+msgid "Other Payments"
+msgstr "Otros Pagos"
+
+#. module: l10n_ar_other_payments
+#: model:ir.actions.act_window,name:l10n_ar_other_payments.other_receipts_action
+#: model:ir.ui.menu,name:l10n_ar_other_payments.action_other_receipts_menu
+msgid "Other Receipts"
+msgstr "Otro Comprobante"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.actions.act_window,help:l10n_ar_other_payments.other_receipts_action
+msgid "Other ways of getting receipts."
+msgstr "Otras formas de obtener comprobantes."
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Paid Amount"
+msgstr "Monto pagado"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Payment Information"
+msgstr "Información del pago"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Payment Methods"
+msgstr "Métodos de pago"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Payment Options"
+msgstr "Opciones de pago"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Payment Ref"
+msgstr "Ref. Pago"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Set to Draft"
+msgstr "Cambiar a borrador"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Third Checks"
+msgstr "Cheques de Terceros"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Total"
+msgstr "Total"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Total Amount"
+msgstr "Importe total"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Unreconcile"
+msgstr "Romper conciliación"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "Validate"
+msgstr "Validar"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model.fields,field_description:l10n_ar_other_payments.field_account_payment_order_concept_line__payment_order_id
+msgid "Voucher"
+msgstr "Comprobante"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.actions.act_window,help:l10n_ar_other_payments.other_payments_action
+msgid "When the purchase receipt is confirmed, you can record the\n"
+"				supplier payment related to this purchase receipt."
+msgstr ""
+
+#. module: l10n_ar_other_payments
+#: model:ir.model,name:l10n_ar_other_payments.model_account_payment_order
+msgid "account.payment.order"
+msgstr "Orden de Pago"
+
+#. module: l10n_ar_other_payments
+#: model:ir.model,name:l10n_ar_other_payments.model_account_payment_order_concept_line
+msgid "account.payment.order.concept.line"
+msgstr "account.payment.order.concept.line"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "e.g. 003/10"
+msgstr "Ej. 003/10"
+
+#. module: l10n_ar_other_payments
+#: model_terms:ir.ui.view,arch_db:l10n_ar_other_payments.other_payment_view_form
+msgid "e.g. Invoice SAJ/0042"
+msgstr "ej. Factura SAJ/0042"
+
