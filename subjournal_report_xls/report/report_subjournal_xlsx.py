@@ -324,7 +324,7 @@ class SubjournalXlsx(models.AbstractModel):
                         self.c_taxes[i] += 1
 
         res = [v for k, v in lines.items()]
-        res2 = sorted(res, key=lambda k: k['date'] +
+        res2 = sorted(res, key=lambda k: k['date'].strftime('%d/%m/%Y') +
                       k['invoice_type'] +
                       k['invoice_number'][:4] +
                       ('0' if k['partner'].startswith('Agrupado') else '1') +
@@ -399,7 +399,7 @@ class SubjournalXlsx(models.AbstractModel):
             cell_format = gray_format
             if p % 2:
                 cell_format = date_format
-            sheet.write('A'+str(p), line['date'], cell_format)
+            sheet.write('A'+str(p), line['date'].strftime('%d/%m/%Y'), cell_format)
             sheet.write('B'+str(p), line['company_id'], cell_format)
             sheet.write('C'+str(p), line['partner'], cell_format)
             sheet.write('D'+str(p), line['state'], cell_format)
