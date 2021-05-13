@@ -55,7 +55,7 @@ class AccountInvoice(models.Model):
 
                 if voucher_type_code:
 
-                    voucher_type = self.env['wsfe.voucher_type'].search(['code', '=', voucher_type_code])
+                    voucher_type = self.env['wsfe.voucher_type'].search([('code', '=', voucher_type_code)])
                     rec.voucher_type_id = voucher_type.id
             except UserError:
                 _logger.exception('%s' % rec)
