@@ -29,6 +29,9 @@ class AccountInvoice(models.Model):
         'account.invoice', 'account_invoice_associated_rel',
         'invoice_id', 'refund_debit_id')
 
+    voucher_type_id = fields.Many2one(comodel_name='wsfe.voucher_type',
+                                      string='Voucher type', compute='_compute_voucher_type', store=True)
+
     # Campos para facturas de exportacion. Aca ninguno es requerido,
     # eso lo hacemos en la vista ya que depende de
     # si es o no factura de exportacion
@@ -41,6 +44,25 @@ class AccountInvoice(models.Model):
         help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")  # noqa
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')
+
+
+    @api.multi
+    @api.depends('denomination_id', 'type')
+    def _compute_voucher_type(self):
+        for rec in self:
+            try:
+                voucher_type_code = rec._get_voucher_type()
+
+                if voucher_type_code:
+
+                    voucher_type = self.env['wsfe.voucher_type'].search(['code', '=', voucher_type_code])
+                    rec.voucher_type_id = voucher_type.id
+            except UserError:
+                _logger.exception('%s' % rec)
+
+            else:
+                _logger.info('%s' % rec.voucher_type_id)
+
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
@@ -139,6 +161,7 @@ class AccountInvoice(models.Model):
 
         # Obtenemos el tipo de comprobante
         voucher_type = voucher_type_obj.get_voucher_type(self)
+
         return voucher_type
 
     @api.multi
