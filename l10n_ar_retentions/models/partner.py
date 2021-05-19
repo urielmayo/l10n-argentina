@@ -20,8 +20,8 @@ class res_partner_retention(models.Model):
     activity_id = fields.Many2one('retention.activity', 'Activity')
     percent = fields.Float('Percent', default=0.00)
     excluded_percent = fields.Float('Percentage of Exclusion')
-    ex_date_from = fields.Date('From date', required=True)
-    ex_date_to = fields.Date('To date', required=True)
+    ex_date_from = fields.Date('From date')
+    ex_date_to = fields.Date('To date')
     exclusion_certificate = fields.Binary(string='Exclusion Certificate')
     exclusion_date_certificate = fields.Date(
         'Exclusion General Resolution Date')
@@ -106,11 +106,20 @@ class res_partner(models.Model):
             ddate = dt.strftime(operation_date, "%Y-%m-%d %H:%M:%S")
             # ~ tzd = fields.Datetime.context_timestamp(self, ddate)
             # Chequeamos que la retencion este en un periodo valido
-            if not (not p_ret.ex_date_from and not p_ret.ex_date_to) or \
-                    (p_ret.ex_date_from <= operation_date and not p_ret.ex_date_to) or \
-                    (not p_ret.ex_date_from and operation_date <= p_ret.ex_date_to) or \
-                    (p_ret.ex_date_from <= operation_date <= p_ret.ex_date_to):
-                excluded_percent = False
+            if excluded_percent:
+                if p_ret.ex_date_from and p_ret.ex_date_to:
+                    # Exclusion applies if we are into the boundaries
+                    if not (p_ret.ex_date_from <= operation_date <= p_ret.ex_date_to):
+                        excluded_percent = False
+                elif p_ret.ex_date_from:
+                    # Exclusion applies only if we are latter than date_from
+                    if not (p_ret.ex_date_from <= operation_date):
+                        excluded_percent = False
+                elif p_ret.ex_date_to:
+                    # Exclusion applies only if we are before than ex_date_to
+                    if not (operation_date <= p_ret.ex_date_to):
+                        excluded_percent = False
+
 
             retention = {
                 'retention': p_ret.retention_id,
