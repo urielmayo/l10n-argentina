@@ -15,11 +15,11 @@ class res_partner(models.Model):
         # TODO Is this the correct thing to do?
         if padron_tax.multilateral:
             multilateral_record = self.env.ref(
-                'l10n_ar_perceptions.iibb_situation_multilateral')
+                'l10n_ar_point_of_sale.iibb_situation_multilateral')
             sit_iibb = multilateral_record
         else:
             local_record = self.env.ref(
-                'l10n_ar_perceptions.iibb_situation_local')
+                'l10n_ar_point_of_sale.iibb_situation_local')
             sit_iibb = local_record
         return sit_iibb.id
 
