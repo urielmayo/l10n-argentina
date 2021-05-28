@@ -29,6 +29,17 @@ from wsfetools.wsfex_suds import WSFEX as wsfex
 from datetime import datetime
 import time
 
+class NoAttErr(object):
+
+    def __init__(self, voucher_res):
+        self.voucher_res = voucher_res
+
+    def __getattr__(self, item):
+        try:
+            return getattr(self.voucher_res, item)
+        except AttributeError:
+            return False
+
 
 class wsfex_shipping_permission(models.Model):
     _name = "wsfex.shipping.permission"
@@ -560,6 +571,55 @@ class wsfex_config(models.Model):
         self.check_event(res)
         last = res['response']
         return last
+
+    @api.model
+    def get_voucher_info(self, pos, voucher_type, number):
+        conf = self
+
+        token, sign = conf.wsaa_ticket_id.get_token_sign()
+        _wsfex = wsfex(conf.cuit, token, sign, conf.url)
+        res = _wsfex.fe_comp_consultar(pos, voucher_type, number)
+
+        self.check_error(res)
+        self.check_event(res)
+        #last = res['response'].CbteNro
+
+        res = res['response']
+        voucher_res = NoAttErr(res[0])
+        result = {
+            'Id': voucher_res.Id,
+            'Fecha_cbte': voucher_res.Fecha_cbte,
+            'Cbte_tipo': voucher_res.Cbte_tipo,
+            'Punto_vta': voucher_res.Punto_vta,
+            'Cbte_nro': voucher_res.Cbte_nro,
+            'Tipo_expo': voucher_res.Tipo_expo,
+            'Permiso_existente': voucher_res.Permiso_existente,
+            'Permisos': voucher_res.Permisos,
+            'Dst_cmp': voucher_res.Dst_cmp,
+            'Cliente': voucher_res.Cliente,
+            'Cuit_pais_cliente': voucher_res.Cuit_pais_cliente,
+            'Domicilio_cliente': voucher_res.Domicilio_cliente,
+            'Id_impositivo': voucher_res.Id_impositivo,
+            'Moneda_Id': voucher_res.Moneda_Id,
+            'Moneda_ctz': voucher_res.Moneda_ctz,
+            'Obs_comerciales': voucher_res.Obs_comerciales,
+            'Imp_total': voucher_res.Imp_total,
+            'Obs': voucher_res.Obs,
+            'Forma_pago': voucher_res.Forma_pago,
+            'Incoterms': voucher_res.Incoterms,
+            'Incoterms_Ds': voucher_res.Incoterms_Ds,
+            'Idioma_cbte': voucher_res.Idioma_cbte,
+            'Items': voucher_res.Items,
+            'Fecha_cbte_cae': voucher_res.Fecha_cbte_cae,
+            'Fch_venc_Cae': voucher_res.Fch_venc_Cae,
+            'Cae': voucher_res.Cae,
+            'Resultado': voucher_res.Resultado,
+            'Motivos_Obs': voucher_res.Motivos_Obs,
+            'Fecha_pago': voucher_res.Fecha_pago,
+            'Cmps_asoc': voucher_res.Cmps_asoc,
+        }
+
+        return result
 
     def prepare_details(self, invoices):
         company = self.env.user.company_id
