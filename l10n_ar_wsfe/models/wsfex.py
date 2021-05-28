@@ -29,6 +29,7 @@ from openerp import _, api, exceptions, fields, models
 from openerp.osv import osv
 
 from ..wsfetools.wsfex_suds import WSFEX
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
 class wsfex_currency_codes(models.Model):
@@ -491,13 +492,12 @@ class WsfexConfig(models.Model):
             invoice_id = False
         else:
             invoice_id = detail['invoice_id']
-
         vals = {
             'invoice_id': invoice_id,
             'request_id': detail['Id'],
             'voucher_number': '%04d-%08d' % (pos, detail['Cbte_nro']),
             'voucher_type_id': voucher_type_ids[0],
-            'date': detail['Fecha_cbte'],
+            'date': detail['Fecha_cbte'] or datetime.today().strftime(DEFAULT_SERVER_DATE_FORMAT),
             'detail': str(detail),
             'error': 'error' in res and res['error'] or '',
             'event': 'event' in res and res['event'] or '',
@@ -648,8 +648,8 @@ class WsfexConfig(models.Model):
                 Cmps_asoc.append(Cmp_asoc)
 
             cbte_tipo = voucher_type_obj.get_voucher_type(inv)
-            if cbte_tipo in ('20', '21'):
-                formatted_date_invoice = ''
+            #if cbte_tipo in ('20', '21'):
+            #    formatted_date_invoice = ''
 
             Cmp = {
                 'invoice_id': inv.id,
