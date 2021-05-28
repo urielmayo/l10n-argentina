@@ -130,7 +130,7 @@ class WSFEX:
         cls_lastCMP.Sign = self.argauth.Sign
         cls_lastCMP.Cuit = self.argauth.Cuit
         cls_lastCMP.Pto_venta = pto_venta
-        cls_lastCMP.Cbte_Tipo = tipo_cbte
+        cls_lastCMP.Tipo_cbte = tipo_cbte
 
         result = self.client.service.FEXGetLast_CMP(cls_lastCMP)
         logger.debug('Result =>\n %s', result)

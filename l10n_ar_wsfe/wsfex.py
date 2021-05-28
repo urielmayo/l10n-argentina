@@ -459,8 +459,8 @@ class wsfex_config(models.Model):
         _wsfex = wsfex(conf.cuit, token, sign, conf.url)
 
         # Agregamos la info que falta
-        #details['Tipo_cbte'] = voucher_type
-        details['Cbte_Tipo'] = voucher_type
+        details['Tipo_cbte'] = voucher_type
+        #details['Cbte_Tipo'] = voucher_type
         details['Punto_vta'] = pos
         res = _wsfex.FEXAuthorize(details)
 

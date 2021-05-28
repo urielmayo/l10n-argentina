@@ -522,6 +522,26 @@ class wsfe_config(models.Model):
             detalle['Tributos'] = None
             #print 'Detalle de facturacion: ', detalle
 
+            # Associated Comps
+            CbtesAsoc = []
+            voucher_type_obj = self.env['wsfe.voucher_type']
+            for associated_inv in inv.associated_inv_ids:
+                tipo_cbte = voucher_type_obj.get_voucher_type(associated_inv)
+                pos, number = associated_inv.internal_number.split('-')
+                cbte_fch = datetime.strptime(
+                    associated_inv.date_invoice, '%Y-%m-%d').strftime('%Y%m%d')
+                CbteAsoc = {
+                    'Tipo': tipo_cbte,
+                    'PtoVta': int(pos),
+                    'Nro': int(number),
+                    'Cuit': inv.company_id.partner_id.vat,
+                    'CbteFch': cbte_fch,
+                }
+                CbtesAsoc.append(CbteAsoc)
+            if CbtesAsoc:
+            #if CbtesAsoc and inv.fiscal_type_id == wsfcred_type:
+                detalle['CbtesAsoc'] = CbtesAsoc
+
             # Agregamos un hook para agregar tributos o IVA que pueda ser
             # llamado de otros modulos. O mismo para modificar el detalle.
             detalle = invoice_obj.hook_add_taxes(inv, detalle)
