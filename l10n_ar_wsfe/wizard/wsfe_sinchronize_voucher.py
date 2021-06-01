@@ -87,7 +87,7 @@ class wsfe_sinchronize_voucher(models.TransientModel):
             pos_ar = inv.pos_ar_id
             self.pos_id = pos_ar.id
             self.voucher_type = voucher_type.id
-            conf = config_model.get_config(pos_ar)
+            conf = config_model.get_config()
             self.config_id = "%s,%d" % (conf._name, conf.id)
         else:
             self.pos_id = False

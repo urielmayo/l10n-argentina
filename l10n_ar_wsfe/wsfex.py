@@ -196,6 +196,7 @@ class wsfex_config(models.Model):
 
         return super(wsfex_config, self).create(cr, uid, vals, context)
 
+    @api.model
     def get_config(self):
         # Obtenemos la compania que esta utilizando en este momento este usuario
         company_id = self.env.user.company_id.id
@@ -572,7 +573,7 @@ class wsfex_config(models.Model):
         last = res['response']
         return last
 
-    @api.model
+    @api.multi
     def get_voucher_info(self, pos, voucher_type, number):
         conf = self
 
