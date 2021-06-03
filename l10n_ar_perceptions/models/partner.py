@@ -67,7 +67,7 @@ class ResPartner(models.Model):
         # Buscamos las percepciones a aplicar segun la posicion fiscal
         # partner = self.browse(cr, uid, partner_id, context)
         perceptions = {}
-        for perc in self.property_account_position.perception_ids:
+        for perc in self.property_account_position_id.perception_ids:
             perception = {
                 'perception': perc,
                 'activity_id': False,

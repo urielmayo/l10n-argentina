@@ -195,8 +195,7 @@ class PerceptionPerception(models.Model):
 
         # Por cada linea, nos fijamos la configuracion del producto
         perceptions = {}
-
-        for line in invoice.invoice_line:
+        for line in invoice.invoice_line_ids:
             account_id = line.account_id
 
             concepts = self._get_concepts_from_account(account_id)
@@ -212,7 +211,7 @@ class PerceptionPerception(models.Model):
 
             concept_name = ' '.join(map(lambda a: a.name, concepts))
             activity_name = activity and activity.name or ''
-            concept_ids = concepts and map(lambda a: a.id, concepts) or []
+            concept_ids = concepts and list(map(lambda a: a.id, concepts)) or []
 
             # Buscamos las taxapps que concuerden
             tapp_domain = [('perception_id', '=', self.id),
@@ -223,7 +222,6 @@ class PerceptionPerception(models.Model):
             if self.type == 'gross_income':
                 iibb_domain.append(
                     ('sit_iibb', '=', sit_iibb.id if sit_iibb else False))
-
             taxapps = tax_app_obj.search(tapp_domain+iibb_domain)
 
             # Si no se encuentra con la situacion de iibb,
@@ -295,7 +293,7 @@ class PerceptionPerception(models.Model):
 
         # Creamos las lineas de percepcion
         new_perception_lines = self.env['perception.tax.line']
-        for concept_id, vals in perceptions.iteritems():
+        for concept_id, vals in perceptions.items():
             # print concept_id, perception_vals
             # Aplicamos la percepcion por Concepto
             taxapp = vals['tax_app_id']
@@ -313,24 +311,22 @@ class PerceptionPerception(models.Model):
                 'name': self.name,
                 'concept_id': concept_id,
                 'invoice_id': invoice.id,
-                'account_id': self.tax_id.account_collected_id.id,
+                'account_id': self.tax_id.account_id.id,
                 'base': vals['base'],
                 'amount': vals['amount'],
                 'manual': False,  # La creamos por sistema
                 'reg_code': vals['reg_code'],
                 'tax_app_id': taxapp.id,
                 'perception_id': self.id,
-                'base_code_id': self.tax_id.base_code_id.id,
-                'tax_code_id': self.tax_id.tax_code_id.id,
                 'state_id': self.state_id and self.state_id.id or False,
                 'partner_id': invoice.partner_id.id,
             }
-
             # Creamos la perception.tax.line correspondiente
             # Le pasamos manual=False para que se cree la account.invoice.tax
             # con manual=False
             new_perception_lines += self.env['perception.tax.line'].\
-                with_context(manual=False).create(perception_line_vals)
+                    with_context(manual=False).new(perception_line_vals)
+        invoice.perception_ids = new_perception_lines
         return new_perception_lines
 
 

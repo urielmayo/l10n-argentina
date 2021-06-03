@@ -13,6 +13,9 @@
                 <separator string="Applied Perceptions"/>
                 <field name="perception_ids" nolabel="1" colspan="4" context="{'default_partner_id': partner_id}">
                     <tree string="Perception Lines">
+                        <field name="name" />
+                        <field name="account_id" />
+                        <field name="partner_id" invisible="1"/>
                         <field name="date" />
                         <field name="perception_id" string="Perception Type"/>
                         <field name="base" />

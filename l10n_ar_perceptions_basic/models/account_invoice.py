@@ -175,6 +175,7 @@ class AccountInvoice(models.Model):
             'is_exempt': False,
             'account_analytic_id': tax.get('analytic', False),
             'account_id': tax['account_id'],
+            'analytic_tag_ids': False,
         }
         return vals
 
