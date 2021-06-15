@@ -8,7 +8,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Import zip">
-                    <label string="This wizard allows you to upload zip files from ARBA / AGIP Agency and process it" colspan="4"/>
+                    <label for="datas_agip" string="This wizard allows you to upload zip files from ARBA / AGIP Agency and process it" colspan="4"/>
                     <separator string="AGIP Zip File" colspan="4"/>
                     <group>
                         <group>
