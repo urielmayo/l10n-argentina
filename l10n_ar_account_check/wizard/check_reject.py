@@ -202,16 +202,28 @@ class CheckRejectIssuedCheck(models.Model):
 
     def create_rejected_journal_entry(self, check):
         # TODO: Improve Methods
-        move_line_obj = self.env['account.move.line']
         account_obj = self.env['account.account']        
+        move_obj = self.env['account.move']
+        move_line_obj = self.env['account.move.line']
         payment = check.payment_order_id
+        company = self.env.user.company_id
+        check_conf_obj = self.env['account.check.config']
+        def_check_account = check_conf_obj.search([('company_id', '=', company.id)]).deferred_account_id.id
+        ctx = {
+            'date': self.reject_date,
+            'check_move_validity': False,
+        }        
         for payment_line in payment.move_line_ids:
             if payment_line.issued_check_id == check:
-                counterpart_account = account_obj.search([('code', '=', payment_line.counterpart)]).id
+            # Create the account move record.
+                move_recordset = move_obj.with_context(ctx).create(payment.account_move_get())
+            # Get the name of the account_move just created
+                move_id = move_recordset.id
+                counterpart_account = account_obj.search([('code', '=', payment_line.counterpart)]).id                
                 inverse_supplier_line = {
                     'name': '/',
                     'account_id': counterpart_account,
-                    'move_id': payment_line.move_id.id,
+                    'move_id': move_id,
                     'partner_id': payment_line.partner_id.id,
                     'period_id': payment_line.period_id.id,
                     'date': self.reject_date,
@@ -221,14 +233,15 @@ class CheckRejectIssuedCheck(models.Model):
                     'journal_id': payment_line.journal_id.id,
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
+                    'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
                 }
-                move_line_obj.with_context({'check_move_validity': False})\
+                move_line_obj.with_context(ctx)\
                     .create(inverse_supplier_line)
 
                 inverse_check_line = {
                     'name': _('Cheque Rechazado')+': '+(payment_line.name or '/'),
-                    'account_id': payment_line.account_id.id,
-                    'move_id': payment_line.move_id.id,
+                    'account_id': def_check_account,
+                    'move_id': move_id,
                     'partner_id': payment_line.partner_id.id,
                     'period_id': payment_line.period_id.id,
                     'date': self.reject_date,
@@ -238,6 +251,7 @@ class CheckRejectIssuedCheck(models.Model):
                     'journal_id': payment_line.journal_id.id,
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
+                    'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
                 }
-                move_line_obj.with_context({'check_move_validity': False})\
+                move_line_obj.with_context(ctx)\
                     .create(inverse_check_line)
