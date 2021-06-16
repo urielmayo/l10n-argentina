@@ -216,7 +216,12 @@ class CheckRejectIssuedCheck(models.Model):
         for payment_line in payment.move_line_ids:
             if payment_line.issued_check_id == check:
             # Create the account move record.
-                move_recordset = move_obj.with_context(ctx).create(payment.account_move_get())
+                # TODO: change hardcoded journal_id            
+                original_move_data = payment.account_move_get()
+                original_move_data['journal_id'] = 3
+                move_recordset = move_obj.with_context(ctx).create(
+                    original_move_data)
+
             # Get the name of the account_move just created
                 move_id = move_recordset.id
                 counterpart_account = account_obj.search([('code', '=', payment_line.counterpart)]).id                
@@ -230,7 +235,7 @@ class CheckRejectIssuedCheck(models.Model):
                     'credit': payment_line.credit,
                     'debit': 0,
                     'amount_currency': payment_line.amount_currency,
-                    'journal_id': payment_line.journal_id.id,
+                    'journal_id': original_move_data['journal_id'],
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
                     'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
@@ -248,7 +253,7 @@ class CheckRejectIssuedCheck(models.Model):
                     'credit': 0,
                     'debit': payment_line.credit,
                     'amount_currency': payment_line.amount_currency,
-                    'journal_id': payment_line.journal_id.id,
+                    'journal_id': original_move_data['journal_id'],
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
                     'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
