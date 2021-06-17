@@ -211,6 +211,7 @@ class AccountIssuedCheck(models.Model):
 
         for check in self:
             company = self.env.user.company_id
+            company_check_id = check.company_id.id
             check_conf_obj = self.env['account.check.config']
             def_check_account = check_conf_obj.search([
                 ('company_id', '=', company.id)]).deferred_account_id
@@ -224,6 +225,7 @@ class AccountIssuedCheck(models.Model):
 
             period_obj = self.env['date.period']
             current_period = period_obj.search([
+                ('company_id', '=', company_check_id),
                 ('date_from', '<=', current_date),
                 ('date_to', '>=', current_date)])
 
