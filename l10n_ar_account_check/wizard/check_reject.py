@@ -219,6 +219,7 @@ class CheckRejectIssuedCheck(models.Model):
                 # TODO: change hardcoded journal_id            
                 original_move_data = payment.account_move_get()
                 original_move_data['journal_id'] = 3
+                original_move_data['state'] = 'posted'
                 move_recordset = move_obj.with_context(ctx).create(
                     original_move_data)
 
