@@ -182,7 +182,7 @@ class CheckRejectIssuedCheck(models.Model):
     _description = 'Reject Issued Check'
 
     reject_date = fields.Date(string='Reject Date', required=True)
-    generate_rejection_journal_entry = fields.Boolean(string='Generate Rejection Journal Entry')
+    generate_rejection_journal_entry = fields.Boolean(string='Generate Rejection Journal Entry', default=True)
     note = fields.Text(string='Note')
 
     def action_reject(self):
