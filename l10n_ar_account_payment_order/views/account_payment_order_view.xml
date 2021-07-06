@@ -140,11 +140,14 @@
                                         <field name="payment_mode_id" invisible="0"
                                             attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']), ('company_id', '=', parent.company_id)]"/>
                                         <field name="name" invisible="1"/>
-                                        <field name="currency_id" readonly="1"/>
                                         <field name="date"/>
                                         <field name="payment_order_id" invisible="1"/>
                                         <field name="name" invisible="0"/>
+                                        <field name="company_currency" invisible="0" readonly="1"/>
                                         <field name="amount" sum="Total"
+                                            widget="monetary" options="{'currency_field': 'company_currency'}"/>
+                                        <field name="currency_id" groups="base.group_multi_currency"/>
+                                        <field name="amount_currency" sum="Total CCY" groups="base.group_multi_currency"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                     </tree>
                                 </field>
@@ -184,6 +187,7 @@
                                         <field name="date_original" readonly="1" force_save="True"/>
                                         <field name="date_due" readonly="1" force_save="True"/>
                                         <field name="currency_id" invisible="1"/>
+                                        <field name="original_currency_id" invisible="1"/>
                                         <field name="amount_original" readonly="1" force_save="True"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="amount_unreconciled" readonly="1" groups="account.group_account_user"
@@ -191,6 +195,15 @@
                                             sum="Total Unreconciled" force_save="True"/>
                                         <field name="amount" sum="Total Allocation" string="Allocation"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="amount_original_currency" string="Amount Original CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            groups="base.group_multi_currency"/>
+                                        <field name="amount_unreconciled_currency" string="Amount Residual CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            groups="base.group_multi_currency"/>
+                                        <field name="amount_currency" sum="Total Allocation CCY" string="Allocation CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            groups="base.group_multi_currency"/>
                                         <field string="Full" name="reconcile" class="reconcile_bullseye"/>
                                     </tree>
                                 </field>
