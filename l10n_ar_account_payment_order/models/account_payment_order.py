@@ -9,6 +9,9 @@ from odoo import _, api, fields, models
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import RedirectWarning, UserError, ValidationError
 from odoo.tools import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountPaymentOrder(models.Model):
@@ -177,7 +180,8 @@ class AccountPaymentOrder(models.Model):
         string='Multi Currency Voucher',
         help='Fields with internal purpose \
         only that depicts if the voucher is \
-        a multi currency one or not')
+        a multi currency one or not',
+        compute='_is_multicurrency')
     invoice_ids = fields.Many2many(
         comodel_name='account.invoice',
         compute='_get_invoice_ids',
@@ -302,6 +306,11 @@ class AccountPaymentOrder(models.Model):
                     payment.amount,
                     payment.company_id.currency_id)
 
+    @api.depends('currency_id')
+    def _is_multicurrency(self):
+        for p in self:
+            p.is_multi_currency = p.currency_id != p.company_id.currency_id
+
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         if self.journal_id.type in ('sale', 'sale_refund'):
@@ -372,12 +381,18 @@ class AccountPaymentOrder(models.Model):
         move_line_obj = self.env['account.move.line']
         lines_type = 'income'
         account_type = self.type == 'payment' and 'payable' or 'receivable'
+        if self.is_multi_currency:
+            dom_ccy = ('currency_id', '=', self.currency_id.id)
+        else:
+            dom_ccy = ('currency_id', 'in', (self.currency_id.id, False))
         moves = move_line_obj.search([
             ('debit', '!=', 0),
             ('credit', '=', 0),
             ('account_id.internal_type', '=', account_type),
             ('reconciled', '=', False),
-            ('partner_id', '=', self.partner_id.id)])
+            ('partner_id', '=', self.partner_id.id),
+            dom_ccy
+        ])
         lines = self._prepare_income_debt_lines(lines_type, moves)
         return self.update_o2m('income_line_ids', lines)
 
@@ -388,12 +403,18 @@ class AccountPaymentOrder(models.Model):
         move_line_obj = self.env['account.move.line']
         lines_type = 'debt'
         account_type = self.type == 'payment' and 'payable' or 'receivable'
+        if self.is_multi_currency:
+            dom_ccy = ('currency_id', '=', self.currency_id.id)
+        else:
+            dom_ccy = ('currency_id', 'in', (self.currency_id.id, False))
         moves = move_line_obj.search([
             ('debit', '=', 0),
             ('credit', '!=', 0),
             ('account_id.internal_type', '=', account_type),
             ('reconciled', '=', False),
-            ('partner_id', '=', self.partner_id.id)])
+            ('partner_id', '=', self.partner_id.id),
+            dom_ccy
+        ])
         lines = self._prepare_income_debt_lines(lines_type, moves)
         return self.update_o2m('debt_line_ids', lines)
 
@@ -645,7 +666,6 @@ class AccountPaymentOrder(models.Model):
     def _create_move_line_payment(self, move_id, name, journal_id, amount,
                                   company_currency, amount_currency, current_currency, sign):
 
-        import ipdb; ipdb.set_trace()
         amount_in_company_currency = self.\
             _convert_paid_amount_in_company_currency(amount)
         debit = credit = 0.0
@@ -915,7 +935,6 @@ class AccountPaymentOrder(models.Model):
                 'debit': 0.0,
                 'date': self.date
             }
-            import ipdb; ipdb.set_trace()
             if amount < 0:
                 amount = -amount
 
@@ -954,7 +973,7 @@ class AccountPaymentOrder(models.Model):
             #             abs(amount_currency)
             #
             # move_line['amount_currency'] = amount_currency
-            import pprint; pprint.pprint(move_line)
+            print('[AML.create] %s\t%s\t%s\t%s' % (move_line['account_id'], move_line['amount_currency'], move_line['debit'], move_line['credit']))
             payment_line = move_line_obj.create(move_line)
             new_amls = payment_line + line.move_line_id
 
@@ -1068,6 +1087,7 @@ class AccountPaymentOrder(models.Model):
                 line_total = 0.0
                 for vals in move_line_vals:
                     line_total += vals['debit'] - vals['credit']
+                    print('[AML.create] %s\t%s\t%s\t%s\t(payment)' % (vals['account_id'], vals['amount_currency'], vals['debit'], vals['credit']))
                     move_line_obj.with_context(ctx).create(vals)
             else:
                 # Create the first line of the voucher
@@ -1093,6 +1113,7 @@ class AccountPaymentOrder(models.Model):
             ml_writeoff = self.writeoff_move_line_get(
                 line_total, move_id, name, company_currency, current_currency)
             if ml_writeoff:
+                print('[AML.create] %s\t%s\t%s\t%s\t(writeoff)' % (ml_writeoff['account_id'], ml_writeoff['amount_currency'], ml_writeoff['debit'], ml_writeoff['credit']))
                 move_line_obj.with_context(ctx).create(ml_writeoff)
 
             # We post the voucher.
@@ -1227,6 +1248,9 @@ class AccountPaymentOrderLine(models.Model):
                 line.amount = line.amount_unreconciled
 
     def _check_amount_over_original(self):
+        if self.payment_order_id.is_multi_currency:
+            _logger.warning('Voucher is multicurrency: Ignoring _check_amount_over_original')
+            return None
         if not (0 <= self.amount <= self.amount_unreconciled):
             print(self.amount, self.amount_unreconciled)
             raise ValidationError(
@@ -1288,6 +1312,16 @@ class AccountPaymentModeLine(models.Model):
     #     for i in self:
     #         i.currency_id = i.payment_mode_id.currency_id or \
     #             self._get_company_currency()
+
+    @api.onchange('amount')
+    def onchange_amount(self):
+        """
+        If currency of partner is different than company we calculate the amount and suggest it
+        based on the payment line date, although the user can change that amount to solve rounding
+        problems
+        """
+        pass
+
 
     @api.model
     def _get_company_currency(self):
