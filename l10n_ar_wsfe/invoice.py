@@ -342,15 +342,19 @@ class account_invoice(models.Model):
             pos_ar = inv.pos_ar_id
             # Chequeamos si corresponde Factura Electronica
             # Aca nos fijamos si el pos_ar_id tiene factura electronica asignada
-            confs = filter(lambda c: pos_ar in c.point_of_sale_ids, [wsfe_conf, wsfex_conf]) #_get_ws_conf(obj_inv.pos_ar_id)
+            #confs = filter(lambda c: pos_ar in c.point_of_sale_ids, [wsfe_conf, wsfex_conf]) #_get_ws_conf(obj_inv.pos_ar_id)
 
-            if len(confs)>1:
-                raise osv.except_osv(_("WSFE Error"), _("There is more than one configuration with this POS %s") % pos_ar.name)
+            #if len(confs)>1:
+            #    raise osv.except_osv(_("WSFE Error"), _("There is more than one configuration with this POS %s") % pos_ar.name)
 
-            if confs:
-                conf = confs[0]
+            #if confs:
+            #    conf = confs[0]
+            #else:
+            #    raise osv.except_osv(_("WSFE Error"), _("There is no configuration for this POS %s") % pos_ar.name)
+            if inv.local:
+                conf = wsfe_conf
             else:
-                raise osv.except_osv(_("WSFE Error"), _("There is no configuration for this POS %s") % pos_ar.name)
+                conf = wsfex_conf
 
             # Obtenemos el tipo de comprobante
             tipo_cbte = voucher_type_obj.get_voucher_type(inv)

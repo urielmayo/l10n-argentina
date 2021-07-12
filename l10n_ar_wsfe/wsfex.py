@@ -462,7 +462,7 @@ class wsfex_config(models.Model):
         _wsfex = wsfex(conf.cuit, token, sign, conf.url)
 
         # Agregamos la info que falta
-        details['Tipo_cbte'] = voucher_type
+        details['Cbte_Tipo'] = voucher_type
         details['Punto_vta'] = pos
         res = _wsfex.FEXAuthorize(details)
 
@@ -635,11 +635,11 @@ class wsfex_config(models.Model):
             for associated_inv in inv.associated_inv_ids:
                 tipo_cbte = voucher_type_obj.get_voucher_type(associated_inv)
                 pos, number = associated_inv.internal_number.split('-')
-                Cmp_asoc = {
+                Cmp_asoc = {'Cmp_asoc': {
                     'Cbte_tipo': tipo_cbte,
                     'Cbte_punto_vta': int(pos),
                     'Cbte_nro': int(number),
-                }
+                }}
 
                 Cmps_asoc.append(Cmp_asoc)
 
@@ -649,12 +649,17 @@ class wsfex_config(models.Model):
 	    _logger.info('export_type %s, tipo_cbte %s' % (inv.export_type_id.code, tipo_cbte)) 
             if inv.export_type_id.code in [2,4] and tipo_cbte == '19':
 		shipping_perm = '' 
-		fecha_pago = inv.date_due.replace('-','')
+	    fecha_pago = inv.date_due.replace('-','')
+
+            if tipo_cbte in ('20','21'):
+                shipping_perm = ''
+                fecha_pago = ''
 
             Cmp = {
                 'invoice_id' : inv.id,
                 'Id' : Id,
                 #'Tipo_cbte' : cbte_tipo,
+                'Cbte_Tipo': tipo_cbte,
                 'Fecha_cbte' : formatted_date_invoice,
                 #'Punto_vta' : pto_venta,
                 'Cbte_nro' : cbte_nro,
@@ -679,7 +684,7 @@ class wsfex_config(models.Model):
                 Cmp['Incoterms_Ds'] = inv.incoterm_id.name
 
             if Cmps_asoc:
-                Cmp['Cmps_Asoc'] = Cmps_asoc
+                Cmp['Cmps_asoc'] = Cmps_asoc
         return Cmp
 
 wsfex_config()

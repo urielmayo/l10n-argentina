@@ -600,7 +600,8 @@ class wsfe_config(models.Model):
 
                 CbtesAsoc.append(CbteAsoc)
 
-            if CbtesAsoc and inv.fiscal_type_id == wsfcred_type:
+            if CbtesAsoc:
+            #if CbtesAsoc and inv.fiscal_type_id == wsfcred_type:
                 detalle['CbtesAsoc'] = CbtesAsoc
 
             # Agregamos un hook para agregar tributos o IVA que pueda ser

@@ -23,7 +23,7 @@
 ##############################################################################
 
 from suds.client import Client
-from suds import MethodNotFound
+from suds import MethodNotFound, TypeNotFound
 import urllib2
 import logging
 
@@ -124,8 +124,17 @@ class WSFEX:
     # Metodo Recuperador ultimo numero de comprobante autorizado
     def FEXGetLast_CMP(self, pto_venta, tipo_cbte):
 
+        logger.info('PdV => %s', pto_venta)
+        logger.info('Cbte_Tipo => %s', tipo_cbte)
         # Llamamos a la funcion
-        result = self.client.service.FEXGetLast_CMP(self.argauth, pto_venta, tipo_cbte)
+        cls_lastCMP = self.client.factory.create('ClsFEX_LastCMP')
+        cls_lastCMP.Token = self.argauth.Token
+        cls_lastCMP.Sign = self.argauth.Sign
+        cls_lastCMP.Cuit = self.argauth.Cuit
+        cls_lastCMP.Pto_venta = pto_venta
+        cls_lastCMP.Cbte_Tipo = tipo_cbte
+
+        result = self.client.service.FEXGetLast_CMP(cls_lastCMP)
         logger.debug('Result =>\n %s', result)
 
         res = {}
@@ -139,6 +148,7 @@ class WSFEX:
             res['event'] = event
 
         if 'FEXResult_LastCMP' in result:
+            logger.info('WTF => %s', result.FEXResult_LastCMP)
             res['response'] = result.FEXResult_LastCMP.Cbte_nro
 
         return res
@@ -186,6 +196,7 @@ class WSFEX:
         if not self.connected:
             self._create_client()
         
+        logger.info('Cmp => %s', Cmp)
         fexrequest = self.client.factory.create('ns0:ClsFEXRequest')
         for k, v in Cmp.iteritems():
             if k == 'Items':
@@ -206,6 +217,7 @@ class WSFEX:
             fexrequest.Items.Item.append(feitem)
 
         # Llamamos a la funcion
+        logger.info('fexrequest => %s', fexrequest)
         result = self.client.service.FEXAuthorize(self.argauth, fexrequest)
         logger.debug('Result =>\n %s', result)
 
