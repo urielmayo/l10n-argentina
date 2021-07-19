@@ -842,6 +842,7 @@ class AccountPaymentOrder(models.Model):
 
     @api.multi
     def _convert_amount(self, amount):
+        return amount
         return self.currency_id.compute(amount, self.company_id.currency_id)
 
     @api.multi
@@ -915,6 +916,7 @@ class AccountPaymentOrder(models.Model):
         self = self.with_context({'date': date})
         # voucher_currency = self.journal_id.currency_id or self.company_id.currency_id  # noqa
         prec = self.env['decimal.precision'].precision_get('account')
+        __import__('ipdb').set_trace()
         for line in self.line_ids:
             if not line.amount and not \
                     (line.move_line_id and not float_compare(
