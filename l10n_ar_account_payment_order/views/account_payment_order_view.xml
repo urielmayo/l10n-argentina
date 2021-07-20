@@ -68,6 +68,7 @@
                         <button name="cancel_voucher" string="Cancel Receipt" type="object" states="draft,proforma"/>
                         <button name="cancel_voucher" string="Unreconcile" type="object" states="posted" confirm="Are you sure to unreconcile and cancel this record ?"/>
                         <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
+                        <button name="action_clean_lines" string="Limpiar imputaciones" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,posted" type="object" statusbar_colors='{"proforma":"blue"}'/>
                     </header>
                     <sheet>
@@ -91,6 +92,7 @@
                                     widget="monetary" options="{'currency_field': 'currency_id'}"
                                     force_save="True"
                                     attrs="{'readonly': True}"/>
+                                <field name="message" nolabel="1" font-weight="bold" readonly="1" colspan="2" />
                             </group>
                             <group>
                                 <field name="date" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>

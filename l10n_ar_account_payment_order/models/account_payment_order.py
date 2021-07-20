@@ -194,6 +194,23 @@ class AccountPaymentOrder(models.Model):
         string="Period", comodel_name="date.period",
         compute='_compute_period', store=True, required=False)
 
+    message = fields.Char()
+
+    @api.multi
+    def action_clean_lines(self):
+        
+        for rec in self:
+            rec.income_line_ids = [(5, 0, 0)]
+            rec.debt_line_ids = [(5, 0, 0)]
+            rec.message = ''
+
+
+    @api.onchange('journal_id')
+    @api.multi
+    def _onchange_journal_id(self):
+        self.action_clean_lines()
+
+
     @api.depends('date')
     def _compute_period(self):
         for rec in self:
