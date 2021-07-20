@@ -198,7 +198,6 @@ class AccountPaymentOrder(models.Model):
 
     @api.multi
     def action_clean_lines(self):
-        
         for rec in self:
             rec.income_line_ids = [(5, 0, 0)]
             rec.debt_line_ids = [(5, 0, 0)]
@@ -208,6 +207,7 @@ class AccountPaymentOrder(models.Model):
     @api.onchange('journal_id')
     @api.multi
     def _onchange_journal_id(self):
+        self._payment_rate()
         self.action_clean_lines()
 
 

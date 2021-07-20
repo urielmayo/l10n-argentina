@@ -112,9 +112,8 @@
                                             
                                 <group attrs="{'invisible':[('is_multi_currency','=',False)]}">
                                     <field name="is_multi_currency" invisible="1"/>
-                                    <label for="payment_rate" colspan="1"/>
-                                        <field name="payment_rate" required="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
-                                        <field name="payment_rate_currency_id" readonly="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}" groups="base.group_multi_currency"/>
+                                    <field name="payment_rate" required="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
+                                    <field name="payment_rate_currency_id" readonly="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}" groups="base.group_multi_currency"/>
                                     <!-- <field name="currency_help_label" colspan="2" nolabel="1" class="oe_grey"/> -->
                                     <field name="paid_amount_in_company_currency" colspan="4" invisible="1"/>
                                 </group>
@@ -443,7 +442,7 @@
                                 <label for="payment_rate" colspan="1"/>
                                 <div>
                                     <field name="payment_rate" required="1" class="oe_inline"/>
-                                    <field name="payment_rate_currency_id" class="oe_inline" groups="base.group_multi_currency"/>
+                                    <field name="payment_rate_currency_id" readonly="1" class="oe_inline" groups="base.group_multi_currency"/>
                                 </div>
                                 <!-- <field name="currency_help_label" colspan="2" nolabel="1" class="oe_grey"/> -->
                                 <field name="paid_amount_in_company_currency" colspan="2" invisible="1"/>
@@ -468,14 +467,27 @@
                             <page string="Payment Information" name="payment_information">
                                 <label for="payment_mode_line_ids"/>
                                 <field name="payment_mode_line_ids">
-                                    <tree string="Payment Methods" editable="bottom" colors="gray:amount==0">
+                                    <tree string="Payment Methods" editable="bottom" decoration-muted="amount == 0">
                                         <field name="payment_mode_id" invisible="0"
-                                            attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']), ('company_id', '=', parent.company_id)]"/>
-                                        <field name="currency_id" readonly="1"/>
+                                            attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']), 
+                                            ('company_id', '=', parent.company_id),
+                                            '|',('currency_id', '=', False), ('currency_id', '=', parent.currency_id)
+                                            ]"
+                                        />
+                                        <field name="name" invisible="1"/>
                                         <field name="date"/>
                                         <field name="payment_order_id" invisible="1"/>
                                         <field name="name" invisible="0"/>
+                                        <field name="company_currency" invisible="1" readonly="1"/>
                                         <field name="amount" sum="Total"
+                                            widget="monetary" options="{'currency_field': 'company_currency'}"/>
+                                        <field name="currency_id"
+                                            readonly="1"
+                                            groups="base.group_multi_currency" 
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"/>
+
+                                        <field name="amount_currency" sum="Total CCY" groups="base.group_multi_currency"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                     </tree>
                                 </field>
@@ -493,11 +505,11 @@
                                     <tree string="Supplier Invoices and Outstanding transactions" editable="bottom" decoration-muted="amount == 0" decoration-success="amount == amount_unreconciled">
                                         <field name="move_invoice_id" invisible="1"/>
                                         <field name="state" invisible="1"/>
-                                        <field name="invoice_id" force_save="True"
+                                        <field name="invoice_id" force_save="true"
                                             domain="[('state', '=', 'open'),
                                             ('commercial_partner_id', '=', parent.partner_id),
                                             ('id', 'not in', parent.invoice_ids),
-                                            ('type', '=', 'in_invoice')]"
+                                            ('type', '=', 'out_invoice')]"
                                             attrs="{
                                             'required': ['|',
                                             ('move_line_id', '=', False),
@@ -506,23 +518,36 @@
                                             options="{'no_quick_create': True, 'no_create_edit': True}"/>
                                         <field name="ref" readonly="1" force_save="True"/>
                                         <field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}"
-                                            domain="[('account_id.internal_type','=','payable'), ('reconciled','=', False), ('partner_id','=',parent.partner_id)]"
-                                            attrs="{'readonly': True}"
-                                            force_save="True"/>
-                                        <field name="account_id" groups="base.group_no_one"
-                                            domain="[('type','=','payable')]"
-                                            readonly="1" force_save="True"/>
-                                        <field name="date_original" readonly="1"/>
-                                        <field name="date_due" readonly="1"/>
+                                            domain="[('account_id.internal_type','in',('receivable','payable')), ('reconciled','=', False), ('partner_id','=',parent.partner_id)]"
+                                            readonly="True"
+                                            groups="account.group_account_user" force_save="True"/>
+                                        <field name="account_id"
+                                            groups="base.group_no_one"
+                                            domain="[('internal_type','=','receivable')]"
+                                            readonly="True" force_save="True"/>
+                                        <field name="date_original" readonly="1" force_save="True"/>
+                                        <field name="date_due" readonly="1" force_save="True"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <field name="amount_original" readonly="1"
+                                        <field name="original_currency_id" invisible="1"/>
+                                        <field name="amount_original" readonly="1" force_save="True"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="amount_unreconciled" readonly="1"
-                                            groups="account.group_account_user" sum="Total Unreconciled"
+                                        <field name="amount_unreconciled" readonly="1" groups="account.group_account_user"
+                                            widget="monetary" options="{'currency_field': 'currency_id'}"
+                                            sum="Total Unreconciled" force_save="True"/>
+                                        <field name="amount" sum="Total Allocation" string="Allocation"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="reconcile" groups="account.group_account_user" invisible="1"/>
-                                        <field name="amount" sum="Total Allocation"
-                                            widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="amount_original_currency" string="Amount Original CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
+                                            groups="base.group_multi_currency"/>
+                                        <field name="amount_unreconciled_currency" string="Amount Residual CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
+                                            groups="base.group_multi_currency"/>
+                                        <field name="amount_currency" sum="Total Allocation CCY" string="Allocation CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
+                                            groups="base.group_multi_currency"/>
                                         <field string="Full" name="reconcile" class="reconcile_bullseye"/>
                                     </tree>
                                 </field>
@@ -538,36 +563,48 @@
                                     <tree string="Credits" editable="bottom" decoration-muted="amount == 0" decoration-success="amount == amount_unreconciled">
                                         <field name="move_invoice_id" invisible="1"/>
                                         <field name="state" invisible="1"/>
-                                        <field name="invoice_id" force_save="True"
-                                            attr="{'readonly': [('move_line_id', '!=', False)]}"
+                                        <field name="invoice_id" force_save="true"
                                             domain="[('state', '=', 'open'),
                                             ('commercial_partner_id', '=', parent.partner_id),
                                             ('id', 'not in', parent.invoice_ids),
-                                            ('type', '=', 'in_refund')]"
+                                            ('type', '=', 'out_refund')]"
                                             attrs="{
                                             'required': ['|',
                                             ('move_line_id', '=', False),
                                             ('move_invoice_id', '!=', False)],
                                             'readonly': [('move_line_id', '!=', False)]}"
                                             options="{'no_quick_create': True, 'no_create_edit': True}"/>
-                                        <field name="ref" readonly="1" force_save="True"/>
+                                        <field name="ref" attrs="{'readonly': True}" force_save="True"/>
                                         <field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}"
-                                            domain="[('account_id.internal_type','=','payable'), ('reconciled','=', False), ('partner_id','=',parent.partner_id)]"
-                                            readonly="1" force_save="True"/>
-                                        <field name="account_id" groups="base.group_no_one"
-                                            domain="[('type','=','payable')]"
-                                            readonly="1" force_save="True"/>
-                                        <field name="date_original" readonly="1"/>
-                                        <field name="date_due" readonly="1"/>
+                                            domain="[('account_id.internal_type','in',('receivable','payable')), ('reconciled','=', False), ('partner_id','=',parent.partner_id)]"
+                                            attrs="{'readonly': True}" force_save="True"/>
+                                        <field name="account_id"  groups="base.group_no_one"
+                                            domain="[('internal_type','=','receivable')]"
+                                            readonly="1"
+                                            force_save="True"/>
+                                        <field name="date_original" readonly="1" force_save="True"/>
+                                        <field name="date_due" readonly="1" force_save="True"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <field name="amount_original" readonly="1"
+                                        <field name="amount_original" readonly="1" force_save="True"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="amount_unreconciled" readonly="1"
-                                            groups="account.group_account_user" sum="Total Unreconciled"
+                                            sum="Total Unreconciled" force_save="True"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                        <field name="reconcile" groups="account.group_account_user" invisible="1"/>
-                                        <field name="amount" sum="Total Allocation"
+                                        <field name="reconcile" readonly="1" force_save="True" invisible="1"/>
+                                        <field name="amount" sum="Total Allocation" string="Allocation"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="amount_original_currency" string="Amount Original CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
+                                            groups="base.group_multi_currency"/>
+                                        <field name="amount_unreconciled_currency" string="Amount Residual CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
+                                            groups="base.group_multi_currency"/>
+                                        <field name="amount_currency" sum="Total Allocation CCY" string="Allocation CCY"
+                                            widget="monetary" options="{'currency_field': 'original_currency_id'}"
+                                            attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"
+                                            groups="base.group_multi_currency"/>
                                         <field string="Full" name="reconcile" class="reconcile_bullseye"/>
                                     </tree>
                                 </field>
