@@ -150,7 +150,7 @@ class AccountPaymentModeLine(models.Model):
             'state': 'open',
             'currency_id': journal.currency_id.id or payment_order.journal_id.currency_id.id,
         }
-        if journal.currency_id or st_line_data['currency_id']==payment_order.company_currency.id:
+        statement_currency = journal.currency_id or self.env.user.company_id.currency_id
+        if statement_currency.id == st_line_data['currency_id']:
             st_line_data['currency_id'] = False
-        print(st_line_data)
         return st_line_data
