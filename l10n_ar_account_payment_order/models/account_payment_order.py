@@ -210,7 +210,6 @@ class AccountPaymentOrder(models.Model):
         self._payment_rate()
         self.action_clean_lines()
 
-
     @api.depends('date')
     def _compute_period(self):
         for rec in self:
@@ -1203,8 +1202,7 @@ class AccountPaymentOrderLine(models.Model):
     _description = 'voucher lines'
     _order = "move_line_id"
 
-    payment_order_id = fields.Many2one(
-        comodel_name='account.payment.order', string='payment order',
+    payment_order_id = fields.Many2one( comodel_name='account.payment.order', string='payment order',
         ondelete='cascade')
     name = fields.Char(string='description', default='')
     account_id = fields.Many2one(
@@ -1272,6 +1270,15 @@ class AccountPaymentOrderLine(models.Model):
 
         self.amount_currency = amount_computed
 
+    # @api.onchange('amount_currency')
+    # def onchange_amount_currency(self):
+    #     parent = self.payment_order_id
+    #     if self.original_currency_id.id != parent.company_currency.id:
+    #         amount_computed = self.amount * parent.payment_rate
+    #     else:
+    #         amount_computed = 0
+
+    #     self.amount_currency = amount_computed
 
 
     @api.depends('move_line_id')
@@ -1288,11 +1295,11 @@ class AccountPaymentOrderLine(models.Model):
     @api.multi
     def _compute_currency_id(self):
         for line in self:
-            line.original_currency_id = line.move_line_id.currency_id or \
+            line.original_currency_id = line.payment_order_id.currency_id or \
                     line.payment_order_id.company_currency
             if line.payment_order_id:
                 # line.currency_id = line.payment_order_id.currency_id
-                line.currency_id = line.payment_order_id.company_currency
+                line.currency_id = line.payment_order_id.currency_id
 
 
     @api.onchange('reconcile')
@@ -1401,9 +1408,21 @@ class AccountPaymentModeLine(models.Model):
         # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
         parent = self.payment_order_id
 
-        self.currency_id = self.payment_mode_id.currency_id or \
+        self.currency_id = parent.currency_id or \
                 parent.company_currency
 
+
+    # @api.onchange('amount_currency')
+    # def onchange_amount_currency(self):
+
+    #     # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
+    #     parent = self.payment_order_id
+    #     if self.currency_id.id != parent.company_currency.id:
+    #         amount_computed = self.amount * parent.payment_rate
+    #     else:
+    #         amount_computed = self.amount
+
+    #     self.amount = amount_computed
 
 
     @api.model
