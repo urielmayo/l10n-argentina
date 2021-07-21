@@ -114,7 +114,6 @@ class WSFE(AfipWS):
         }
 
         detail.update(iva_values)
-
         if concept in [2, 3]:
             detail.update({
                 'FchServDesde': formatted_date_invoice,
@@ -607,6 +606,7 @@ class WSFE(AfipWS):
             return True
         datetime.strptime(val, AFIP_DATE_FORMAT)
         inv_date = invoice.date_invoice or fields.Date.context_today(invoice)
+        inv_date = inv_date.strftime(AFIP_DATE_FORMAT)
         if val >= inv_date.replace('-', ''):
             return True
         return False
