@@ -89,10 +89,10 @@
                                     attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
                                 <field name="amount" class="oe_inline"
                                     string="Paid Amount"
-                                    widget="monetary" options="{'currency_field': 'currency_id'}"
+                                    widget="monetary" options="{'currency_field': 'company_currency'}"
                                     force_save="True"
                                     attrs="{'readonly': True}"/>
-                                <field name="message" nolabel="1" font-weight="bold" readonly="1" colspan="2" />
+                                <!-- <field name="message" nolabel="1" font&#45;weight="bold" readonly="1" colspan="2" /> -->
                             </group>
                             <group>
                                 <field name="date" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
@@ -110,17 +110,17 @@
                                 <field name="currency_id" attrs="{'readonly': True}" force_save="True"
                                 />
                                             
-                                <group attrs="{'invisible':[('is_multi_currency','=',False)]}">
+                                <div attrs="{'invisible':[('is_multi_currency','=',False)]}">
                                     <field name="is_multi_currency" invisible="1"/>
                                     <field name="payment_rate" required="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
                                     <field name="payment_rate_currency_id" readonly="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}" groups="base.group_multi_currency"/>
                                     <!-- <field name="currency_help_label" colspan="2" nolabel="1" class="oe_grey"/> -->
                                     <field name="paid_amount_in_company_currency" colspan="4" invisible="1"/>
-                                </group>
+                                </div>
                             </group>
                             <group col="2">
                                 <separator string="Payment Options" colspan="2"/>
-                                <field name="writeoff_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="writeoff_amount" widget="monetary" options="{'currency_field': 'company_currency'}"/>
                                 <field name="payment_option"
                                     required="1"
                                     attrs="{'invisible':[('writeoff_amount','=',0)], 'readonly': [('state', 'not in', ('draft'))]}"/>
@@ -154,6 +154,7 @@
                                             widget="monetary" options="{'currency_field': 'company_currency'}"/>
                                         <field name="currency_id"
                                             readonly="1"
+                                            force_save="1"
                                             groups="base.group_multi_currency" 
                                             attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"/>
 
@@ -232,6 +233,7 @@
                                 <field name="debt_line_ids" attrs="{'readonly': [('state', 'not in', ('draft'))]}" context="{'journal_id':journal_id, 'partner_id':partner_id}">
                                     <tree string="Credits" editable="bottom" decoration-muted="amount == 0" decoration-success="amount == amount_unreconciled">
                                         <field name="move_invoice_id" invisible="1"/>
+                                        <field name="original_currency_id" invisible="1"/>
                                         <field name="state" invisible="1"/>
                                         <field name="invoice_id" force_save="true"
                                             domain="[('state', '=', 'open'),
