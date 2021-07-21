@@ -932,7 +932,6 @@ class AccountPaymentOrder(models.Model):
         self = self.with_context({'date': date})
         # voucher_currency = self.journal_id.currency_id or self.company_id.currency_id  # noqa
         prec = self.env['decimal.precision'].precision_get('account')
-        __import__('ipdb').set_trace()
         for line in self.line_ids:
             if not line.amount and not \
                     (line.move_line_id and not float_compare(
@@ -1299,7 +1298,7 @@ class AccountPaymentOrderLine(models.Model):
                     line.payment_order_id.company_currency
             if line.payment_order_id:
                 # line.currency_id = line.payment_order_id.currency_id
-                line.currency_id = line.payment_order_id.currency_id
+                line.currency_id = line.payment_order_id.company_currency
 
 
     @api.onchange('reconcile')
@@ -1349,6 +1348,7 @@ class AccountPaymentModeLine(models.Model):
     _name = 'account.payment.mode.line'
     _description = 'Payment method lines'
 
+
     name = fields.Text(
         help='Payment reference', string='Description')
     payment_order_id = fields.Many2one(
@@ -1363,7 +1363,7 @@ class AccountPaymentModeLine(models.Model):
         digits=(16, 2), required=False,
         help='Payment amount in the partner currency')
     currency_id = fields.Many2one(
-        comodel_name='res.currency', default=lambda s: s._get_company_currency(),
+        comodel_name='res.currency', default=lambda s: s._compute_currency_id(),
         string='Currency')
     company_currency = fields.Many2one(
         comodel_name='res.currency', string='Company Currency',
@@ -1377,17 +1377,11 @@ class AccountPaymentModeLine(models.Model):
     #         i.currency_id = i.payment_mode_id.currency_id or \
     #             self._get_company_currency()
 
-    @api.onchange('amount')
-    def onchange_amount(self):
 
-        # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
-        parent = self.payment_order_id
-        if self.currency_id.id != parent.company_currency.id:
-            amount_computed = self.amount / parent.payment_rate
-        else:
-            amount_computed = self.amount
+    def _compute_currency_id(self):
 
-        self.amount_currency = amount_computed
+            return self.payment_order_id.currency_id
+
 
     @api.onchange('currency_id')
     def onchange_currency_id(self):
@@ -1411,6 +1405,21 @@ class AccountPaymentModeLine(models.Model):
         self.currency_id = parent.currency_id or \
                 parent.company_currency
 
+    @api.onchange('amount')
+    def onchange_amount(self):
+
+        # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
+        parent = self.payment_order_id
+        if self.currency_id.id != parent.company_currency.id:
+            amount_computed = self.amount / parent.payment_rate
+        else:
+            amount_computed = self.amount
+
+        if self.amount_currency == amount_computed:
+            return
+        else:
+            self.amount_currency = amount_computed
+
 
     # @api.onchange('amount_currency')
     # def onchange_amount_currency(self):
@@ -1422,7 +1431,10 @@ class AccountPaymentModeLine(models.Model):
     #     else:
     #         amount_computed = self.amount
 
-    #     self.amount = amount_computed
+    #     if self.amount == amount_computed:
+    #         return
+    #     else:
+    #         self.amount = amount_computed
 
 
     @api.model
