@@ -12,6 +12,26 @@
             <field name="code">Web Service de Factura Electrónica de Exportación</field>
         </record>
 
+        <record id="fiscal_type_normal" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Normal</field>
+            <field name="desc">Factura de mercado interno</field>
+        </record>
+
+        <record id="fiscal_type_export" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Exportación</field>
+            <field name="desc">Factura de exportación</field>
+        </record>
+
+        <record id="fiscal_type_fe" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Factura Electrónica</field>
+            <field name="desc">Comprobante digital equivalente a la factura de papel</field>
+        </record>
+
+        <record id="fiscal_type_fcred" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Factura Electrónica de crédito</field>
+            <field name="desc">Comprobante digital equivalente a la factura de papel</field>
+        </record>
+
         <record id="voucher_invoice_A" model="wsfe.voucher_type">
             <field name="name">Factura A</field>
             <field name="code">1</field>
@@ -109,4 +129,29 @@
         </record>
 
     </data>
+
+    <data noupdate="0">
+
+        <record id="fiscal_type_normal" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Normal</field>
+            <field name="desc">Factura de mercado interno</field>
+        </record>
+
+        <record id="fiscal_type_export" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Exportación</field>
+            <field name="desc">Factura de exportación</field>
+        </record>
+
+        <record id="fiscal_type_fe" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Factura Electrónica</field>
+            <field name="desc">Comprobante digital equivalente a la factura de papel</field>
+        </record>
+
+        <record id="fiscal_type_fcred" model="account.invoice.fiscal.type" forcecreate="0">
+            <field name="name">Factura Electrónica de crédito</field>
+            <field name="desc">Comprobante digital equivalente a la factura de papel</field>
+        </record>
+
+    </data>
+
 </openerp>

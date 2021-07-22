@@ -257,15 +257,39 @@ class AccountInvoice(models.Model):
 
         return super(AccountInvoice, self).action_cancel()
 
+    @api.multi
+    def _get_dup_domain(self):
+        invoice = self
+        denomination_id = invoice.denomination_id
+        pos_ar_id = invoice.pos_ar_id
+        partner_id = invoice.partner_id or False
+        if invoice.type in ('out_invoice', 'out_refund'):
+            domain = [
+                ('denomination_id', '=', denomination_id.id),
+                ('pos_ar_id', '=', pos_ar_id.id),
+                ('is_debit_note', '=', invoice.is_debit_note),
+                ('internal_number', '!=', False),
+                ('internal_number', '!=', ''),
+                ('internal_number', '=', invoice.internal_number),
+                ('type', '=', invoice.type),
+            ]
+        else:
+            domain = [
+                ('denomination_id', '=', denomination_id.id),
+                ('is_debit_note', '=', invoice.is_debit_note),
+                ('partner_id', '=', partner_id.id),
+                ('internal_number', '!=', False),
+                ('internal_number', '!=', ''),
+                ('internal_number', '=', invoice.internal_number),
+                ('type', '=', invoice.type),
+            ]
+        return domain
+
     # DONE
     @api.constrains('denomination_id', 'pos_ar_id', 'type',
                     'is_debit_note', 'internal_number')
     def _check_duplicate(self):
         for invoice in self:
-            denomination_id = invoice.denomination_id
-            pos_ar_id = invoice.pos_ar_id
-            partner_id = invoice.partner_id or False
-
             if invoice.type in ('in_invoice', 'in_refund'):
                 local = invoice.fiscal_position_id.local
 
@@ -280,29 +304,15 @@ class AccountInvoice(models.Model):
                 return
 
             if invoice.type in ('out_invoice', 'out_refund'):
-                count = invoice.search_count([
-                    ('denomination_id', '=', denomination_id.id),
-                    ('pos_ar_id', '=', pos_ar_id.id),
-                    ('is_debit_note', '=', invoice.is_debit_note),
-                    ('internal_number', '!=', False),
-                    ('internal_number', '!=', ''),
-                    ('internal_number', '=', invoice.internal_number),
-                    ('type', '=', invoice.type),
-                ])
+                domain = invoice._get_dup_domain()
+                count = invoice.search_count(domain)
 
                 if count > 1:
                     raise ValidationError(
                         _('Error! The Invoice is duplicated.'))
             else:
-                count = invoice.search_count([
-                    ('denomination_id', '=', denomination_id.id),
-                    ('is_debit_note', '=', invoice.is_debit_note),
-                    ('partner_id', '=', partner_id.id),
-                    ('internal_number', '!=', False),
-                    ('internal_number', '!=', ''),
-                    ('internal_number', '=', invoice.internal_number),
-                    ('type', '=', invoice.type),
-                ])
+                domain = invoice._get_dup_domain()
+                count = invoice.search_count(domain)
 
                 if count > 1:
                     raise ValidationError(

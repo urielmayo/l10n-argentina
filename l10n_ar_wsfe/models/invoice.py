@@ -12,6 +12,22 @@ from odoo.exceptions import UserError, except_orm
 _logger = logging.getLogger(__name__)
 
 
+class AccountInvoiceFiscalType(models.Model):
+    _name = "account.invoice.fiscal.type"
+
+    name = fields.Char(_("Name"))
+    desc = fields.Char(_("Description"))
+
+
+class invoice_wsfe_optional(models.Model):
+    _name = "account.invoice.optional"
+    _description = 'WSFE Invoice Optional'
+
+    invoice_id = fields.Many2one('account.invoice', 'Invoice')
+    optional_id = fields.Many2one('wsfe.optionals', 'Optional')
+    value = fields.Char('Value', size=255)
+
+
 class AccountInvoice(models.Model):
     _name = "account.invoice"
     _inherit = "account.invoice"
@@ -44,7 +60,17 @@ class AccountInvoice(models.Model):
         help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")  # noqa
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')
+    optional_ids = fields.One2many(
+        'account.invoice.optional', 'invoice_id', 'Optionals')
+    fiscal_type_id = fields.Many2one(
+        'account.invoice.fiscal.type', 'Fiscal type')
 
+    @api.multi
+    def _get_dup_domain(self):
+        res = super()._get_dup_domain()
+        if self.type in ('out_invoice', 'out_refund'):
+            res.append(('fiscal_type_id', '=', self.fiscal_type_id.id))
+        return res
 
     @api.multi
     @api.depends('denomination_id', 'type')
@@ -233,6 +259,49 @@ class AccountInvoice(models.Model):
                         "because it has been informed to AFIP.")
                 raise exceptions.ValidationError(err)
         return super(AccountInvoice, self).action_cancel()
+
+    @api.multi
+    def get_next_invoice_number(self):
+        """
+        Funcion para obtener el siguiente numero de comprobante correspondiente en el sistema
+        Pisamos la de l10n_ar_point_of_sale por que no provee hooks para agregar datos en el query
+        """
+        self.ensure_one()
+        invoice = self
+        cr = self.env.cr
+        # Obtenemos el ultimo numero de comprobante para ese pos y ese tipo de comprobante
+        query = """
+        select
+            max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
+        from account_invoice
+        where internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+            and pos_ar_id=%(pos_id)s
+            and state in %(states)s
+            and type=%(inv_type)s
+            and is_debit_note=%(debit_note)s
+            and denomination_id=%(denomination)s
+        """
+        fiscal_type = invoice.fiscal_type_id and '= %s' % invoice.fiscal_type_id.id or 'IS NULL'
+        fiscal_filter = "and fiscal_type_id {fiscal_type}".format(fiscal_type=fiscal_type)
+        query += fiscal_filter
+        params = {
+            'pos_id': invoice.pos_ar_id.id,
+            'states': ('open', 'paid', 'cancel',),
+            'inv_type': invoice.type,
+            'debit_note': invoice.is_debit_note,
+            'denomination': invoice.denomination_id.id,
+        }
+        cr.execute(query, params)
+        last_number = cr.fetchone()
+        self.env.invalidate_all()
+
+        # Si no devuelve resultados, es porque es el primero
+        if not last_number or not last_number[0]:
+            next_number = 1
+        else:
+            next_number = last_number[0] + 1
+
+        return next_number
 
     @api.multi
     def action_number(self):
