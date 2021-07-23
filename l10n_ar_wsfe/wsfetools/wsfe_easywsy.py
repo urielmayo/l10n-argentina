@@ -114,7 +114,8 @@ class WSFE(AfipWS):
         }
 
         detail.update(iva_values)
-        wsfcred_type = self.env.ref('l10n_ar_wsfe.fiscal_type_fcred')
+        env = invoice.env
+        wsfcred_type = env.ref('l10n_ar_wsfe.fiscal_type_fcred')
         is_not_anulation_fcred = invoice.fiscal_type_id == wsfcred_type and invoice.optional_ids.filtered(lambda x: x.optional_id.code == '22' and x.value.strip().lower() == 'n')
         if concept in [2, 3]:
             detail.update({
@@ -127,32 +128,34 @@ class WSFE(AfipWS):
                 detail['FchVtoPago'] = date_due
         #cbtes asoc
 
-        voucher_type_obj = self.env['wsfe.voucher_type']
         # Associated Comps
         CbtesAsoc = []
+        voucher_type_obj = invoice.env['wsfe.voucher_type']
         for associated_inv in invoice.associated_inv_ids:
             tipo_cbte = voucher_type_obj.get_voucher_type(associated_inv)
             pos, number = associated_inv.internal_number.split('-')
-            cbte_fch = datetime.strptime(
-                associated_inv.date_invoice, '%Y-%m-%d').strftime('%Y%m%d')
+            cbte_fch = associated_inv.date_invoice.strftime('%Y%m%d')
             CbteAsoc = {
                 'Tipo': tipo_cbte,
                 'PtoVta': int(pos),
                 'Nro': int(number),
                 'Cuit': invoice.company_id.partner_id.vat,
                 'CbteFch': cbte_fch,
+                'invoice': associated_inv,
+                'Concepto': False
             }
-
             CbtesAsoc.append(CbteAsoc)
-
         if CbtesAsoc:
-            detail['CbtesAsoc'] = CbtesAsoc
+            detail['CbtesAsoc'] = {'CbteAsoc': CbtesAsoc}
 
-        #cbtes asoc
+
+        voucher_type_obj = env['wsfe.voucher_type']
 
         #optionals
-        detail['Opcionales'] = invoice.optional_ids and invoice.optional_ids.mapped(
+        detail['Opcionales'] = {'Opcional':
+                invoice.optional_ids and invoice.optional_ids.mapped(
                 lambda o: {'Id': int(o.optional_id.code), 'Valor': o.value.strip()}) or []
+        }
 
         if not hasattr(self.data, 'sent_invoices'):
             self.data.sent_invoices = {}
@@ -321,7 +324,7 @@ class WSFE(AfipWS):
             if res['Comprobantes'][0]['Observaciones']:
                 msg += '\nObservaciones: ' + '\n'.join(
                     res['Comprobantes'][0]['Observaciones'])
-                msg = msg.encode('latin1').decode('utf8')
+                # msg = msg.encode('latin1').decode('utf8')
 
             if invoice._context.get('raise-exception', True):
                 raise UserError(_('AFIP Web Service Error\n' +
@@ -421,8 +424,9 @@ class WSFE(AfipWS):
                 'result': comp['Resultado'],
                 'currency': comp['MonId'],
                 'currency_rate': comp['MonCotiz'],
-                'observations': '\n'.join(comp['Observaciones']).encode(
-                'latin1').decode('utf8'),
+                # 'observations': '\n'.join(comp['Observaciones']).encode(
+                # 'latin1').decode('utf8'),
+                'observations': '\n'.join(comp['Observaciones']),
             }
 
             req_details.append((0, 0, det))
@@ -641,6 +645,9 @@ class WSFE(AfipWS):
     def validate_service_payment_date(val, invoice, Concepto):
         if Concepto not in [2, 3]:
             return True
+        # No checks if invoice is of mipyme.fcred
+        if invoice.fiscal_type_id == invoice.env.ref('l10n_ar_wsfe.fiscal_type_fcred'):
+            return True
         datetime.strptime(val, AFIP_DATE_FORMAT)
         inv_date = invoice.date_invoice or fields.Date.context_today(invoice)
         inv_date = inv_date.strftime(AFIP_DATE_FORMAT)
@@ -689,3 +696,11 @@ class WSFE(AfipWS):
             if isinstance(val, float):
                 return True
         return False
+
+    @wsapi.check(['Tipo', 'Nro'])
+    def validate_cmps_tipo(val, Tipo):
+        return True
+
+    @wsapi.check(['Valor'])
+    def validate_cmps_valor(val, Valor):
+        return True

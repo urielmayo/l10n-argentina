@@ -51,4 +51,5 @@ access_wsfex_uom_payments,wsfex.uom payments,model_wsfex_uom_codes,account.group
 access_wsfex_uom_manager,wsfex.uom manager,model_wsfex_uom_codes,account.group_account_manager,1,1,1,1
 access_wsfex_voucher_type_codes,wsfex.voucher_types.codes accountant,model_wsfex_voucher_type_codes,account.group_account_user,1,1,1,1
 access_wsfe_optionals,wsfe.optionals accountant,model_wsfe_optionals,account.group_account_user,1,1,1,1
+access_account_invoice_optional,account.invoice.optional accountant,model_account_invoice_optional,account.group_account_user,1,1,1,1
 access_account_invoice_fiscal_type,account.invoice.fiscal.type accountant,model_account_invoice_fiscal_type,account.group_account_user,1,1,1,1

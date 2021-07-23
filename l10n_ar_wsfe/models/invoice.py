@@ -293,7 +293,7 @@ class AccountInvoice(models.Model):
         }
         cr.execute(query, params)
         last_number = cr.fetchone()
-        self.env.invalidate_all()
+        self.env.cache.invalidate()
 
         # Si no devuelve resultados, es porque es el primero
         if not last_number or not last_number[0]:
@@ -467,6 +467,7 @@ class AccountInvoice(models.Model):
             self.env.cr.commit()
         except Exception as e:
             # Simply reraise if the exception is already controlled
+            _logger.exception('WSFE Validation Error')
             if isinstance(e, except_orm):
                 raise
             err = _('WSFE Validation Error\n' +
