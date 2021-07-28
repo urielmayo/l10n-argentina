@@ -412,6 +412,7 @@
                     <sheet>
                         <h1 attrs="{'invisible': [('number','=',False)]}"><field name="number"/></h1>
                         <field name="account_id" invisible="True"/>
+                        <field name="company_currency" invisible="True"/>
                         <field name="pre_line" invisible="1"/>
                         <field name="type" invisible="True"/>
                         <group>
@@ -427,7 +428,7 @@
                                     string="Journal"/>
                                 <field name="amount" class="oe_inline"
                                     string="Paid Amount"
-                                    widget="monetary" options="{'currency_field': 'currency_id'}"
+                                    widget="monetary" options="{'currency_field': 'company_currency'}"
                                     force_save="True"
                                     attrs="{'readonly': True}"/>
                             </group>
@@ -443,7 +444,7 @@
                                 <field name="is_multi_currency" invisible="1"/>
                                 <label for="payment_rate" colspan="1"/>
                                 <div>
-                                    <field name="payment_rate" required="1" class="oe_inline"/>
+                                    <field name="payment_rate" required="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
                                     <field name="payment_rate_currency_id" readonly="1" class="oe_inline" groups="base.group_multi_currency"/>
                                 </div>
                                 <!-- <field name="currency_help_label" colspan="2" nolabel="1" class="oe_grey"/> -->
@@ -451,7 +452,7 @@
                             </group>
                             <group col="2">
                                 <separator string="Payment Options" colspan="2"/>
-                                <field name="writeoff_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="writeoff_amount" widget="monetary" options="{'currency_field': 'company_currency'}"/>
                                 <field name="payment_option"
                                     required="1"
                                     attrs="{'invisible':[('writeoff_amount','=',0)], 'readonly': [('state', 'not in', ('draft'))]}"/>
@@ -485,6 +486,7 @@
                                             widget="monetary" options="{'currency_field': 'company_currency'}"/>
                                         <field name="currency_id"
                                             readonly="1"
+                                            force_save="1"
                                             groups="base.group_multi_currency" 
                                             attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"/>
 
@@ -587,6 +589,7 @@
                                         <field name="date_original" readonly="1" force_save="True"/>
                                         <field name="date_due" readonly="1" force_save="True"/>
                                         <field name="currency_id" invisible="1"/>
+                                        <field name="original_currency_id" invisible="1"/>
                                         <field name="amount_original" readonly="1" force_save="True"
                                             widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                         <field name="amount_unreconciled" readonly="1"
