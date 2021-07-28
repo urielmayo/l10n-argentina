@@ -17,6 +17,8 @@
                     <field name="dst_country_id" attrs="{'invisible': [('local','=', True)], 'required': [('local','=',False)]}"/>
                 </field>
                 <field name="date_due" position="after">
+                    <field name="fiscal_type_id" options="{'no_create': True, 'no_create_edit':True}"/>
+
                     <field name="cae" string="CAE" readonly="1"/>
                     <field name="cae_due_date" readonly="1"/>
                     <field name="incoterm_id" attrs="{'invisible': [('local','=', True)], 'required': [('local','=',False)]}"/>
@@ -41,6 +43,16 @@
                     </group>
                 </page>
                 <page name="other_info" position="before">
+                    <page string="FCRED" attrs="{'invisible': [('local','=', False)]}">
+                        <group string="Optionals">
+                            <field name="optional_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="optional_id" options="{'no_create': True, 'no_create_edit':True, 'no_open':True}"/>
+                                    <field name="value"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
                     <page string="Export Invoice" attrs="{'invisible': [('local','=', True)]}">
                         <group string="Shipping Permissions">
                             <field name="shipping_perm_ids" nolabel="1" widget="one2many_list">

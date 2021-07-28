@@ -11,6 +11,18 @@ from odoo.addons.l10n_ar_wsfe.wsfetools.wsfe_easywsy import WSFE
 from odoo.exceptions import UserError
 
 
+class WsfeOptionals(models.Model):
+    _name = "wsfe.optionals"
+    _description = "WSFE Optionals"
+
+    code = fields.Char('Code', required=False, size=4)
+    name = fields.Char('Desc', required=True, size=64)
+    to_date = fields.Date('Effect Until')
+    from_date = fields.Date('Effective From')
+    from_afip = fields.Boolean('From AFIP')
+    wsfe_config_id = fields.Many2one('wsfe.config', 'WSFE Configuration')
+
+
 class WsfeTaxCodes(models.Model):
     _name = "wsfe.tax.codes"
     _description = "Tax Codes"
@@ -58,6 +70,7 @@ class WsfeConfig(models.Model):
         'Services and Products', default=10)
     products_date_difference = fields.Integer(
         'Products', default=5)
+    optional_ids = fields.One2many('wsfe.optionals', 'wsfe_config_id', 'Optionals', domain=[('from_afip', '=', True)])
 
     _defaults = {
         'company_id': lambda self, cr, uid, context=None:
@@ -272,6 +285,8 @@ class WsfeConfig(models.Model):
             raise UserError(
                 _("Please configure the company VAT before get Taxes!"))
         wsfe_tax_model = self.env['wsfe.tax.codes']
+        wsfe_optionals_obj = self.env['wsfe.optionals']
+
         ws = self.ws_auth()
         data = {
             'FEParamGetTiposIva': {
@@ -305,6 +320,44 @@ class WsfeConfig(models.Model):
             # Si los codigos estan en la db los modifico
             else:
                 tax.write(vals)
+
+        # now optionals
+        ws = self.ws_auth()
+        data = {
+            'FEParamGetTiposOpcional': {
+            }
+        }
+        ws.add(data, no_check="all")
+        response = ws.request('FEParamGetTiposOpcional')
+        err = self.check_errors(response, raise_exception=False)
+        if err:
+            raise UserError(_("Error reading Taxes!\n") + err)
+        for r in response[0][0]:
+            res_c = wsfe_optionals_obj.search([('code', '=', r.Id)])
+
+            #~ Si tengo no los codigos de esos Opcionales en la db, los creo
+            if not len(res_c):
+                fd = datetime.strptime(r.FchDesde, '%Y%m%d')
+                try:
+                    td = datetime.strptime(r.FchHasta, '%Y%m%d')
+                except ValueError:
+                    td = False
+
+                wsfe_optionals_obj.create({
+                    'code': r.Id, 'name': r.Desc, 'to_date': td,
+                    'from_date': fd, 'wsfe_config_id': self.id, 'from_afip': True})
+            #~ Si los codigos estan en la db los modifico
+            else:
+                fd = datetime.strptime(r.FchDesde, '%Y%m%d')
+                #'NULL' ?? viene asi de fe_param_get_tipos_iva():
+                try:
+                    td = datetime.strptime(r.FchHasta, '%Y%m%d')
+                except ValueError:
+                    td = False
+
+                res_c.write({
+                    'code': r.Id, 'name': r.Desc, 'to_date': td,
+                    'from_date': fd, 'wsfe_config_id': self.id, 'from_afip': True})
 
         return True
 
@@ -531,6 +584,7 @@ class WsfeVoucherType(models.Model):
     ], 'Document Type', index=True, required=True, readonly=False)
     denomination_id = fields.Many2one('invoice.denomination',
                                       'Denomination', required=False)
+    fiscal_type_id = fields.Many2one('account.invoice.fiscal.type', 'Fiscal type')
 
     @api.model
     def get_voucher_type(self, voucher):
@@ -544,6 +598,7 @@ class WsfeVoucherType(models.Model):
 
             denomination_id = voucher.denomination_id.id
             type = voucher.type
+            fiscal_type_id = voucher.fiscal_type_id.id
             if type.startswith("in"):
                 type = "out_%s" % type[3:]
             if type == 'out_invoice':
@@ -555,6 +610,9 @@ class WsfeVoucherType(models.Model):
                 ('document_type', '=', type),
                 ('denomination_id', '=', denomination_id)
             ])
+
+            if fiscal_type_id:
+                res = res.filtered(lambda x: x.fiscal_type_id.id == fiscal_type_id)
 
             if not len(res):
                 raise UserError(
