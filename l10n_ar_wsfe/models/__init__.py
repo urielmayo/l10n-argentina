@@ -7,3 +7,4 @@ from . import invoice  # noqa
 from . import wsfe  # noqa
 from . import wsfex  # noqa
 from . import wsfe_request  # noqa
+from . import res_company  # noqa

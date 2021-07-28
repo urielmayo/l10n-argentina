@@ -49,6 +49,7 @@ class WSFE(AfipWS):
             if (first_number and nn == first_number) or len(invoices) == 1:
                 inv_data['first_of_lot'] = True
             details_array.append(inv_data)
+        import pprint; pprint.pprint(data)
         return data
 
     def parse_invoice(self, invoice, number=False, invoices=False):

@@ -245,10 +245,63 @@ class AccountInvoice(models.Model):
         return last_date
 
     @api.multi
+    def action_invoice_open(self):
+        print(self.read(['optional_ids', 'fiscal_type_id']))
+        if self.check_must_be_fce():
+            self.ensure_fce_values()
+        print(self.read(['optional_ids', 'fiscal_type_id']))
+        return super().action_invoice_open()
+
+    @api.multi
     def invoice_validate(self):
         self.action_number()
         self.action_aut_cae()
         return super().invoice_validate()
+
+    @api.multi
+    def check_must_be_fce(self):
+        """
+        If the invoice matches some criteria, the invoice must be of credit -FCE-
+        """
+        if not self.company_id.fcred_is_fce_emitter:
+            return False
+        if self.type not in ('out_invoice', 'out_refund'):
+            return False
+        ABC = self.env['afip.big.company'].sudo()
+        is_bc = ABC.search([('cuit', '=like', self.partner_id.vat)])
+        amount_total = self.amount_total if self.is_multi_currency else self.amount_total_cur
+        fcred_minimum_amount = self.company_id.fcred_minimum_amount
+        if is_bc and amount_total > fcred_minimum_amount:
+            _logger.info('The %s must be of type FCRED' % self)
+            return True
+        return False
+
+    @api.multi
+    def ensure_fce_values(self):
+        """
+        If invoice must be of type FCE, ensure certain values are set.
+        """
+        # Ensure Fiscal Type FCE
+        ft_fcred = self.env.ref('l10n_ar_wsfe.fiscal_type_fcred')
+        if self.fiscal_type_id.id != ft_fcred.id:
+            self.fiscal_type_id = ft_fcred.id
+        # Optionals
+        if not self.optional_ids:
+            WO = self.env['wsfe.optionals']
+            aio_todo = WO.search([('code', 'in', ('2101', '27'))])
+            # 2101: cbu del emisor, 27 sca|adc
+            aios = []
+            for aio in aio_todo:
+                if aio.code == '2101':
+                    value = self.company_id.fcred_cbu_emitter
+                if aio.code == '27':
+                    value = self.company_id.fcred_transfer
+                dd = {
+                    'optional_id': aio.id,
+                    'value': value,
+                }
+                aios.append((0, 0, dd))
+            self.optional_ids = aios
 
     # Heredado para no cancelar si es una factura electronica
     @api.multi
