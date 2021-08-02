@@ -18,6 +18,7 @@ class ResCompany(models.Model):
     fcred_minimum_amount = fields.Float(string='Monto Minimo (FCE)', default=195698)
     fcred_transfer = fields.Char(string='SCA/ADC (FCE)?', default='SCA')
     fcred_is_fce_emitter = fields.Boolean(string='FCE Emitter?', default=False)
+    fcred_pos_ar_id = fields.Many2one('pos.ar', string='FCE Pos')
 
 
 class AfipBigCompany(models.Model):
