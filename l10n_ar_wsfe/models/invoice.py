@@ -302,6 +302,10 @@ class AccountInvoice(models.Model):
                 }
                 aios.append((0, 0, dd))
             self.optional_ids = aios
+        # Point Of Sale
+        pos_ar_id = self.company_id.fcred_pos_ar_id.id
+        if pos_ar_id:
+            self.pos_ar_id = pos_ar_id
 
     # Heredado para no cancelar si es una factura electronica
     @api.multi
