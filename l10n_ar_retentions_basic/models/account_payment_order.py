@@ -25,6 +25,12 @@ class RetentionTaxLine(models.Model):
         string='Payment Order',
         ondelete='cascade',
     )
+
+    currency_id = fields.Many2one(related= 'payment_order_id.currency_id')
+
+    currency_rate = fields.Float(related= 'payment_order_id.payment_rate')
+
+
     voucher_number = fields.Char(
         string='Reference',
         size=64,
@@ -43,6 +49,16 @@ class RetentionTaxLine(models.Model):
     amount = fields.Float(
         digits=dp.get_precision('Account'),
     )
+
+    base_currency = fields.Float(
+        digits=dp.get_precision('Account'),
+        compute='_compute_base_currency',
+    )
+    amount_currency = fields.Float(
+        digits=dp.get_precision('Account'),
+        compute='_compute_amount_currency',
+    )
+
     retention_id = fields.Many2one(
         comodel_name='retention.retention',
         string='Retention Configuration',
@@ -95,6 +111,12 @@ class RetentionTaxLine(models.Model):
                 self.state_id = retention.state_id.id
             else:
                 self.state_id = False
+
+    def _compute_amount_currency(self):
+        self.amount_currency = self.amount / self.currency_rate
+
+    def _compute_base_currency(self):
+        self.base_currency = self.base / self.currency_rate
 
     @api.multi
     def create_voucher_move_line(self):
