@@ -57,6 +57,7 @@
             ref="l10n_ar_account_payment_order.account_payment_order_view_form_vendor"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='journal_items']" position="before">
+                <field name="is_multi_currency" invisible="1"/>
                 <page string="Retentions">
                     <field name="retention_ids" nolabel="1">
                         <tree string="Retention Lines">
@@ -69,9 +70,13 @@
                             <field name="partner_id" invisible="1"/>
                             <field name="certificate_no"/>
                             <field name="base"/>
-                            <field name="base_currency" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="base_currency"
+                                attrs="{'column_invisible': [('parent.is_multi_currency', '=', True)]}"
+                                widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             <field name="amount"/>
-                            <field name="amount_currency" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="amount_currency" 
+                                attrs="{'column_invisible': [('parent.is_multi_currency', '=', True)]}"
+                                widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             <field name="account_id" invisible="1"/>
                         </tree>
                         <form>
