@@ -31,8 +31,8 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        # ~ "wizard/padron_import_view.xml",
-        # ~ "wizard/padron_mass_update_view.xml",
+        "wizard/padron_import_view.xml",
+        "wizard/padron_mass_update_view.xml",
         "views/padron_view.xml",
         "views/perception_view.xml",
         "views/retention_view.xml",

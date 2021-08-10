@@ -120,7 +120,6 @@ class res_partner(models.Model):
                     if not (operation_date <= p_ret.ex_date_to):
                         excluded_percent = False
 
-
             retention = {
                 'retention': p_ret.retention_id,
                 'activity_id': p_ret.activity_id,

@@ -12,6 +12,22 @@ from odoo.exceptions import UserError, except_orm
 _logger = logging.getLogger(__name__)
 
 
+class AccountInvoiceFiscalType(models.Model):
+    _name = "account.invoice.fiscal.type"
+
+    name = fields.Char(_("Name"))
+    desc = fields.Char(_("Description"))
+
+
+class invoice_wsfe_optional(models.Model):
+    _name = "account.invoice.optional"
+    _description = 'WSFE Invoice Optional'
+
+    invoice_id = fields.Many2one('account.invoice', 'Invoice')
+    optional_id = fields.Many2one('wsfe.optionals', 'Optional')
+    value = fields.Char('Value', size=255)
+
+
 class AccountInvoice(models.Model):
     _name = "account.invoice"
     _inherit = "account.invoice"
@@ -44,7 +60,17 @@ class AccountInvoice(models.Model):
         help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")  # noqa
     wsfe_request_ids = fields.One2many('wsfe.request.detail', 'name')
     wsfex_request_ids = fields.One2many('wsfex.request.detail', 'invoice_id')
+    optional_ids = fields.One2many(
+        'account.invoice.optional', 'invoice_id', 'Optionals')
+    fiscal_type_id = fields.Many2one(
+        'account.invoice.fiscal.type', 'Fiscal type')
 
+    @api.multi
+    def _get_dup_domain(self):
+        res = super()._get_dup_domain()
+        if self.type in ('out_invoice', 'out_refund'):
+            res.append(('fiscal_type_id', '=', self.fiscal_type_id.id))
+        return res
 
     @api.multi
     @api.depends('denomination_id', 'type')
@@ -219,10 +245,67 @@ class AccountInvoice(models.Model):
         return last_date
 
     @api.multi
+    def action_invoice_open(self):
+        print(self.read(['optional_ids', 'fiscal_type_id']))
+        if self.check_must_be_fce():
+            self.ensure_fce_values()
+        print(self.read(['optional_ids', 'fiscal_type_id']))
+        return super().action_invoice_open()
+
+    @api.multi
     def invoice_validate(self):
         self.action_number()
         self.action_aut_cae()
         return super().invoice_validate()
+
+    @api.multi
+    def check_must_be_fce(self):
+        """
+        If the invoice matches some criteria, the invoice must be of credit -FCE-
+        """
+        if not self.company_id.fcred_is_fce_emitter:
+            return False
+        if self.type not in ('out_invoice', 'out_refund'):
+            return False
+        ABC = self.env['afip.big.company'].sudo()
+        is_bc = ABC.search([('cuit', '=like', self.partner_id.vat)])
+        amount_total = self.amount_total if self.is_multi_currency else self.amount_total_cur
+        fcred_minimum_amount = self.company_id.fcred_minimum_amount
+        if is_bc and amount_total > fcred_minimum_amount:
+            _logger.info('The %s must be of type FCRED' % self)
+            return True
+        return False
+
+    @api.multi
+    def ensure_fce_values(self):
+        """
+        If invoice must be of type FCE, ensure certain values are set.
+        """
+        # Ensure Fiscal Type FCE
+        ft_fcred = self.env.ref('l10n_ar_wsfe.fiscal_type_fcred')
+        if self.fiscal_type_id.id != ft_fcred.id:
+            self.fiscal_type_id = ft_fcred.id
+        # Optionals
+        if not self.optional_ids:
+            WO = self.env['wsfe.optionals']
+            aio_todo = WO.search([('code', 'in', ('2101', '27'))])
+            # 2101: cbu del emisor, 27 sca|adc
+            aios = []
+            for aio in aio_todo:
+                if aio.code == '2101':
+                    value = self.company_id.fcred_cbu_emitter
+                if aio.code == '27':
+                    value = self.company_id.fcred_transfer
+                dd = {
+                    'optional_id': aio.id,
+                    'value': value,
+                }
+                aios.append((0, 0, dd))
+            self.optional_ids = aios
+        # Point Of Sale
+        pos_ar_id = self.company_id.fcred_pos_ar_id.id
+        if pos_ar_id:
+            self.pos_ar_id = pos_ar_id
 
     # Heredado para no cancelar si es una factura electronica
     @api.multi
@@ -233,6 +316,49 @@ class AccountInvoice(models.Model):
                         "because it has been informed to AFIP.")
                 raise exceptions.ValidationError(err)
         return super(AccountInvoice, self).action_cancel()
+
+    @api.multi
+    def get_next_invoice_number(self):
+        """
+        Funcion para obtener el siguiente numero de comprobante correspondiente en el sistema
+        Pisamos la de l10n_ar_point_of_sale por que no provee hooks para agregar datos en el query
+        """
+        self.ensure_one()
+        invoice = self
+        cr = self.env.cr
+        # Obtenemos el ultimo numero de comprobante para ese pos y ese tipo de comprobante
+        query = """
+        select
+            max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
+        from account_invoice
+        where internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+            and pos_ar_id=%(pos_id)s
+            and state in %(states)s
+            and type=%(inv_type)s
+            and is_debit_note=%(debit_note)s
+            and denomination_id=%(denomination)s
+        """
+        fiscal_type = invoice.fiscal_type_id and '= %s' % invoice.fiscal_type_id.id or 'IS NULL'
+        fiscal_filter = "and fiscal_type_id {fiscal_type}".format(fiscal_type=fiscal_type)
+        query += fiscal_filter
+        params = {
+            'pos_id': invoice.pos_ar_id.id,
+            'states': ('open', 'paid', 'cancel',),
+            'inv_type': invoice.type,
+            'debit_note': invoice.is_debit_note,
+            'denomination': invoice.denomination_id.id,
+        }
+        cr.execute(query, params)
+        last_number = cr.fetchone()
+        self.env.cache.invalidate()
+
+        # Si no devuelve resultados, es porque es el primero
+        if not last_number or not last_number[0]:
+            next_number = 1
+        else:
+            next_number = last_number[0] + 1
+
+        return next_number
 
     @api.multi
     def action_number(self):
@@ -398,6 +524,7 @@ class AccountInvoice(models.Model):
             self.env.cr.commit()
         except Exception as e:
             # Simply reraise if the exception is already controlled
+            _logger.exception('WSFE Validation Error')
             if isinstance(e, except_orm):
                 raise
             err = _('WSFE Validation Error\n' +

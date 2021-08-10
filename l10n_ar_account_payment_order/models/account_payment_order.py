@@ -9,6 +9,9 @@ from odoo import _, api, fields, models
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import RedirectWarning, UserError, ValidationError
 from odoo.tools import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountPaymentOrder(models.Model):
@@ -115,6 +118,9 @@ class AccountPaymentOrder(models.Model):
         comodel_name='res.company', string='Company',
         default=lambda s: s._get_default_company(),
         required=True, readonly=True)
+    company_currency = fields.Many2one(related='company_id.currency_id',
+                                        string='Moneda principal')
+
     pre_line = fields.Boolean(string='Previous Payments ?')
     payment_mode_line_ids = fields.One2many(
         comodel_name='account.payment.mode.line',
@@ -177,7 +183,8 @@ class AccountPaymentOrder(models.Model):
         string='Multi Currency Voucher',
         help='Fields with internal purpose \
         only that depicts if the voucher is \
-        a multi currency one or not')
+        a multi currency one or not',
+        compute='_is_multicurrency')
     invoice_ids = fields.Many2many(
         comodel_name='account.invoice',
         compute='_get_invoice_ids',
@@ -187,6 +194,22 @@ class AccountPaymentOrder(models.Model):
         string="Period", comodel_name="date.period",
         compute='_compute_period', store=True, required=False)
 
+    message = fields.Char()
+
+    @api.multi
+    def action_clean_lines(self):
+        for rec in self:
+            rec.income_line_ids = [(5, 0, 0)]
+            rec.debt_line_ids = [(5, 0, 0)]
+            rec.message = ''
+
+
+    @api.onchange('journal_id')
+    @api.multi
+    def _onchange_journal_id(self):
+        self._payment_rate()
+        self.action_clean_lines()
+
     @api.depends('date')
     def _compute_period(self):
         for rec in self:
@@ -195,6 +218,17 @@ class AccountPaymentOrder(models.Model):
             period_obj = rec.env['date.period']
             period = period_obj._get_period(rec.date)
             rec.period_id = period.id
+
+
+    @api.onchange('date')
+    def _payment_rate(self):
+
+        rate = self.currency_id._get_rates(self.company_id, self.date)[self.currency_id.id]
+        
+        if self.currency_id.preciated:
+            rate = 1 / rate
+
+        self.payment_rate = rate
 
     @api.depends('income_line_ids.invoice_id', 'debt_line_ids.invoice_id')
     def _get_invoice_ids(self):
@@ -295,12 +329,20 @@ class AccountPaymentOrder(models.Model):
 
     @api.depends('amount')
     def _paid_amount_in_company_currency(self):
+        """Returns the same amount"""
         for p in self:
-            payment = self.with_context({'date': p.date})
-            self.paid_amount_in_company_currency = \
-                payment.currency_id.compute(
-                    payment.amount,
-                    payment.company_id.currency_id)
+            p.paid_amount_in_company_currency = p.amount
+#        for p in self:
+#            payment = self.with_context({'date': p.date})
+#            self.paid_amount_in_company_currency = \
+#                payment.currency_id.compute(
+#                    payment.amount,
+#                    payment.company_id.currency_id)
+
+    @api.depends('currency_id')
+    def _is_multicurrency(self):
+        for p in self:
+            p.is_multi_currency = p.currency_id != p.company_id.currency_id
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -372,12 +414,18 @@ class AccountPaymentOrder(models.Model):
         move_line_obj = self.env['account.move.line']
         lines_type = 'income'
         account_type = self.type == 'payment' and 'payable' or 'receivable'
+        if self.is_multi_currency:
+            dom_ccy = ('currency_id', '=', self.currency_id.id)
+        else:
+            dom_ccy = ('currency_id', 'in', (self.currency_id.id, False))
         moves = move_line_obj.search([
             ('debit', '!=', 0),
             ('credit', '=', 0),
             ('account_id.internal_type', '=', account_type),
             ('reconciled', '=', False),
-            ('partner_id', '=', self.partner_id.id)])
+            ('partner_id', '=', self.partner_id.id),
+            dom_ccy
+        ])
         lines = self._prepare_income_debt_lines(lines_type, moves)
         return self.update_o2m('income_line_ids', lines)
 
@@ -388,12 +436,18 @@ class AccountPaymentOrder(models.Model):
         move_line_obj = self.env['account.move.line']
         lines_type = 'debt'
         account_type = self.type == 'payment' and 'payable' or 'receivable'
+        if self.is_multi_currency:
+            dom_ccy = ('currency_id', '=', self.currency_id.id)
+        else:
+            dom_ccy = ('currency_id', 'in', (self.currency_id.id, False))
         moves = move_line_obj.search([
             ('debit', '=', 0),
             ('credit', '!=', 0),
             ('account_id.internal_type', '=', account_type),
             ('reconciled', '=', False),
-            ('partner_id', '=', self.partner_id.id)])
+            ('partner_id', '=', self.partner_id.id),
+            dom_ccy
+        ])
         lines = self._prepare_income_debt_lines(lines_type, moves)
         return self.update_o2m('debt_line_ids', lines)
 
@@ -635,6 +689,8 @@ class AccountPaymentOrder(models.Model):
 
     @api.model
     def _convert_paid_amount_in_company_currency(self, amount):
+        """ Return actual amount, the user defines the rate of conversion and its result"""
+        return amount
         res = {}
         currency = self.currency_id.with_context({'date': self.date})
         company_currency = self.company_id.currency_id
@@ -643,7 +699,7 @@ class AccountPaymentOrder(models.Model):
 
     @api.multi
     def _create_move_line_payment(self, move_id, name, journal_id, amount,
-                                  company_currency, current_currency, sign):
+                                  company_currency, amount_currency, current_currency, sign):
 
         amount_in_company_currency = self.\
             _convert_paid_amount_in_company_currency(amount)
@@ -671,7 +727,7 @@ class AccountPaymentOrder(models.Model):
             'currency_id': company_currency != current_currency and
             current_currency.id or False,
             'amount_currency': company_currency != current_currency and
-            sign * amount or 0.0,
+            sign * amount_currency or 0.0,
             'date': self.date,
             'date_maturity': self.date_due
         }
@@ -680,6 +736,7 @@ class AccountPaymentOrder(models.Model):
 
     @api.multi
     def create_move_lines(self, move_id, company_currency, current_currency):
+        print('%s.create_move_lines()' % self)
         total_debit = total_credit = 0.0
         # TODO: is there any other alternative then the voucher type ??
         # ANSWER: We can have payment and receipt "In Advance".
@@ -705,8 +762,8 @@ class AccountPaymentOrder(models.Model):
 
             move_line = self._create_move_line_payment(
                 move_id, pml.name, pml.payment_mode_id,
-                pml.amount, company_currency,
-                current_currency, sign)
+                pml.amount, company_currency, pml.amount_currency,
+                pml.currency_id, sign)
 
             move_lines.append(move_line)
 
@@ -796,10 +853,12 @@ class AccountPaymentOrder(models.Model):
                 'date': self.date,
                 'date_maturity': self.date_due
             }
+        print(move_line)
         return move_line
 
     @api.multi
     def _convert_amount(self, amount):
+        return amount
         return self.currency_id.compute(amount, self.company_id.currency_id)
 
     @api.multi
@@ -903,14 +962,17 @@ class AccountPaymentOrder(models.Model):
                 'account_id': line.account_id.id,
                 'move_id': move_id,
                 'partner_id': self.partner_id.id,
-                'currency_id': self.currency_id != company_currency and
-                self.currency_id.id or False,
+                'currency_id': line.original_currency_id != company_currency and
+                line.original_currency_id.id or False,
+                'amount_currency': line.amount_currency and
+                line.amount_currency * sign * -1 or 0,
                 'analytic_account_id': move_line_analytic_account_id,
                 'quantity': 1,
                 'credit': 0.0,
                 'debit': 0.0,
                 'date': self.date
             }
+            print(move_line)
             if amount < 0:
                 amount = -amount
 
@@ -926,63 +988,66 @@ class AccountPaymentOrder(models.Model):
                     'account_tax_id': self.tax_id.id,
                 })
 
-            # compute the amount in foreign currency
-            foreign_currency_diff = 0.0
-            amount_currency = False
-            if line.move_line_id:
-                # We want to set it on the account move line as soon as the original line had a foreign currency  # noqa
-                if line.move_line_id.currency_id and \
-                        line.move_line_id.currency_id != company_currency:
-                    # we compute the amount in that foreign currency.
-                    if line.move_line_id.currency_id == current_currency:
-                        sign = (move_line['debit'] -
-                                move_line['credit']) < 0 and -1 or 1
-                        amount_currency = sign * (line.amount)
-                    else:
-                        amount_currency = line.move_line_id.currency_id.\
-                            compute(move_line['debit']-move_line['credit'],
-                                    company_currency)
-                if line.amount == line.amount_unreconciled:
-                    foreign_currency_diff = \
-                        line.move_line_id.amount_residual_currency - \
-                        abs(amount_currency)
-
-            move_line['amount_currency'] = amount_currency
+                # LET odoo handle the exchange rate entry
+            # # compute the amount in foreign currency
+            # foreign_currency_diff = 0.0
+            # amount_currency = False
+            # if line.move_line_id:
+            #     # We want to set it on the account move line as soon as the original line had a foreign currency  # noqa
+            #     if line.move_line_id.currency_id and \
+            #             line.move_line_id.currency_id != company_currency:
+            #         # we compute the amount in that foreign currency.
+            #         if line.move_line_id.currency_id == current_currency:
+            #             sign = (move_line['debit'] -
+            #                     move_line['credit']) < 0 and -1 or 1
+            #             amount_currency = sign * (line.amount)
+            #         else:
+            #             amount_currency = line.move_line_id.currency_id.\
+            #                 compute(move_line['debit']-move_line['credit'],
+            #                         company_currency)
+            #     if line.amount == line.amount_unreconciled:
+            #         foreign_currency_diff = \
+            #             line.move_line_id.amount_residual_currency - \
+            #             abs(amount_currency)
+            #
+            # move_line['amount_currency'] = amount_currency
+            print('[AML.create] %s\t%s\t%s\t%s' % (move_line['account_id'], move_line['amount_currency'], move_line['debit'], move_line['credit']))
             payment_line = move_line_obj.create(move_line)
             new_amls = payment_line + line.move_line_id
 
-            if not self.company_id.currency_id.is_zero(
-                    currency_rate_difference):
-                # Change difference entry in company currency
-                exch_lines = self._get_exchange_lines(
-                    line, move_id, currency_rate_difference,
-                    company_currency, current_currency)
-                new_aml = move_line_obj.create(exch_lines[0])
-                move_line_obj.create(exch_lines[1])
-                new_amls += new_aml
+            # if not self.company_id.currency_id.is_zero(
+            #         currency_rate_difference):
+            #     # Change difference entry in company currency
+            #     exch_lines = self._get_exchange_lines(
+            #         line, move_id, currency_rate_difference,
+            #         company_currency, current_currency)
+            #     new_aml = move_line_obj.create(exch_lines[0])
+            #     move_line_obj.create(exch_lines[1])
+            #     new_amls += new_aml
 
-            if line.move_line_id and line.move_line_id.currency_id and \
-                    not line.move_line_id.currency_id.is_zero(
-                        foreign_currency_diff):
-                # Change difference entry in voucher currency
-                move_line_foreign_currency = {
-                    'journal_id': line.payment_order_id.journal_id.id,
-                    'name': _('change')+': '+(line.name or '/'),
-                    'account_id': line.account_id.id,
-                    'move_id': move_id,
-                    'partner_id': line.payment_order_id.partner_id.id,
-                    'currency_id': line.move_line_id.currency_id.id,
-                    'amount_currency': (-1 if line.type == 'cr' else 1) *
-                    foreign_currency_diff,
-                    'quantity': 1,
-                    'credit': 0.0,
-                    'debit': 0.0,
-                    'date': line.payment_order_id.date,
-                }
-                new_aml = move_line_obj.create(move_line_foreign_currency)
-                new_amls += new_aml
+            # if line.move_line_id and line.move_line_id.currency_id and \
+            #         not line.move_line_id.currency_id.is_zero(
+            #             foreign_currency_diff):
+            #     # Change difference entry in voucher currency
+            #     move_line_foreign_currency = {
+            #         'journal_id': line.payment_order_id.journal_id.id,
+            #         'name': _('change')+': '+(line.name or '/'),
+            #         'account_id': line.account_id.id,
+            #         'move_id': move_id,
+            #         'partner_id': line.payment_order_id.partner_id.id,
+            #         'currency_id': line.move_line_id.currency_id.id,
+            #         'amount_currency': (-1 if line.type == 'cr' else 1) *
+            #         foreign_currency_diff,
+            #         'quantity': 1,
+            #         'credit': 0.0,
+            #         'debit': 0.0,
+            #         'date': line.payment_order_id.date,
+            #     }
+            #     new_aml = move_line_obj.create(move_line_foreign_currency)
+            #     new_amls += new_aml
             if line.move_line_id.id:
                 rec_lst_ids.append(new_amls)
+        print(tot_line, rec_lst_ids)
         return (tot_line, rec_lst_ids)
 
     @api.multi
@@ -1025,7 +1090,7 @@ class AccountPaymentOrder(models.Model):
                 'analytic_account_id': self.analytic_id and
                 self.analytic_id.id or False,
             }
-
+        print(move_line)
         return move_line
 
     @api.multi
@@ -1060,6 +1125,7 @@ class AccountPaymentOrder(models.Model):
                 line_total = 0.0
                 for vals in move_line_vals:
                     line_total += vals['debit'] - vals['credit']
+                    print('[AML.create] %s\t%s\t%s\t%s\t(payment)' % (vals['account_id'], vals['amount_currency'], vals['debit'], vals['credit']))
                     move_line_obj.with_context(ctx).create(vals)
             else:
                 # Create the first line of the voucher
@@ -1085,6 +1151,7 @@ class AccountPaymentOrder(models.Model):
             ml_writeoff = self.writeoff_move_line_get(
                 line_total, move_id, name, company_currency, current_currency)
             if ml_writeoff:
+                print('[AML.create] %s\t%s\t%s\t%s\t(writeoff)' % (ml_writeoff['account_id'], ml_writeoff['amount_currency'], ml_writeoff['debit'], ml_writeoff['credit']))
                 move_line_obj.with_context(ctx).create(ml_writeoff)
 
             # We post the voucher.
@@ -1096,6 +1163,7 @@ class AccountPaymentOrder(models.Model):
 
             move_recordset.post()
             # We automatically reconcile the account move lines.
+            print('APO-> calling %s.reconcile()' % rec_list_ids)
             for move_lines in rec_list_ids:
                 if len(move_lines) >= 2:
                     move_lines.reconcile(
@@ -1130,25 +1198,24 @@ class AccountPaymentOrder(models.Model):
 
 class AccountPaymentOrderLine(models.Model):
     _name = 'account.payment.order.line'
-    _description = 'Voucher Lines'
+    _description = 'voucher lines'
     _order = "move_line_id"
 
-    payment_order_id = fields.Many2one(
-        comodel_name='account.payment.order', string='Payment Order',
+    payment_order_id = fields.Many2one( comodel_name='account.payment.order', string='payment order',
         ondelete='cascade')
-    name = fields.Char(string='Description', default='')
+    name = fields.Char(string='description', default='')
     account_id = fields.Many2one(
-        comodel_name='account.account', string='Account')
+        comodel_name='account.account', string='account')
     partner_id = fields.Many2one(
-        comodel_name='res.partner', string='Partner',
+        comodel_name='res.partner', string='partner',
         related='payment_order_id.partner_id')
-    untax_amount = fields.Float(string='Untax Amount')
-    amount = fields.Float(string='Amount', digits=dp.get_precision('Account'))
-    reconcile = fields.Boolean(string='Full Reconcile')
+    untax_amount = fields.Float(string='untax amount')
+    amount = fields.Float(string='amount', digits=dp.get_precision('account'))
+    reconcile = fields.Boolean(string='full reconcile')
     type = fields.Selection(
-        string='Dr/Cr', selection=[
-            ('debt', 'Debt'),
-            ('income', 'Income')])
+        string='dr/cr', selection=[
+            ('debt', 'debt'),
+            ('income', 'income')])
     move_line_id = fields.Many2one(
         comodel_name='account.move.line',
         string='Journal Item', copy=False)
@@ -1165,10 +1232,21 @@ class AccountPaymentOrderLine(models.Model):
     amount_unreconciled = fields.Float(
         string='Open Balance', digits=dp.get_precision('Account'),
         compute='_compute_balance', store=True)
+    amount_currency = fields.Float(
+        string='Amount CCY', digits=dp.get_precision('Account'))
+    amount_original_currency = fields.Float(
+        string='Original Amount CCY', digits=dp.get_precision('Account'),
+        compute='_compute_balance', store=True)
+    amount_unreconciled_currency = fields.Float(
+        string='Open Balance CCY', digits=dp.get_precision('Account'),
+        compute='_compute_balance', store=True)
     company_id = fields.Many2one(
         comodel_name='res.company', string='Company',
         related='payment_order_id.company_id', store=True, readonly=True)
     currency_id = fields.Many2one(
+        comodel_name='res.currency', string='Currency',
+        compute='_compute_currency_id', readonly=True)
+    original_currency_id = fields.Many2one(
         comodel_name='res.currency', string='Currency',
         compute='_compute_currency_id', readonly=True)
     invoice_id = fields.Many2one(
@@ -1180,6 +1258,28 @@ class AccountPaymentOrderLine(models.Model):
     state = fields.Selection(
         string='State', related='payment_order_id.state', readonly=True)
 
+
+    @api.onchange('amount')
+    def onchange_amount(self):
+        parent = self.payment_order_id
+        if self.original_currency_id.id != parent.company_currency.id:
+            amount_computed = self.amount / parent.payment_rate
+        else:
+            amount_computed = 0
+
+        self.amount_currency = amount_computed
+
+    # @api.onchange('amount_currency')
+    # def onchange_amount_currency(self):
+    #     parent = self.payment_order_id
+    #     if self.original_currency_id.id != parent.company_currency.id:
+    #         amount_computed = self.amount * parent.payment_rate
+    #     else:
+    #         amount_computed = 0
+
+    #     self.amount_currency = amount_computed
+
+
     @api.depends('move_line_id')
     def _compute_balance(self):
         for line in self:
@@ -1187,12 +1287,19 @@ class AccountPaymentOrderLine(models.Model):
             line.amount_original = move_line.debit or move_line.credit or 0.0
             sign = line.type == 'debt' and -1 or 1
             line.amount_unreconciled = sign * move_line.amount_residual or 0.0
+            # Usability Multicurrency fields
+            line.amount_original_currency = move_line.amount_currency
+            line.amount_unreconciled_currency = sign * move_line.amount_residual_currency
 
     @api.multi
     def _compute_currency_id(self):
         for line in self:
+            line.original_currency_id = line.payment_order_id.currency_id or \
+                    line.payment_order_id.company_currency
             if line.payment_order_id:
-                line.currency_id = line.payment_order_id.currency_id
+                # line.currency_id = line.payment_order_id.currency_id
+                line.currency_id = line.payment_order_id.company_currency
+
 
     @api.onchange('reconcile')
     def amount_full_conciliation(self):
@@ -1203,6 +1310,9 @@ class AccountPaymentOrderLine(models.Model):
                 line.amount = line.amount_unreconciled
 
     def _check_amount_over_original(self):
+        if self.payment_order_id.is_multi_currency:
+            _logger.warning('Voucher is multicurrency: Ignoring _check_amount_over_original')
+            return None
         if not (0 <= self.amount <= self.amount_unreconciled):
             print(self.amount, self.amount_unreconciled)
             raise ValidationError(
@@ -1214,9 +1324,10 @@ class AccountPaymentOrderLine(models.Model):
         for order_line in self:
             order_line._check_amount_over_original()
 
-    @api.onchange('amount')
-    def onchange_amount(self):
-        self._check_amount_over_original()
+    # @api.onchange('amount')
+    # def onchange_amount(self):
+    #     self._check_amount_over_original()
+
 
     @api.multi
     def _compute_writeoff_amount(
@@ -1237,6 +1348,7 @@ class AccountPaymentModeLine(models.Model):
     _name = 'account.payment.mode.line'
     _description = 'Payment method lines'
 
+
     name = fields.Text(
         help='Payment reference', string='Description')
     payment_order_id = fields.Many2one(
@@ -1251,7 +1363,7 @@ class AccountPaymentModeLine(models.Model):
         digits=(16, 2), required=False,
         help='Payment amount in the partner currency')
     currency_id = fields.Many2one(
-        comodel_name='res.currency', compute='_compute_currency',
+        comodel_name='res.currency', default=lambda s: s._compute_currency_id(),
         string='Currency')
     company_currency = fields.Many2one(
         comodel_name='res.currency', string='Company Currency',
@@ -1259,11 +1371,71 @@ class AccountPaymentModeLine(models.Model):
     date = fields.Date(
         string='Payment Date', help="This date is informative only.")
 
-    @api.depends('payment_mode_id')
-    def _compute_currency(self):
-        for i in self:
-            i.currency_id = i.payment_mode_id.currency_id or \
-                self._get_company_currency()
+    # @api.depends('payment_mode_id')
+    # def _compute_currency(self):
+    #     for i in self:
+    #         i.currency_id = i.payment_mode_id.currency_id or \
+    #             self._get_company_currency()
+
+
+    def _compute_currency_id(self):
+
+            return self.payment_order_id.currency_id
+
+
+    @api.onchange('currency_id')
+    def onchange_currency_id(self):
+
+        # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
+        parent = self.payment_order_id
+
+        if self.currency_id.id != parent.company_currency.id:
+            amount_computed = self.amount / parent.payment_rate
+        else:
+            amount_computed = self.amount
+
+        self.amount_currency = amount_computed
+
+    @api.onchange('payment_mode_id')
+    def onchange_payment_mode_id(self):
+
+        # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
+        parent = self.payment_order_id
+
+        self.currency_id = parent.currency_id or \
+                parent.company_currency
+
+    @api.onchange('amount')
+    def onchange_amount(self):
+
+        # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
+        parent = self.payment_order_id
+        if self.currency_id.id != parent.company_currency.id:
+            amount_computed = self.amount / parent.payment_rate
+        else:
+            amount_computed = self.amount
+
+        if self.amount_currency == amount_computed:
+            return
+        else:
+            self.amount_currency = amount_computed
+
+
+    # @api.onchange('amount_currency')
+    # def onchange_amount_currency(self):
+
+    #     # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
+    #     parent = self.payment_order_id
+    #     if self.currency_id.id != parent.company_currency.id:
+    #         amount_computed = self.amount * parent.payment_rate
+    #     else:
+    #         amount_computed = self.amount
+
+    #     if self.amount == amount_computed:
+    #         return
+    #     else:
+    #         self.amount = amount_computed
+
 
     @api.model
     def _get_company_currency(self):

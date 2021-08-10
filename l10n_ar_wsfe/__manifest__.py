@@ -32,14 +32,16 @@
     "data": [
         "security/ir.model.access.csv",
         "data/wsfe_data.xml",
+        "data/ir_cron.xml",
         "wizard/wsfe_sinchronize_voucher_view.xml",
         "wizard/wsfe_massive_sinchronize_view.xml",
         "views/wsfe_view.xml",
         "views/account_invoice_view.xml",
+        "views/res_company_view.xml",
     ],
     "installable": True,
     "application": True,
     "external_dependencies": {
         "python": ["easywsy", "suds"]
-        }
+    }
 }
