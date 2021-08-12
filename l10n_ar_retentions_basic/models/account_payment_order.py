@@ -112,11 +112,15 @@ class RetentionTaxLine(models.Model):
             else:
                 self.state_id = False
 
+    @api.multi
     def _compute_amount_currency(self):
-        self.amount_currency = self.amount / self.currency_rate
+        for rec in self:
+            rec.amount_currency = rec.amount / rec.currency_rate
 
+    @api.multi
     def _compute_base_currency(self):
-        self.base_currency = self.base / self.currency_rate
+        for rec in self:
+            rec.base_currency = rec.base / rec.currency_rate
 
     @api.multi
     def create_voucher_move_line(self):
