@@ -26,8 +26,7 @@
     "description": "Payment Order document with argentinian payment methods.",
     "depends": [
         "base_period",
-        "account",
-       #        "l10n_ar_invoice_currency",
+#        "l10n_ar_invoice_currency",
     ],
     "data": [
         "security/payment_rule.xml",

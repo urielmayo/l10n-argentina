@@ -28,7 +28,7 @@ class RetentionTaxLine(models.Model):
 
     currency_id = fields.Many2one(related= 'payment_order_id.currency_id')
 
-    currency_rate = fields.Float(related= 'payment_order_id.payment_rate', default=1.0)
+    currency_rate = fields.Float(related= 'payment_order_id.payment_rate')
 
 
     voucher_number = fields.Char(
@@ -80,12 +80,6 @@ class RetentionTaxLine(models.Model):
         store=True,
         readonly=True,
     )
-
-    company_currency = fields.Many2one(related='company_id.currency_id')
-
-    is_multi_currency = fields.Boolean(compute='_compute_is_multi_currency')
-
-
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Partner',
@@ -127,12 +121,6 @@ class RetentionTaxLine(models.Model):
     def _compute_base_currency(self):
         for rec in self:
             rec.base_currency = rec.base / rec.currency_rate
-
-    @api.multi
-    def _compute_is_multi_currency(self):
-        for rec in self:
-            rec.is_multi_currency = rec.company_currency == rec.currency_id
-
 
     @api.multi
     def create_voucher_move_line(self):
@@ -219,13 +207,6 @@ class AccountPaymentOrder(models.Model):
             'draft': [('readonly', False)],
         },
     )
-
-    is_multi_currency = fields.Boolean(compute='_compute_is_multi_currency')
-
-    @api.multi
-    def _compute_is_multi_currency(self):
-        for rec in self:
-            rec.is_multi_currency = rec.company_currency == rec.currency_id
 
     @api.onchange('retention_ids')
     def _onchange_retentions(self):
