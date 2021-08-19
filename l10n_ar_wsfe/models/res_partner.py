@@ -3,10 +3,13 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from . import invoice  # noqa
-from . import wsfe  # noqa
-from . import wsfex  # noqa
-from . import wsfe_request  # noqa
-from . import res_company  # noqa
-from . import res_partner  # noqa
-from . import pos_ar  # noqa
+from odoo import models, fields, api, _
+import logging
+
+_logger = logging.getLogger(__name__)
+
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    fcred_transfer = fields.Char(string='SCA/ADC (FCE)?', default='SCA')

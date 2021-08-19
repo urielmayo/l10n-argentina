@@ -64,6 +64,7 @@ class AccountInvoice(models.Model):
         'account.invoice.optional', 'invoice_id', 'Optionals')
     fiscal_type_id = fields.Many2one(
         'account.invoice.fiscal.type', 'Fiscal type')
+    pos_ar_id = fields.Many2one(domain="[('fcred_is_fce_emitter', '=', False)]")
 
     @api.multi
     def _get_dup_domain(self):
@@ -224,7 +225,7 @@ class AccountInvoice(models.Model):
         q = """
         SELECT MAX(date_invoice)
         FROM account_invoice
-        WHERE internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+        WHERE internal_number ~ '^[0-9]{4,5}-[0-9]{8}$'
             AND pos_ar_id = %(pos_id)s
             AND state in %(state)s
             AND type = %(type)s
@@ -295,7 +296,7 @@ class AccountInvoice(models.Model):
                 if aio.code == '2101':
                     value = self.company_id.fcred_cbu_emitter
                 if aio.code == '27':
-                    value = self.company_id.fcred_transfer
+                    value = self.partner_id.fcred_transfer
                 dd = {
                     'optional_id': aio.id,
                     'value': value,
@@ -303,7 +304,10 @@ class AccountInvoice(models.Model):
                 aios.append((0, 0, dd))
             self.optional_ids = aios
         # Point Of Sale
-        pos_ar_id = self.company_id.fcred_pos_ar_id.id
+        pos_ar_id = self.env['pos.ar'].search([
+            ('fcred_is_fce_emitter', '=', True),
+            ('shop_id', '=', self.pos_ar_id.shop_id.id)
+        ]) or self.company_id.fcred_pos_ar_id.id
         if pos_ar_id:
             self.pos_ar_id = pos_ar_id
 
@@ -331,7 +335,7 @@ class AccountInvoice(models.Model):
         select
             max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
         from account_invoice
-        where internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+        where internal_number ~ '^[0-9]{4,5}-[0-9]{8}$'
             and pos_ar_id=%(pos_id)s
             and state in %(states)s
             and type=%(inv_type)s

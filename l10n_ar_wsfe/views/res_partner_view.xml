@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_res_partner_form_inherit_l10n_ar_wsfe" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit.l10n.ar.wsfe</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='property_account_position_id']" position="after">
+                        <field name="fcred_transfer" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</odoo>

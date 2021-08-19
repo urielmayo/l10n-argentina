@@ -1155,3 +1155,8 @@ msgstr "o"
 #: model:ir.model,name:l10n_ar_wsfe.model_wsfe_massive_sinchronize
 msgid "wsfe.massive.sinchronize"
 msgstr "wsfe.massive.sinchronize"
+
+#. module: l10n_ar_wsfe
+#, python-format
+msgid "You are not allowed to have more than one Pos per company with FCE Enabled. %s"
+msgstr "No se permite tener mas de un punto de venta asociado al mismo deposito con factura electronica de credito habilitada. %s"
