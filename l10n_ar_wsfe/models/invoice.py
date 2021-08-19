@@ -295,7 +295,7 @@ class AccountInvoice(models.Model):
                 if aio.code == '2101':
                     value = self.company_id.fcred_cbu_emitter
                 if aio.code == '27':
-                    value = self.company_id.fcred_transfer
+                    value = self.partner_id.fcred_transfer
                 dd = {
                     'optional_id': aio.id,
                     'value': value,

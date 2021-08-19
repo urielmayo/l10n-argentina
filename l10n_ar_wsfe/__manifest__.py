@@ -38,6 +38,7 @@
         "views/wsfe_view.xml",
         "views/account_invoice_view.xml",
         "views/res_company_view.xml",
+        "views/res_partner_view.xml",
     ],
     "installable": True,
     "application": True,
