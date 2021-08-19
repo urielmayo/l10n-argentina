@@ -224,7 +224,7 @@ class AccountInvoice(models.Model):
         q = """
         SELECT MAX(date_invoice)
         FROM account_invoice
-        WHERE internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+        WHERE internal_number ~ '^[0-9]{4,5}-[0-9]{8}$'
             AND pos_ar_id = %(pos_id)s
             AND state in %(state)s
             AND type = %(type)s
@@ -331,7 +331,7 @@ class AccountInvoice(models.Model):
         select
             max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
         from account_invoice
-        where internal_number ~ '^[0-9]{4}-[0-9]{8}$'
+        where internal_number ~ '^[0-9]{4,5}-[0-9]{8}$'
             and pos_ar_id=%(pos_id)s
             and state in %(states)s
             and type=%(inv_type)s
