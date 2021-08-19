@@ -19,6 +19,10 @@ class RetentionRetention(models.Model):
     _name = "retention.retention"
     _description = "Retention Configuration"
 
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
+
     # TODO: Maybe it would be better to erase this object
     # and add fields "jurisdiccion" and "state_id" to account.tax
     name = fields.Char(
@@ -58,6 +62,12 @@ class RetentionRetention(models.Model):
         default='nacional',
     )
     active = fields.Boolean('Active', default=True)
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self._get_company(),
+        readonly=True,
+    )
 
     @api.multi
     def unlink(self):

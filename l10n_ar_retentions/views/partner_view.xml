@@ -23,6 +23,7 @@
                                     <field name="exclusion_certificate" />
                                     <field name="exclusion_date_certificate" />
                                     <field name="sit_iibb"/>
+                                    <field name="company_id" invisible="1"/>
                                 </tree>
                             </field>
                         </group>
@@ -32,6 +33,7 @@
                                 <tree string="Retentions to Apply" editable="bottom">
                                     <field name="retention_id"/>
                                     <field name="concept_id"/>
+                                    <field name="company_id" invisible="1"/>
                                 </tree>
                             </field>
                         </group>

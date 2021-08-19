@@ -82,10 +82,12 @@ class PerceptionPerception(models.Model):
                 "ON arcl.account_id=a.id " \
                 "JOIN perception_concept c ON c.id=arcl.concept_id " \
                 "WHERE c.type=%s " \
-                "AND a.id=%s"
+                "AND a.id=%s " \
+                "AND (c.company_id=%s OR c.company_id IS NULL)"
 
+        company = self._get_company()
         cr = self.env.cr
-        cr.execute(query, (self.type, account_id,))
+        cr.execute(query, (self.type, account_id, company.id,))
 
         res = cr.fetchall()
         if res:
@@ -183,7 +185,7 @@ class PerceptionPerception(models.Model):
 
     @api.model
     def _compute_base_perception(self, invoice, perception_data):
-        activity = perception_data['activity_id']
+        activity_id = perception_data['activity_id']
         percent = perception_data['percent']
         sit_iibb = perception_data['sit_iibb']
         tax_app_obj = self.env['perception.tax.application']
@@ -191,7 +193,8 @@ class PerceptionPerception(models.Model):
         concept_id = False
 
         # Obtenemos la actividad configurada para esta Percepcion en el partner
-        activity_id = activity and activity.id or False
+        activity = self.env['perception.activity'].browse(activity_id)
+        # activity_id = activity and activity.id or False
 
         # Por cada linea, nos fijamos la configuracion del producto
         perceptions = {}
@@ -349,6 +352,10 @@ class PerceptionConcept(models.Model):
     _name = "perception.concept"
     _description = "Perception Concepts"
 
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
+
     name = fields.Char('Description', size=256, required=True)
     code = fields.Char('Code', size=32)
     type = fields.Selection([('vat', 'VAT'),
@@ -362,11 +369,21 @@ class PerceptionConcept(models.Model):
         'account.account', 'account_perception_concept_rel',
         'concept_id', 'account_id', 'Accounts')
     notes = fields.Text('Notes')
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self._get_company(),
+        readonly=True,
+    )
 
 
 class PerceptionActivity(models.Model):
     _name = "perception.activity"
     _description = "Perception Gross Income Activity"
+
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
 
     name = fields.Char('Description', size=256, required=True)
     code = fields.Char('Code', size=32)
@@ -375,6 +392,12 @@ class PerceptionActivity(models.Model):
                             ('profit', 'Profit'),
                             ('other', 'Other')], 'Type', required=True)
     notes = fields.Text('Notes')
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self._get_company(),
+        readonly=True,
+    )
 
 
 class PerceptionTaxApplication(models.Model):

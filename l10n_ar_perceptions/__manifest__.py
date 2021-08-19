@@ -37,6 +37,7 @@
         "views/account_invoice_view.xml",
         "views/menuitems.xml",
         "security/ir.model.access.csv",
+        "security/ir_rule.xml",
     ],
     "installable": True,
     "application": True,

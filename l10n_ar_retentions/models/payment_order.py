@@ -107,7 +107,9 @@ class AccountPaymentOrder(models.Model):
                           self.partner_id.account_fiscal_position_id.name))
             tapp_domain = [
                 ('retention_id', '=', advance_ret.retention_id.id),
-                ('concept_id', '=', advance_ret.concept_id.id)]
+                ('concept_id', '=', advance_ret.concept_id.id),
+                ('company_id', '=', self.company_id.id),
+            ]
             taxapp = tax_app_obj.search(tapp_domain)
             if not taxapp:
                 raise ValidationError(
@@ -349,10 +351,14 @@ class AccountPaymentOrder(models.Model):
             AND pol.payment_order_id=po.id
         JOIN account_move mv ON mv.id=ml.move_id
         WHERE r.id=%(ret_id)s AND po.state='posted'
+            AND (r.company_id = %(company_id)s OR r.company_id IS NULL)
         """
+
+        company = self._get_default_company()
 
         q_params = {
             'ret_id': retention.id,
+            'company_id': company.id,
         }
         if move_line:
             q_params['move_line_id'] = move_line.id

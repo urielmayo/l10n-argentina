@@ -94,6 +94,12 @@ msgid "Code"
 msgstr "Código"
 
 #. module: l10n_ar_perceptions
+#: model:ir.model.fields,field_description:l10n_ar_perceptions.field_perception_activity__company_id
+#: model:ir.model.fields,field_description:l10n_ar_perceptions.field_perception_concept__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: l10n_ar_perceptions
 #: code:addons/l10n_ar_perceptions/models/perception.py:139
 #, python-format
 msgid "Company Configuration Error!\n"

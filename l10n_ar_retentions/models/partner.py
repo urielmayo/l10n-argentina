@@ -9,7 +9,6 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DSDF
 
-
 class res_partner_retention(models.Model):
     _name = "res.partner.retention"
     _description = "Retention Defined in Partner"
@@ -28,6 +27,12 @@ class res_partner_retention(models.Model):
     partner_id = fields.Many2one('res.partner', 'Partner')
     sit_iibb = fields.Many2one(
         comodel_name='iibb.situation', string='Situation of IIBB')
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        related='retention_id.company_id',
+        string='Company',
+        store=True,
+    )
 
     _sql_constraints = [
         ('retention_partner_unique',
@@ -64,19 +69,36 @@ class ResPartnerAdvanceRetention(models.Model):
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string="Partner")
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        related='retention_id.company_id',
+        string='Company',
+        store=True,
+    )
 
 
 class res_partner(models.Model):
     _name = "res.partner"
     _inherit = "res.partner"
 
+    @api.model
+    def _get_retentions_domain(self):
+        company = self.env.user.company_id
+        return [
+            '|',
+            ('company_id', '=', False),
+            ('company_id', '=', company.id),
+        ]
+
     retention_ids = fields.One2many(
         'res.partner.retention', 'partner_id', 'Retentions Exceptions',
+        domain=lambda self: self._get_retentions_domain(),
         help="Here you have to configure retention exceptions for this " +
         "partner with this Fiscal Position")
     advance_retention_ids = fields.One2many(
         comodel_name='res.partner.advance.retention',
         inverse_name='partner_id',
+        domain=lambda self: self._get_retentions_domain(),
         string="Advance Payment Concept")
 
     def _get_retentions_to_apply(self, operation_date):
@@ -142,9 +164,19 @@ class res_partner(models.Model):
 class account_fiscal_position(models.Model):
     _inherit = 'account.fiscal.position'
 
+    @api.model
+    def _get_retentions_domain(self):
+        company = self.env.user.company_id
+        return [
+            '|',
+            ('company_id', '=', False),
+            ('company_id', '=', company.id),
+        ]
+
     retention_ids = fields.Many2many(
         'retention.retention', 'fiscal_position_retention_rel',
         'position_id', 'retention_id', 'Retentions',
+        domain=lambda self: self._get_retentions_domain(),
         help="These are the retentions that will be applied to Suppliers " +
         "belonging to this Fiscal Position. Exceptions to this have to be " +
         "loaded at partner form.")

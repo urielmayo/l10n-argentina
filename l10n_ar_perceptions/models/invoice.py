@@ -75,7 +75,7 @@ class PerceptionTaxLine(models.Model):
 class AccountInvoice(models.Model):
     _name = "account.invoice"
     _inherit = "account.invoice"
-    
+
     def _compute_amount(self):
         print('_over_compute_amount')
         # self.compute_taxes()

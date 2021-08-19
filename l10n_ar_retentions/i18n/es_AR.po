@@ -134,6 +134,12 @@ msgid "Code"
 msgstr "Código"
 
 #. module: l10n_ar_retentions
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_activity__company_id
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_concept__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: l10n_ar_retentions
 #: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_advance_retention_concept_id
 #: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_application_concept_id
 #: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line_concept_id

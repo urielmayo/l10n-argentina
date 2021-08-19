@@ -71,8 +71,11 @@ class retention_retention(models.Model):
 
     @api.model
     def _get_concepts_from_account(self, retention, account):
+        company = self._get_company()
         concepts = account.retention_concept_ids.filtered(
-            lambda c: c.type == retention.type)
+            lambda c: c.type == retention.type
+            and (c.company_id.id == company.id or not c.company_id)
+        )
         if not concepts:
             raise ValidationError(
                 _("Retention Error\n") +
@@ -216,11 +219,11 @@ class retention_retention(models.Model):
                 tapp_domain = [
                     ('retention_id', '=', retention.id),
                     ('concept_id', 'in', concepts.ids),]
-                
+
                 if activity:
                     tapp_domain.append(
                     ('activity_id', '=', activity and activity.id))
-                
+
                 iibb_domain = []
                 if retention.type == 'gross_income':
                     iibb_domain.append(
@@ -360,6 +363,10 @@ class RetentionConcept(models.Model):
     _name = "retention.concept"
     _description = "Retention Profit Concepts"
 
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
+
     name = fields.Char('Description', size=256, required=True)
     code = fields.Char('Code', size=32)
     type = fields.Selection([('vat', 'VAT'),
@@ -375,6 +382,12 @@ class RetentionConcept(models.Model):
         column1='concept_id', column2='account_id',
         string='Accounts')
     notes = fields.Text('Notes')
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self._get_company(),
+        readonly=True,
+    )
 
 
 class AccountAccount(models.Model):
@@ -392,6 +405,10 @@ class RetentionActivity(models.Model):
     _name = "retention.activity"
     _description = "Retention Gross Income Activity"
 
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
+
     name = fields.Char('Description', size=256, required=True)
     code = fields.Char('Code', size=32)
     type = fields.Selection([('vat', 'VAT'),
@@ -399,6 +416,12 @@ class RetentionActivity(models.Model):
                              ('profit', 'Profit'),
                              ('other', 'Other')], 'Type', required=True)
     notes = fields.Text('Notes')
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self._get_company(),
+        readonly=True,
+    )
 
 
 class RetentionTaxApplication(models.Model):
