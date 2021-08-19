@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_pos_ar_form_inherit_l10n_ar_wsfe" model="ir.ui.view">
+            <field name="name">pos.ar.form.inherit.l10n.ar.wsfe</field>
+            <field name="model">pos.ar</field>
+            <field name="inherit_id" ref="l10n_ar_point_of_sale.pos_ar_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='company_id']" position="after">
+                        <field name="fcred_is_fce_emitter" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</odoo>

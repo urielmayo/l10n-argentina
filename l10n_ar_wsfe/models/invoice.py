@@ -64,6 +64,7 @@ class AccountInvoice(models.Model):
         'account.invoice.optional', 'invoice_id', 'Optionals')
     fiscal_type_id = fields.Many2one(
         'account.invoice.fiscal.type', 'Fiscal type')
+    pos_ar_id = fields.Many2one(domain="[('fcred_is_fce_emitter', '=', False)]")
 
     @api.multi
     def _get_dup_domain(self):
@@ -303,7 +304,10 @@ class AccountInvoice(models.Model):
                 aios.append((0, 0, dd))
             self.optional_ids = aios
         # Point Of Sale
-        pos_ar_id = self.company_id.fcred_pos_ar_id.id
+        pos_ar_id = self.env['pos.ar'].search([
+            ('fcred_is_fce_emitter', '=', True),
+            ('shop_id', '=', self.pos_ar_id.shop_id.id)
+        ]) or self.company_id.fcred_pos_ar_id.id
         if pos_ar_id:
             self.pos_ar_id = pos_ar_id
 
