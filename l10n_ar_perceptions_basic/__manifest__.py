@@ -33,6 +33,7 @@
         "views/perception_view.xml",
         "views/account_invoice_view.xml",
         "views/menuitems.xml",
+        "security/ir_rule.xml",
     ],
     "installable": True,
     "application": True,

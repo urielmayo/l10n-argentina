@@ -37,6 +37,7 @@
         "views/partner_view.xml",
         "views/payment_order_view.xml",
         "views/menuitems.xml",
+        "security/ir_rule.xml",
     ],
     "installable": True,
     "application": True,

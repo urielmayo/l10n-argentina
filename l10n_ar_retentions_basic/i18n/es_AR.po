@@ -72,7 +72,8 @@ msgid "Click to create a retention."
 msgstr "Click para crear una Retención"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line_company_id
+#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_retention__company_id
+#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line__company_id
 msgid "Company"
 msgstr "Compañía"
 

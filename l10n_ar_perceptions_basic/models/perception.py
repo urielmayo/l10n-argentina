@@ -22,6 +22,10 @@ class PerceptionPerception(models.Model):
     objects with data like amount, certificate number, etc.
     """
 
+    @api.model
+    def _get_company(self):
+        return self.env.user.company_id
+
     name = fields.Char(
         string='Perception',
         required=True,
@@ -62,6 +66,12 @@ class PerceptionPerception(models.Model):
         default='nacional',
     )
     active = fields.Boolean('Active', default=True)
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        string='Company',
+        default=lambda self: self._get_company(),
+        readonly=True,
+    )
 
     @api.multi
     def unlink(self):

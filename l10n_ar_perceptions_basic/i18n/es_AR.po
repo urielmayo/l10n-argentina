@@ -75,6 +75,7 @@ msgid "Click to create a perception."
 msgstr "Click para crear una percepcion"
 
 #. module: l10n_ar_perceptions_basic
+#: model:ir.model.fields,field_description:l10n_ar_perceptions_basic.field_perception_perception__company_id
 #: model:ir.model.fields,field_description:l10n_ar_perceptions_basic.field_perception_tax_line__company_id
 msgid "Company"
 msgstr "Compañía"

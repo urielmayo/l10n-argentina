@@ -34,6 +34,7 @@
         "views/retention_view.xml",
         "views/voucher_payment_receipt_view.xml",
         "views/menuitems.xml",
+        "security/ir_rule.xml",
     ],
     "installable": True,
     "application": True,
