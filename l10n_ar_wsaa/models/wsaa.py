@@ -86,7 +86,7 @@ class wsaa_ta(models.Model):
 
         wsaa_config = self.config_id
         service = self.name.name
-        user = self.env['res.users'].browse(SUPERUSER_ID)
+        user = self.env['res.users'].sudo().browse(SUPERUSER_ID)
         if user.partner_id.tz:
             tz = pytz.timezone(user.partner_id.tz)
         else:
