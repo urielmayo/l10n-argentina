@@ -103,6 +103,13 @@ class AccountInvoice(models.Model):
 
                 if dst_country:
                     self.dst_country_id = dst_country[0]
+        if res.get('domain', {}) and isinstance(res['domain'].get('pos_ar_id'), list):
+            res['domain']['pos_ar_id'].append(('fcred_is_fce_emitter', '=', False))
+            self.pos_ar_id = False
+            sorted_pos = self.denomination_id.pos_ar_ids.sorted(
+                key=lambda x: x.priority).filtered(lambda x: not x.fcred_is_fce_emitter)
+            if sorted_pos:
+                self.pos_ar_id = sorted_pos[0]
         return res
 
     # Esto lo hacemos porque al hacer una nota de credito,
