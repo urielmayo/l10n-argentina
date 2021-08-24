@@ -293,10 +293,14 @@ class AccountInvoice(models.Model):
         ft_fcred = self.env.ref('l10n_ar_wsfe.fiscal_type_fcred')
         if self.fiscal_type_id.id != ft_fcred.id:
             self.fiscal_type_id = ft_fcred.id
+        conf = self.get_ws_conf()
         # Optionals
         if not self.optional_ids:
             WO = self.env['wsfe.optionals']
-            aio_todo = WO.search([('code', 'in', ('2101', '27'))])
+            aio_todo = WO.search([
+                ('code', 'in', ('2101', '27')),
+                ('wsfe_config_id', '=', conf.id),
+            ])
             # 2101: cbu del emisor, 27 sca|adc
             aios = []
             for aio in aio_todo:

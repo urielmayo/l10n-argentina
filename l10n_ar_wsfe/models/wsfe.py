@@ -313,7 +313,10 @@ class WsfeConfig(models.Model):
             }
 
             # Si no existe el impuesto en la DB, lo creamos de acuerdo a AFIP
-            tax = wsfe_tax_model.search([('code', '=', tax.Id)])
+            tax = wsfe_tax_model.search([
+                ('code', '=', tax.Id),
+                ('wsfe_config_id', '=', self.id),
+            ])
             if not tax:
                 wsfe_tax_model.create(vals)
 
@@ -333,7 +336,10 @@ class WsfeConfig(models.Model):
         if err:
             raise UserError(_("Error reading Taxes!\n") + err)
         for r in response[0][0]:
-            res_c = wsfe_optionals_obj.search([('code', '=', r.Id)])
+            res_c = wsfe_optionals_obj.search([
+                ('code', '=', r.Id),
+                ('wsfe_config_id', '=', self.id),
+            ])
 
             #~ Si tengo no los codigos de esos Opcionales en la db, los creo
             if not len(res_c):
