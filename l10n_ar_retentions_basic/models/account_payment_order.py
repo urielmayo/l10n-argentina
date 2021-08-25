@@ -100,6 +100,8 @@ class RetentionTaxLine(models.Model):
         string="State/Province",
     )
 
+
+
     @api.onchange('retention_id')
     def _onchange_retention(self):
         retention = self.retention_id
