@@ -273,7 +273,7 @@ class AccountInvoice(models.Model):
         """
         if not self.company_id.fcred_is_fce_emitter:
             return False
-        if self.type not in ('out_invoice', 'out_refund'):
+        if self.is_debit_note or self.type not in ('out_invoice', 'out_refund'):
             return False
         ABC = self.env['afip.big.company'].sudo()
         is_bc = ABC.search([('cuit', '=like', self.partner_id.vat)])
