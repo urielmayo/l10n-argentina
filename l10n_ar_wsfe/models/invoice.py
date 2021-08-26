@@ -294,9 +294,9 @@ class AccountInvoice(models.Model):
         if self.fiscal_type_id.id != ft_fcred.id:
             self.fiscal_type_id = ft_fcred.id
         conf = self.get_ws_conf()
-        set_optionals = False
+        set_optionals = True
         if self.is_debit_note or self.type == 'out_refund':
-            set_optionals = True
+            set_optionals = False
         # Optionals
         if not self.optional_ids and set_optionals:
             WO = self.env['wsfe.optionals']
