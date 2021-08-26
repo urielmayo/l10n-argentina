@@ -24,6 +24,9 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+PCODES = {'nacional': '1', 'provincial': '2', 'municipal': '3'}
+
+
 class PerceptionTaxLine(models.Model):
     _name = "perception.tax.line"
     _inherit = "perception.tax.line"
@@ -87,6 +90,24 @@ class AccountInvoice(models.Model):
         states={
             'draft': [('readonly', False)],
         })
+
+    @api.model
+    def hook_add_taxes(self, inv, detalle):
+        detalle = super().hook_add_taxes(inv, detalle)
+        perc_array = []
+
+        for perception in inv.perception_ids:
+            print(perception.name, perception.base, perception.amount)
+            code = PCODES[perception.perception_id.jurisdiccion]
+            perc = {'Id': code, 'BaseImp': perception.base, 'Importe': perception.amount, 'Alic': 0.0}
+            perc_array.append(perc)
+
+        if detalle.get('Tributos'):
+            detalle['Tributos']['Tributo'] += perc_array
+        else:
+            detalle['Tributos'] = {'Tributo': perc_array}
+
+        return detalle
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
