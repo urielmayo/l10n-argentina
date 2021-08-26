@@ -126,8 +126,10 @@ class WSFE(AfipWS):
             })
             if not is_not_anulation_fcred:
                 detail['FchVtoPago'] = date_due
-            elif invoice.fiscal_type_id == wsfcred_type and invoice.type == 'out_invoice' and not invoice.is_debit_note:
-                detail['FchVtoPago'] = date_due
+            # elif invoice.fiscal_type_id == wsfcred_type and invoice.type == 'out_invoice' and not invoice.is_debit_note:
+            #     detail['FchVtoPago'] = date_due
+        if invoice.fiscal_type_id == wsfcred_type and invoice.type == 'out_invoice' and not invoice.is_debit_note:
+            detail['FchVtoPago'] = date_due
         #cbtes asoc
 
         # Associated Comps
