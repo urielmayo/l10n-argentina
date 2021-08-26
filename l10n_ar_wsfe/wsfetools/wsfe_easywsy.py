@@ -707,6 +707,6 @@ class WSFE(AfipWS):
     def validate_cmps_valor(val, Valor):
         return True
 
-    @wsapi.check(['Alic'])
+    @wsapi.check(['Alic', 'Desc'])
     def validate_tributos(val, Alic):
         return True

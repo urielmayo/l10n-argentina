@@ -99,7 +99,7 @@ class AccountInvoice(models.Model):
         for perception in inv.perception_ids:
             print(perception.name, perception.base, perception.amount)
             code = PCODES[perception.perception_id.jurisdiccion]
-            perc = {'Id': code, 'BaseImp': perception.base, 'Importe': perception.amount, 'Alic': 0.0}
+            perc = {'Id': code, 'BaseImp': perception.base, 'Importe': perception.amount, 'Alic': 0.0, 'Desc': perception.name}
             perc_array.append(perc)
 
         if detalle.get('Tributos'):
