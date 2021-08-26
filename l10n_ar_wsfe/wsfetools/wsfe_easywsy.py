@@ -115,6 +115,7 @@ class WSFE(AfipWS):
         }
 
         detail.update(iva_values)
+        detail = invoice.hook_add_taxes(invoice, detail)
         env = invoice.env
         wsfcred_type = env.ref('l10n_ar_wsfe.fiscal_type_fcred')
         is_not_anulation_fcred = invoice.fiscal_type_id == wsfcred_type and invoice.optional_ids.filtered(lambda x: x.optional_id.code == '22' and x.value.strip().lower() == 'n')
@@ -175,7 +176,7 @@ class WSFE(AfipWS):
         if not_found_tax:
             err = _("Taxes `%s` are not configured in WSFE!") % \
                 (", ").join(not_found_tax.mapped('tax_id.name'))
-            raise ValidationError(_("Error!\n") + err)
+            _logger.warning(_("Expected Error!\n") + err)
 
         # Procesamos las taxes
 
@@ -213,7 +214,7 @@ class WSFE(AfipWS):
         exempt_operation_amount = invoice.amount_exempt
         no_taxed_amount = invoice.amount_no_taxed
 
-        base_amount = vat_base_amount + tribute_base_amount
+        base_amount = vat_base_amount
         tax_amount = tribute_tax_amount + vat_tax_amount
 
         total_amount = round(base_amount + no_taxed_amount +
@@ -230,7 +231,7 @@ class WSFE(AfipWS):
             'ImpOpEx': exempt_operation_amount,
             'ImpTotal': total_amount,
             'ImpTotConc': no_taxed_amount,
-            'ImpTrib': tribute_tax_amount + tribute_base_amount,
+            'ImpTrib': tribute_tax_amount,
             'Iva': {
                 'AlicIva': vat_array,
             },
@@ -704,4 +705,8 @@ class WSFE(AfipWS):
 
     @wsapi.check(['Valor'])
     def validate_cmps_valor(val, Valor):
+        return True
+
+    @wsapi.check(['Alic'])
+    def validate_tributos(val, Alic):
         return True
