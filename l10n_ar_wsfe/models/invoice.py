@@ -273,7 +273,7 @@ class AccountInvoice(models.Model):
         """
         if not self.company_id.fcred_is_fce_emitter:
             return False
-        if self.is_debit_note or self.type not in ('out_invoice', 'out_refund'):
+        if self.type not in ('out_invoice', 'out_refund'):
             return False
         ABC = self.env['afip.big.company'].sudo()
         is_bc = ABC.search([('cuit', '=like', self.partner_id.vat)])
@@ -294,8 +294,11 @@ class AccountInvoice(models.Model):
         if self.fiscal_type_id.id != ft_fcred.id:
             self.fiscal_type_id = ft_fcred.id
         conf = self.get_ws_conf()
+        set_optionals = False
+        if self.is_debit_note or self.type == 'out_refund':
+            set_optionals = True
         # Optionals
-        if not self.optional_ids:
+        if not self.optional_ids and set_optionals:
             WO = self.env['wsfe.optionals']
             aio_todo = WO.search([
                 ('code', 'in', ('2101', '27')),
