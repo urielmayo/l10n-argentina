@@ -62,7 +62,8 @@ class AccountPaymentOrder(models.Model):
                 'quantity': 1,
                 'credit': 0.0,
                 'debit': 0.0,
-                'date': self.date
+                'date': self.date,
+                'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],
             }
             if amount < 0:
                 amount = -amount
