@@ -13,7 +13,7 @@ class PoSBoxConcept(models.Model):
 
     @api.constrains("code")
     def check_code_not_dup(self):
-        for concept in self:
+        for concept in self.sudo():
             code = concept.code
             count = self.search_count([("code", "ilike", code)])
             if count > 1:
@@ -22,7 +22,7 @@ class PoSBoxConcept(models.Model):
 
     @api.constrains("name", "concept_type")
     def check_name_not_dup(self):
-        for concept in self:
+        for concept in self.sudo():
             name = concept.name
             count = self.search_count(
                 [
