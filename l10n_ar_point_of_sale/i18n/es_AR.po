@@ -642,7 +642,7 @@ msgstr "IVA"
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_invoice__amount_taxed
 msgid "VAT Base"
-msgstr "CUIT Base"
+msgstr "Base Imponible"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_invoice_denomination__vat_discriminated
