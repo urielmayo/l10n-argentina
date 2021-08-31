@@ -13,7 +13,7 @@ class PoSBoxConcept(models.Model):
 
     @api.constrains("code")
     def check_code_not_dup(self):
-        for concept in self.sudo():
+        for concept in self:
             code = concept.code
             count = self.search_count([("code", "ilike", code)])
             if count > 1:
@@ -22,7 +22,7 @@ class PoSBoxConcept(models.Model):
 
     @api.constrains("name", "concept_type")
     def check_name_not_dup(self):
-        for concept in self.sudo():
+        for concept in self:
             name = concept.name
             count = self.search_count(
                 [
@@ -48,6 +48,10 @@ class PoSBoxConcept(models.Model):
         required=True,
     )
 
+    @api.model
+    def create(self, vals):
+        self.env['ir.rule'].clear_cache()
+        return super(PoSBoxConcept, self).create(vals)
 
 class PoSBoxConceptAllowed(models.Model):
     _name = 'pos.box.concept.allowed'
