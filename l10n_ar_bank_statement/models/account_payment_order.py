@@ -114,7 +114,7 @@ class AccountPaymentModeLine(models.Model):
         """
 
         invoices = self.mapped("payment_order_id").mapped(
-            "line_ids").mapped("invoice_id")
+            "line_ids").mapped("invoice_id").filtered(lambda x: x.type in ('out_invoice', 'in_invoice'))
         return ', '.join(inv.internal_number or '' for inv in invoices)
 
     def _prepare_statement_line_data(self):
