@@ -74,7 +74,7 @@ class AccountInvoice(models.Model):
         return res
 
     @api.multi
-    @api.depends('denomination_id', 'type')
+    @api.depends('denomination_id', 'type', 'fiscal_type_id', 'is_debit_note')
     def _compute_voucher_type(self):
         for rec in self:
             try:
