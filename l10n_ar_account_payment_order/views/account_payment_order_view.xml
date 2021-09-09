@@ -126,7 +126,7 @@
                                     attrs="{'invisible':[('writeoff_amount','=',0)], 'readonly': [('state', 'not in', ('draft'))]}"/>
                                 <field name="writeoff_acc_id"
                                     attrs="{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff')], 'readonly': [('state', 'not in', ('draft'))]}"
-                                    domain="[('type','=','other')]"/>
+                                    domain="[('user_type_id.type','=','other')]"/>
                                 <field name="comment"
                                     attrs="{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'readonly': [('state', 'not in', ('draft'))]}"/>
                                 <field name="analytic_id"
@@ -458,7 +458,7 @@
                                     attrs="{'invisible':[('writeoff_amount','=',0)], 'readonly': [('state', 'not in', ('draft'))]}"/>
                                 <field name="writeoff_acc_id"
                                     attrs="{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'required':[('payment_option','=','with_writeoff')], 'readonly': [('state', 'not in', ('draft'))]}"
-                                    domain="[('type','=','other')]"/>
+                                    domain="[('user_type_id.type','=','other')]"/>
                                 <field name="comment"
                                     attrs="{'invisible':['|', ('payment_option','!=','with_writeoff'), ('writeoff_amount','=',0)], 'readonly': [('state', 'not in', ('draft'))]}"/>
                                 <field name="analytic_id"
