@@ -224,8 +224,8 @@ class AccountPaymentOrder(models.Model):
     def _payment_rate(self):
 
         rate = self.currency_id._get_rates(self.company_id, self.date)[self.currency_id.id]
-        
-        if self.currency_id.preciated:
+
+        if hasattr(self.currency_id, 'preciated') and self.currency_id.preciated:
             rate = 1 / rate
 
         self.payment_rate = rate
