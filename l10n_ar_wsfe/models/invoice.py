@@ -112,6 +112,13 @@ class AccountInvoice(models.Model):
                 self.pos_ar_id = sorted_pos[0]
         return res
 
+    @api.multi
+    def name_get(self):
+        # Usamos el numero interno relacionado a AFIP
+        ctx = dict(self.env.context)
+        ctx['use_internal_number'] = True
+        return super(AccountInvoice, self.with_context(ctx)).name_get()
+
     # Esto lo hacemos porque al hacer una nota de credito,
     # no le setea la fiscal_position_id.
     # Ademas, seteamos el comprobante asociado
