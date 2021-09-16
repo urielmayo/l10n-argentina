@@ -37,36 +37,25 @@ class AccountTax(models.Model):
 
 @api.multi
 def post(self, invoice=False):
-    invoice = self._context.get('invoice', False)
+    if self._context.get('invoice'):
+        invoice = self._context.get('invoice', False)
     self._post_validate()
     for move in self:
         move.line_ids.create_analytic_lines()
         if move.name == '/':
-            new_name = False
-            journal = move.journal_id
-            if journal.sequence_id:
-                # If invoice is actually refund and journal has a
-                # refund_sequence then use that one or use the regular one
-                sequence = journal.sequence_id
-                refund_list = ['out_refund', 'in_refund']
-                if invoice and invoice.type in \
-                        refund_list and journal.refund_sequence:
-
-                    if not journal.refund_sequence_id:
-                        err = _('Please define a sequence for the credit notes')
-                        raise UserError(err)
-
-                    sequence = journal.refund_sequence_id
-
-                new_name = sequence.with_context(
-                    ir_sequence_date=move.date).next_by_id()
+            if invoice:
+                new_name = invoice.internal_number
             else:
-                err = _('Please define a sequence on the journal.')
-                raise UserError(err)
-
+                journal = move.journal_id
+                if journal.sequence_id:
+                    sequence = journal.sequence_id
+                    new_name = sequence.with_context(
+                        ir_sequence_date=move.date).next_by_id()
+                else:
+                    err = _('Please define a sequence on the journal.')
+                    raise UserError(err)
             if new_name:
                 move.name = new_name
-
     return self.write({'state': 'posted'})
 
 
