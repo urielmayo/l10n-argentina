@@ -599,6 +599,13 @@ class AccountInvoice(models.Model):
             inv._update_reference(ref)
             return
 
+    @api.multi
+    def _get_computed_reference(self):
+        self.ensure_one()
+        if self.company_id.invoice_reference_type != 'invoice_number':
+            return super(AccountInvoice, self)._get_computed_reference()
+        return self.number
+
 ###############################################################################
 
     @api.multi
