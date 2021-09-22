@@ -244,12 +244,14 @@ class AccountInvoice(models.Model):
             AND state in %(state)s
             AND type = %(type)s
             AND is_debit_note = %(is_debit_note)s
+            AND fiscal_type_id = %(fiscal_type_id)s
         """
         q_vals = {
             'pos_id': self.pos_ar_id.id,
             'state': ('open', 'paid', 'cancel',),
             'type': self.type,
             'is_debit_note': self.is_debit_note,
+            'fiscal_type_id': self.fiscal_type_id.id,
         }
         self.env.cr.execute(q, q_vals)
         last_date = self.env.cr.fetchone()
