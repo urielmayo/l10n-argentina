@@ -375,7 +375,9 @@ class account_voucher(osv.osv):
 
     def _get_voucher_line_vals(self, line, line_currency_id,
             amount, amount_original, amount_unreconciled):
-
+        reference = line.ref
+        if line.advancement_detail_id.reference:
+            reference += ' (' + line.advancement_detail_id.reference + ')'
         rs = {
             'name':line.move_id.name,
             'type': line.credit and 'dr' or 'cr',
@@ -388,7 +390,7 @@ class account_voucher(osv.osv):
             'amount_unreconciled': amount_unreconciled,
             'currency_id': line_currency_id,
             'invoice_id': line.invoice.id,
-            'ref': line.ref,
+            'ref': reference,
         }
         return rs
 
