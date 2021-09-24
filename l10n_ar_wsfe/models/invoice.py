@@ -221,6 +221,7 @@ class AccountInvoice(models.Model):
         self.ensure_one()
         if not conf:
             conf = self.get_ws_conf()
+        _logger.info(self)
         inv = self
         tipo_cbte = self._get_voucher_type()
         try:
@@ -564,11 +565,17 @@ class AccountInvoice(models.Model):
             # tenemos que escribir la request
             # Sino al hacer el rollback se pierde hasta el wsfe.request
             self.env.cr.rollback()
-            with api.Environment.manage():
-                new_env = api.Environment(new_cr, uid, ctx)
-                logs = ws.log_request(new_env)
-                new_cr.commit()
-                new_cr.close()
+            try:
+                with api.Environment.manage():
+                    new_env = api.Environment(new_cr, uid, ctx)
+                    logs = ws.log_request(new_env)
+                    new_cr.commit()
+                    new_cr.close()
+            except Exception as e:
+                _logger.exception('Unable to log afip request')
+                logs = None
+            else:
+                _logger.info('Success in logging afip request')
         return logs
 
     @api.multi

@@ -481,15 +481,20 @@ class WsfexConfig(models.Model):
     def get_last_voucher(self, pos, voucher_type):
         self.ensure_one()
         ws = self.ws_auth()
-        data = {
-            'FEXGetLast_CMP': {
-                'CbteTipo': voucher_type,
-                'PtoVta': pos,
-            }
-        }
-        ws.add(data)
-        response = ws.request('FEXGetLast_CMP')
-        res = ws.parse_response(response)
-        del(ws)
-        last = res['response'].Cbte_nro
+
+        token, sign = self.wsaa_ticket_id.get_token_sign()
+        client = ws.client
+        cls_lastCMP = client.factory.create('ClsFEX_LastCMP')
+        cls_lastCMP.Token = token
+        cls_lastCMP.Sign = sign
+        cls_lastCMP.Cuit = self.cuit
+        cls_lastCMP.Pto_venta = pos
+        cls_lastCMP.Cbte_Tipo = voucher_type
+
+        result = client.service.FEXGetLast_CMP(cls_lastCMP)
+        if 'FEXResult_LastCMP' in result:
+            last = result.FEXResult_LastCMP.Cbte_nro
+        else:
+            raise UserError('FEXResult_LastCMP error','FEXResult_LastCMP is not in the response from AFIP')
+
         return last
