@@ -97,6 +97,15 @@
                                 attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                         </div>
                     </xpath>
+
+                    <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="attributes">
+                        <attribute name="context">
+                            {
+                                'default_purchase_ok': False,
+                                'default_sale_ok': True,
+                            }
+                        </attribute>
+                    </xpath>
                 </data>
             </field>
         </record>
@@ -220,6 +229,14 @@
                         <field name="outstanding_credits_debits_widget" colspan="2"
                             nolabel="1" widget="payment" attrs="{'invisible': [('state', 'not in', 'open')]}"/>
                     </div>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="context">
+                        {
+                            'default_purchase_ok': True,
+                            'default_sale_ok': False,
+                        }
+                    </attribute>
                 </xpath>
             </field>
         </record>

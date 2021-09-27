@@ -24,6 +24,8 @@
         "views/account_view.xml",
         "views/iibb_situation_view.xml",
         "views/res_users_view.xml",
+        "views/purchase_view.xml",
+        "views/sale_view.xml",
         "views/menuitems.xml",
         "security/pos_ar_rule.xml",
         "security/ir.model.access.csv",
