@@ -131,7 +131,7 @@ class WSFEX(AfipWS):
 #            shipping_perm = 'S' and inv.shipping_perm_ids or ''
 
         tipo_cbte = inv._get_voucher_type() # voucher_type_obj.get_voucher_type(cr, uid, inv, context=context)
-        if tipo_cbte in ('20', '21'):
+        if tipo_cbte in ('20', '21') or (tipo_cbte == '19' and inv.export_type_id.code in (2,4)):
             shipping_perm = ''
         else:
             shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
@@ -165,6 +165,9 @@ class WSFEX(AfipWS):
         if inv.incoterm_id:
             Cmp['Incoterms'] = inv.incoterm_id.code
             Cmp['Incoterms_Ds'] = inv.incoterm_id.name
+
+        if (tipo_cbte == '19' and inv.export_type_id.code in (2,4)):
+            Cmp['Fecha_pago'] = inv.date_due.strftime('%Y%m%d')
 
         if Cmps_asoc:
             Cmp['Cmps_asoc'] = {
