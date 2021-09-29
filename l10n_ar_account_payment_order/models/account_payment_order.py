@@ -3,13 +3,13 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
+import logging
 from datetime import datetime
 
 from odoo import _, api, fields, models
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import RedirectWarning, UserError, ValidationError
 from odoo.tools import float_compare
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +19,22 @@ class AccountPaymentOrder(models.Model):
     _inherit = ['mail.thread']
     _rec_name = 'number'
     _order = 'date DESC'
+
+    def _get_journals(self):
+        domain = [('id', '=', -1)]
+        company_id = self._get_default_company().id
+        journals = []
+        type = self.env.context.get('type', 'bank')
+        filtered_journals = self.env['account.journal'].search([
+            ('type', '=', type),
+            ('company_id', '=', company_id),
+        ])
+        for journal in filtered_journals:
+            journals.append(journal.id)
+        if journals:
+            domain = [('id', 'in', journals)]
+            return domain
+        return domain
 
     name = fields.Char(
         string='Memo', default='')
@@ -47,7 +63,8 @@ class AccountPaymentOrder(models.Model):
         required=True, states={
             'cancel': [('readonly', True)],
             'posted': [('readonly', True)],
-        }, default=lambda s: s._get_journal())
+        }, default=lambda s: s._get_journal(),
+        domain=_get_journals)
     move_id = fields.Many2one(
         comodel_name='account.move', string='Account Entry', copy=False)
     move_line_ids = fields.One2many(comodel_name='account.move.line',
@@ -202,7 +219,6 @@ class AccountPaymentOrder(models.Model):
             rec.income_line_ids = [(5, 0, 0)]
             rec.debt_line_ids = [(5, 0, 0)]
             rec.message = ''
-
 
     @api.onchange('journal_id')
     @api.multi
