@@ -254,21 +254,23 @@ class AccountIssuedCheck(models.Model):
             clearance_move_line = move_line_obj.with_context(
                 {'check_move_validity': False}).create(check_move_line_vals)
 
-            # Creamos la línea contable que refiere
-            # a la acreditación por parte del banco
-            bank_move_line_vals = {
-                'journal_id': def_check_journal.id,
-                'period_id': current_period.id,
-                'date': current_date,
-                'name': name_ref,
-                'account_id': check.checkbook_id.bank_account_id.account_id.id,
-                'credit': check.amount,
-                'move_id': move_id.id,
-            }
+            if check.checkbook_id:
+                # Creamos la línea contable que refiere
+                # a la acreditación por parte del banco
+                # solo si tiene referenciada una chequera (checkbook_id)
+                bank_move_line_vals = {
+                    'journal_id': def_check_journal.id,
+                    'period_id': current_period.id,
+                    'date': current_date,
+                    'name': name_ref,
+                    'account_id': check.checkbook_id.bank_account_id.account_id.id,
+                    'credit': check.amount,
+                    'move_id': move_id.id,
+                }
 
-            move_line_obj.with_context(
-                {'check_move_validity': False}
-                ).create(bank_move_line_vals)
+                move_line_obj.with_context(
+                    {'check_move_validity': False}
+                    ).create(bank_move_line_vals)
 
             # move_lines_to_reconcile = []
             # payment_move_line = move_line_obj.search([
