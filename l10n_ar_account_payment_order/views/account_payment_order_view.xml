@@ -422,10 +422,14 @@
                                     domain="[('supplier','=',True)]" string="Supplier"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="journal_id"
+                                    invisible="context.get('line_type', False)"
+                                    options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True}"
+                                    string="Journal"/>                                
+                                <!-- <field name="journal_id"
                                     domain="[('type', '=', 'payment'), ('company_id', '=', company_id)]"
                                     invisible="context.get('line_type', False)"
                                     options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True}"
-                                    string="Journal"/>
+                                    string="Journal"/> -->
                                 <field name="amount" class="oe_inline"
                                     string="Paid Amount"
                                     widget="monetary" options="{'currency_field': 'company_currency'}"

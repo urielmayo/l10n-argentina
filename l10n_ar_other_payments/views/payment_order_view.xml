@@ -23,6 +23,7 @@
 							<field name="currency_id" invisible="1"/>
 							<field name="journal_id"
 								string="Journal"
+								options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True}"
 								attrs="{'readonly': [('state', 'not in', ('draft',))]}"/>
 							<field name="other_payment" invisible="1"/>
 							<field name="amount" class="oe_inline"
