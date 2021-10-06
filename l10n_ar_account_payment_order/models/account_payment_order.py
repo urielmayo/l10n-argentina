@@ -1275,25 +1275,27 @@ class AccountPaymentOrderLine(models.Model):
         string='State', related='payment_order_id.state', readonly=True)
 
 
-    @api.onchange('amount')
-    def onchange_amount(self):
+    # @api.onchange('amount')
+    # def onchange_amount(self):
+    #     # import ipdb; ipdb.set_trace()
+    #     parent = self.payment_order_id
+    #     if self.original_currency_id.id != parent.company_currency.id:
+    #         amount_computed = self.amount / parent.payment_rate
+    #     else:
+    #         amount_computed = 0
+    #
+    #     self.amount_currency = amount_computed
+
+
+    @api.onchange('amount_currency')
+    def onchange_amount_currency(self):
         parent = self.payment_order_id
         if self.original_currency_id.id != parent.company_currency.id:
-            amount_computed = self.amount / parent.payment_rate
+            amount_computed = self.amount_currency * parent.payment_rate
         else:
             amount_computed = 0
 
-        self.amount_currency = amount_computed
-
-    # @api.onchange('amount_currency')
-    # def onchange_amount_currency(self):
-    #     parent = self.payment_order_id
-    #     if self.original_currency_id.id != parent.company_currency.id:
-    #         amount_computed = self.amount * parent.payment_rate
-    #     else:
-    #         amount_computed = 0
-
-    #     self.amount_currency = amount_computed
+        self.amount = amount_computed
 
 
     @api.depends('move_line_id')
@@ -1320,10 +1322,16 @@ class AccountPaymentOrderLine(models.Model):
     @api.onchange('reconcile')
     def amount_full_conciliation(self):
         for line in self:
-            if line.amount_unreconciled == line.amount:
+            if line.amount or line.amount_currency:
                 line.amount = 0
+                line.amount_currency = 0
             else:
-                line.amount = line.amount_unreconciled
+                if line.original_currency_id.id != line.payment_order_id.company_currency.id:
+                    line.amount_currency = line.amount_unreconciled_currency
+                    line.amount = line.amount_unreconciled_currency * line.payment_order_id.payment_rate
+                else:
+                    line.amount = line.amount_unreconciled
+                    line.amount_currency = 0
 
     def _check_amount_over_original(self):
         if self.payment_order_id.is_multi_currency:
