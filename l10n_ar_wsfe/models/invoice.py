@@ -287,7 +287,7 @@ class AccountInvoice(models.Model):
             return False
         ABC = self.env['afip.big.company'].sudo()
         is_bc = ABC.search([('cuit', '=like', self.partner_id.vat)])
-        amount_total = self.amount_total if self.is_multi_currency else self.amount_total_cur
+        amount_total = self.amount_total_cur if self.is_multi_currency else self.amount_total
         fcred_minimum_amount = self.company_id.fcred_minimum_amount
         if is_bc and amount_total > fcred_minimum_amount:
             _logger.info('The %s must be of type FCRED' % self)
