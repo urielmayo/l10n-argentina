@@ -10,3 +10,4 @@ from . import wsfe_request  # noqa
 from . import res_company  # noqa
 from . import res_partner  # noqa
 from . import pos_ar  # noqa
+from . import sale  # noqa
