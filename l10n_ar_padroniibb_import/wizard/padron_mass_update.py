@@ -5,6 +5,9 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class PadronMassUpdate(models.TransientModel):
@@ -208,9 +211,11 @@ class PadronMassUpdate(models.TransientModel):
                 }
                 self._cr.execute(q, q_params)
             else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
+                #e_title = _('Query Error\n')
+                #e_msg = _('Unexpected result: %s' % str(res))
+                _logger.error('ERROR with register %s' % str(res))
+                # print('error')
+                # raise ValidationError(e_title + e_msg)
 
     @api.model
     def _update_retention_agip(self, retention):
@@ -310,9 +315,10 @@ class PadronMassUpdate(models.TransientModel):
                 }
                 self._cr.execute(q, q_params)
             else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
+                # e_title = _('Query Error\n')
+                # e_msg = _('Unexpected result: %s' % str(res))
+                # raise ValidationError(e_title + e_msg)
+                _logger.error('ERROR with register %s' % str(res))
 
     @api.model
     def _update_perception_agip(self, perception):
