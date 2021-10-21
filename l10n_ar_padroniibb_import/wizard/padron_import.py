@@ -361,5 +361,3 @@ class PadronImport(models.TransientModel):
         if self.datas_arba:
             _logger.info('[ARBA] Zip file from ARBA is loaded: START')
             self.import_arba_file(self.datas_arba)
-
-        raise Warning(_("Hey!\nThe import ended Successfully"))

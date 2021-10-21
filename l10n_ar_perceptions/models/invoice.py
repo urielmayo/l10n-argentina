@@ -20,9 +20,8 @@
 import datetime
 import time
 
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-
 
 PCODES = {'nacional': '1', 'provincial': '2', 'municipal': '3'}
 
@@ -211,9 +210,9 @@ class AccountInvoice(models.Model):
                     #todo: compute no crea percepciones, por ende  al llamar a _compute_perception_invoice_taxes no genera ningun ait nuevo
                     perc.compute(partner_perc, inv)
 
-            for taxe in ait_obj._compute_perception_invoice_taxes(inv).\
-                    values():
-                ait_obj.new(taxe)
+            # Remove it to fix duplicated ERROR in Production, not 100% sure that is the right way to fix it.
+            # for taxe in ait_obj._compute_perception_invoice_taxes(inv).values():
+            #     ait_obj.new(taxe)
 
         # Update the stored value (fields.function),
         # so we write to trigger recompute

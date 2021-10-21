@@ -11,23 +11,29 @@ class PoSBoxConcept(models.Model):
     _description = 'Concept with an account to be used by ' + \
         'cash.box.in and cash.box.out'
 
-    @api.constrains("code")
+    @api.constrains("code", "company_id")
     def check_code_not_dup(self):
         for concept in self:
             code = concept.code
-            count = self.search_count([("code", "ilike", code)])
+            company = concept.company_id.id
+            count = self.search_count([
+                ("code", "ilike", code),
+                ("company_id", "=", company),
+                ])
             if count > 1:
                 raise exceptions.ValidationError(
                     _("Concept duplicated: %s") % code)
 
-    @api.constrains("name", "concept_type")
+    @api.constrains("name", "concept_type", "company_id")
     def check_name_not_dup(self):
         for concept in self:
             name = concept.name
+            company = concept.company_id.id
             count = self.search_count(
                 [
                     ("name", "ilike", name),
                     ("concept_type", "=", concept.concept_type),
+                    ("company_id", "=", company),
                 ]
             )
 

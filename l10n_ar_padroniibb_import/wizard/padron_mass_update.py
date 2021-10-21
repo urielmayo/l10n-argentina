@@ -115,9 +115,7 @@ class PadronMassUpdate(models.TransientModel):
                 }
                 self._cr.execute(q, q_params)
             else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
+                _logger.error('ERROR with register %s' % str(res))
 
     @api.model
     def _update_perception_arba(self, perception):
@@ -418,9 +416,7 @@ class PadronMassUpdate(models.TransientModel):
                 }
                 self._cr.execute(q, q_params)
             else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
+                _logger.error('ERROR with register %s' % str(res))
 
     @api.multi
     def action_update(self):
