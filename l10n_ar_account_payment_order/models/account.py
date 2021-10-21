@@ -98,6 +98,7 @@ class AccountJournal(models.Model):
             ('cash', None): 'cash',
             ('general', None): 'general',
             ('payment', None): 'payment',
+            ('receipt', None): 'receipt',
         }
         
         invoice_type = _journal_invoice_type_map[(self.type, self._context.get('invoice_type'))]
