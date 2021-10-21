@@ -15,6 +15,7 @@
     "depends": [
         "account",
         "stock",
+        "l10n_ar_wsfe",
     ],
     "data": [
         "wizard/account_journal_wizard_view.xml",
