@@ -17,7 +17,6 @@ class DatePeriod(models.Model):
     _order = "date_from desc"
     _description = 'Date Period (L10N AR)'
 
-
     @api.model
     def _get_company(self):
         return self.env.user.company_id
