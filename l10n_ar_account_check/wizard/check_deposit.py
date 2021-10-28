@@ -82,13 +82,17 @@ class AccountCheckDeposit(models.Model):
             return
         bank_acc = self.bank_account_id
 
-        if bank_acc.journal_id:
-            domain = bank_acc.journal_id.ids
-            return {
-                'domain': {
-                    'journal_id': [('id', 'in', domain)]
-                    }
+        journal_ids = bank_acc.journal_id.ids
+        if not self.journal_id and len(journal_ids) > 0:
+            self.journal_id = journal_ids[0]
+        else:
+            self.journal_id = False
+
+        return {
+            'domain': {
+                'journal_id': [('id', 'in', journal_ids)]
                 }
+            }
 
     # TODO: Hacer un refactoring para poder depositar varios al mismo tiempo,
     # pero antes averiguar si se tiene que hacer un asiento por cada uno o
