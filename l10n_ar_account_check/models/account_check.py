@@ -280,7 +280,33 @@ class AccountIssuedCheck(models.Model):
             # reconcile_recordset = move_line_obj.browse(move_lines_to_reconcile)
             # reconcile_recordset.reconcile()
 
+            absl = self._create_account_bank_statement_line(
+                check, -1)
         return self.write({"state": "issued"})
+
+    def _create_account_bank_statement_line(self, check, factor=-1, date=False):
+        if factor == -1:
+            ref = "Acreditación de cheque diferido"
+        else:
+            ref = "Rechazo de cheque diferido"
+        line_data = {
+                    'name': check.display_name,
+                    'date': date or check.clearance_move_id.date,
+                    'payment_date': check.clearance_move_id.date,
+                    'amount': check.amount * factor,
+                    'partner_id': check.receiving_partner_id.id,
+                    'ref': ref,
+                    'account_id': check.checkbook_id.bank_account_id.account_id.id,
+                    'state': 'open',
+                    'line_type': 'payment',
+                    'creation_type': 'system',
+                    'journal_id': check.checkbook_id.journal_id.id,
+                    'check_id': check.id,
+                    'company_id': self.company_id.id,
+                    # 'statement_id': statement_id,
+                }
+        return self.env['account.bank.statement.line'].create(line_data)
+
 
     def accredit_checks_cron_task(self):
         """ Search postdated checks and accredit them.
@@ -311,12 +337,24 @@ class AccountIssuedCheck(models.Model):
             if not check.accredited:
                 raise ValidationError(
                     _("Can't break conciliation of a not accredited check!"))
+
+            related_absl = self.env['account.bank.statement.line'].search([
+                ('check_id', '=', check.id)
+            ])
+            if related_absl and related_absl['state'] != 'open':
+                raise ValidationError(
+                    _("Can't break conciliation, the account bank statement line is in done state!"))
+
         for check in self:
+            if related_absl:
+                related_absl.with_context(
+                    {'force_unlink_statement_line': True}).unlink()
             move = check.clearance_move_id
             move.line_ids.remove_move_reconcile()
             move.button_cancel()
             move.unlink()
             check.write({'state': 'waiting'})
+
 
     @api.multi
     def reject_check(self):
@@ -515,6 +553,17 @@ class AccountThirdCheck(models.Model):
     @api.multi
     def check_to_wallet(self):
         self.ensure_one()
+        related_absl = self.env['account.bank.statement.line'].search([
+            ('check_id', '=', self.id)
+        ])
+        if related_absl and related_absl['state'] != 'open':
+            raise ValidationError(
+                _("Can't back to wallet, the account bank statement line is in done state!"))
+
+        if related_absl:
+            related_absl.with_context(
+                {'force_unlink_statement_line': True}).unlink()
+
         if self.deposit_move_id:
             self.deposit_move_id.button_cancel()
             self.deposit_move_id.unlink()
@@ -598,3 +647,23 @@ class AccountThirdCheck(models.Model):
             'state': 'rejected',
         })
         return True
+
+    def create_account_bank_statement_line(self, check, factor=1):
+        if factor == 1:
+            ref = "Deposito de cheque de tercero diferido"
+        else:
+            ref = "Rechazo de cheque de tercero diferido"
+        line_data = {
+                    'name': check.display_name,
+                    'date': check.deposit_date,
+                    'amount': check.amount * factor,
+                    'partner_id': check.source_partner_id.id,
+                    'ref': ref,
+                    'account_id': check.deposit_journal_id.default_debit_account_id.id,
+                    'state': 'open',
+                    'line_type': 'receipt',
+                    'journal_id': check.deposit_journal_id.id,
+                    'check_id': check.id,
+                    'company_id': self.company_id.id,
+                }
+        return self.env['account.bank.statement.line'].create(line_data)

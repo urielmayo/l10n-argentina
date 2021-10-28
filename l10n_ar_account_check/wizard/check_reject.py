@@ -50,11 +50,8 @@ class AccountCheckReject(models.Model):
         check_objs = third_check_obj.browse(record_ids)
 
         for check in check_objs:
-
             check.reject_date = wizard.reject_date
-
             partner = check.source_partner_id
-
             config = check_config_obj.search(
                 [('company_id', '=', check.company_id.id)])
             if not config:
@@ -130,12 +127,10 @@ class AccountCheckReject(models.Model):
 
             # Creamos la nota de debito
             debit_note_id = invoice_obj.create(invoice_vals)
-
             debit_note_id._onchange_partner_id()
 
             # Volvemos a cambiar la cuenta que sobreescribio el onchange
             debit_note_id.account_id = inv_account_id
-
             debit_note_id._onchange_invoice_line_ids()
 
         # TODO: Chequear que es lo mismo el estado en el que este,
@@ -146,11 +141,14 @@ class AccountCheckReject(models.Model):
         # Guardamos la referencia a la nota de debito del rechazo
         check.state = 'rejected'
         check.debit_note_id = debit_note_id
+        check.create_account_bank_statement_line(check, -1)
 
-        form_res = self.env.ref('l10n_ar_point_of_sale.view_pos_invoice_form')
+        # form_res = self.env.ref('l10n_ar_point_of_sale.view_pos_invoice_form')
+        form_res = self.env.ref('l10n_ar_point_of_sale.account_invoice_view_form')
         form_id = form_res and form_res.id or False
-        tree_res = self.env.ref(
-            'l10n_ar_point_of_sale.view_pos_invoice_filter')  # ????
+        # tree_res = self.env.ref('l10n_ar_point_of_sale.view_pos_invoice_filter')  # ????
+        tree_res = self.env.ref('l10n_ar_point_of_sale.account_invoice_view_tree')
+
         tree_id = tree_res and tree_res.id or False
 
         return {
@@ -194,10 +192,11 @@ class CheckRejectIssuedCheck(models.Model):
             check.write(
                 {'reject_date': self.reject_date,
                  'generate_rejection_journal_entry': self.generate_rejection_journal_entry,
-                'note': self.note})
+                 'note': self.note})
             if self.generate_rejection_journal_entry:
                 self.create_rejected_journal_entry(check)
-            check.reject_check()                
+            check._create_account_bank_statement_line(check, 1, self.reject_date)
+            check.reject_check()
         return {'type': 'ir.actions.act_window_close'}
 
     def create_rejected_journal_entry(self, check):
@@ -212,7 +211,7 @@ class CheckRejectIssuedCheck(models.Model):
         ctx = {
             'date': self.reject_date,
             'check_move_validity': False,
-        }        
+        }
         for payment_line in payment.move_line_ids:
             if payment_line.issued_check_id == check:
             # Create the account move record.

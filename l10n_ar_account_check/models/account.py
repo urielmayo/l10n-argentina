@@ -3,7 +3,7 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from odoo import models, fields
+from odoo import fields, models
 
 
 class AccountMoveLine(models.Model):
@@ -13,3 +13,11 @@ class AccountMoveLine(models.Model):
     issued_check_id = fields.Many2one(
         comodel_name='account.issued.check',
         string='Issued Check')
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    checkbox_ids = fields.One2many(string="Checkbook",
+                                   comodel_name='account.checkbook',
+                                   inverse_name='journal_id')

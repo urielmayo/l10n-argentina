@@ -73,6 +73,7 @@ class AccountBankStatementLine(models.Model):
     journal_id = fields.Many2one(related=False)
     company_id = fields.Many2one(related=False)
     statement_state = fields.Selection(related="statement_id.state")
+    check_id = fields.Many2one(required=False)
     payment_id = fields.Many2one(
         'account.payment', string='Payment reference', copy=False)
     payment_order_id = fields.Many2one(

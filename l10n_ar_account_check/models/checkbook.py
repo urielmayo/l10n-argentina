@@ -75,6 +75,9 @@ class AccountCheckbook(models.Model):
                                  string='Company', required=True,
                                  default=lambda self: self.env.
                                  user.company_id.id)
+    journal_id = fields.Many2one(string="Related Journal",
+                                 comodel_name='account.journal',)
+
     type = fields.Selection([
         ('common', 'Common'),
         ('postdated', 'Post-dated')],
@@ -91,6 +94,14 @@ class AccountCheckbook(models.Model):
     @api.onchange('bank_account_id')
     def onchange_bank_account(self):
         self.bank_id = self.bank_account_id.bank_id.id
+        domain = self.bank_account_id.account_id.ids
+        return {
+            'domain': {
+                'journal_id': [
+                    ('default_credit_account_id', 'in', domain)
+                    ]
+                }
+            }
 
     @api.multi
     def unlink(self):
@@ -163,6 +174,9 @@ class AccountIssuedCheck(models.Model):
     check_id = fields.Many2one('account.checkbook.check', 'Check')
     checkbook_id = fields.Many2one('account.checkbook', 'Checkbook')
     number = fields.Char('Check Number', size=20)
+    # absl_id = fields.One2many(string="Account Bank Statement Line",
+    #                           comodel_name='account.bank.statement.line',
+    #                           inverse_name='check_id')
 
     @api.onchange('check_id')
     def onchange_check_id(self):
