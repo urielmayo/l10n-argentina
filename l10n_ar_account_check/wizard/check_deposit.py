@@ -80,10 +80,15 @@ class AccountCheckDeposit(models.Model):
     def onchange_bank_account(self):
         if not self.bank_account_id:
             return
-
         bank_acc = self.bank_account_id
+
         if bank_acc.journal_id:
-            self.journal_id = bank_acc.journal_id.id
+            domain = bank_acc.journal_id.ids
+            return {
+                'domain': {
+                    'journal_id': [('id', 'in', domain)]
+                    }
+                }
 
     # TODO: Hacer un refactoring para poder depositar varios al mismo tiempo,
     # pero antes averiguar si se tiene que hacer un asiento por cada uno o
