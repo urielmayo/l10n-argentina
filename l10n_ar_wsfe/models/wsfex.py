@@ -6,6 +6,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.addons.l10n_ar_wsfe.wsfetools.wsfex_easywsy import WSFEX
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountIncoterms(models.Model):
@@ -188,6 +191,27 @@ class WsfexConfig(models.Model):
         ws = self._webservice_class(self.url)
         ws.login('Auth', auth)
         return ws
+
+    @api.multi
+    def get_voucher_info(self, pos, voucher_type, number):
+        self.ensure_one()
+        ws = self.ws_auth()
+        data = {
+            'FEXGetCMP': {
+                'Cmp': {
+                    'Cbte_tipo': int(voucher_type),
+                    'Cbte_nro': number,
+                    'Punto_vta': pos,
+                }
+            }
+        }
+        ws.add(data, no_check='all')
+        response = ws.request('FEXGetCMP')
+        if not hasattr(response, 'FEXResultGet'):
+            raise UserError(
+                _("Error fetching voucher from AFIP!"))
+        _logger.info(response.FEXResultGet)
+        return response.FEXResultGet
 
     @api.model
     def create(self, vals):

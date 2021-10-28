@@ -10,12 +10,14 @@
                 <form string="WSFE Sinchronize Voucher">
                     <group string="Query Information">
                         <group>
-                            <field name="config_id" invisible="1"/>
                             <field name="voucher_type" widget="selection"/>
+                            <field name="use_wsfex"/>
+                            <field name="pos_id"/>
                             <field name="voucher_number"/>
                         </group>
                         <group>
-                            <field name="pos_id"/>
+                            <field name="config_id" invisible="0" readonly="1"/>
+                            <field name="config_wsfex_id" invisible="0" readonly="1"/>
                         </group>
                     </group>
                     <group string="Voucher Information">

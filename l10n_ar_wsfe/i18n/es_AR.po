@@ -127,7 +127,17 @@ msgstr "Concepto"
 #. module: l10n_ar_wsfe
 #: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_sinchronize_voucher__config_id
 msgid "Config"
-msgstr "Configuración"
+msgstr "Configuración WSFE"
+
+#. module: l10n_ar_wsfe
+#: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_sinchronize_voucher__config_wsfex_id
+msgid "Config WSFEX"
+msgstr "Configuración WSFEX"
+
+#. module: l10n_ar_wsfe
+#: model:ir.model.fields,field_description:l10n_ar_wsfe.field_wsfe_sinchronize_voucher__use_wsfex
+msgid "Use WSFEX?"
+msgstr "Utilizar WSFEX?"
 
 #. module: l10n_ar_wsfe
 #: model_terms:ir.ui.view,arch_db:l10n_ar_wsfe.view_wsfe_config_form

@@ -7,7 +7,7 @@ import time
 
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 from odoo.tools.misc import DEFAULT_SERVER_DATETIME_FORMAT
 
@@ -24,11 +24,17 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         wsfe_conf_model = self.env['wsfe.config'].with_context(company_id=self.env.user.company_id.id)
         return wsfe_conf_model.get_config()
 
+    def _get_def_config_wsfex(self):
+        wsfe_conf_model = self.env['wsfex.config'].with_context(company_id=self.env.user.company_id.id)
+        return wsfe_conf_model.get_config()
+
     voucher_type = fields.Many2one(
         'wsfe.voucher_type', 'Voucher Type', required=True)
     pos_id = fields.Many2one('pos.ar', 'POS', required=True)
     config_id = fields.Many2one(
         'wsfe.config', 'Config', default=_get_def_config)
+    config_wsfex_id = fields.Many2one(
+        'wsfex.config', 'Config WSFEX', default=_get_def_config_wsfex)
     voucher_number = fields.Integer('Number', required=True)
     document_type = fields.Many2one(
         'res.document.type', 'Document Type', readonly=True)
@@ -49,13 +55,17 @@ class wsfe_sinchronize_voucher(models.TransientModel):
     cae_due_date = fields.Date('CAE Due Date', readonly=False)
     date_process = fields.Datetime('Date Processed', readonly=True)
     infook = fields.Boolean('Info OK', default=False)
+    use_wsfex = fields.Boolean('Use WSFEX?', default=False)
     invoice_id = fields.Many2one('account.invoice', 'Invoice')
 
     @api.onchange('config_id', 'voucher_type')
     def change_pos(self):
         pos_model = self.env['pos.ar']
         wsfe_conf = self.config_id
+        wsfex_conf = self.config_wsfex_id
         ids = [p.id for p in wsfe_conf.point_of_sale_ids]
+        if wsfex_conf:
+            ids.extend([p.id for p in wsfex_conf.point_of_sale_ids])
         denomination_id = self.voucher_type.denomination_id.id or False
         operator = 'in'
         if not denomination_id:
@@ -83,33 +93,52 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         if not voucher_type or not pos or not number:
             return
 
-        res = self.config_id.get_voucher_info(pos, voucher_type, number)
+        if not self.use_wsfex:
+            res = self.config_id.get_voucher_info(pos, voucher_type, number)
+        else:
+            res = self.config_wsfex_id.get_voucher_info(pos, voucher_type, number)
+            if not res['Id']:
+                raise ValidationError(_('Voucher Not Found'))
+        try:
+            # WSFEX Does not return DocTipo
+            doc_ids = self.env['res.document.type'].search(
+                [('afip_code', '=', res['DocTipo'])])
+        except Exception:
+            document_type = False
+        else:
+            document_type = doc_ids and doc_ids[0] or False
 
-        doc_ids = self.env['res.document.type'].search(
-            [('afip_code', '=', res['DocTipo'])])
-        document_type = doc_ids and doc_ids[0] or False
-
-        di = time.strftime(DEFAULT_SERVER_DATE_FORMAT,
-                           time.strptime(str(res['CbteFch']), '%Y%m%d'))
-        dd = time.strftime(DEFAULT_SERVER_DATE_FORMAT,
-                           time.strptime(str(res['FchVto']), '%Y%m%d'))
-        dpr = time.strftime(DEFAULT_SERVER_DATETIME_FORMAT,
-                            time.strptime(str(res['FchProceso']),
-                                          '%Y%m%d%H%M%S'))
+        if not self.use_wsfex:
+            di = time.strftime(DEFAULT_SERVER_DATE_FORMAT,
+                            time.strptime(str(res['CbteFch']), '%Y%m%d'))
+            dd = time.strftime(DEFAULT_SERVER_DATE_FORMAT,
+                            time.strptime(str(res['FchVto']), '%Y%m%d'))
+            dpr = time.strftime(DEFAULT_SERVER_DATETIME_FORMAT,
+                                time.strptime(str(res['FchProceso']),
+                                            '%Y%m%d%H%M%S'))
+        else:
+            di = time.strftime(DEFAULT_SERVER_DATE_FORMAT,
+                            time.strptime(str(res['Fecha_cbte']), '%Y%m%d'))
+            dd = time.strftime(DEFAULT_SERVER_DATE_FORMAT,
+                            time.strptime(str(res['Fch_venc_Cae']), '%Y%m%d'))
+            dpr = time.strftime(DEFAULT_SERVER_DATETIME_FORMAT,
+                                time.strptime(str(res['Id']),
+                                            '%Y%m%d%H%M%S'))
 
         # TODO: Tandriamos que filtrar las invoices por
         # Tipo de Comprobante tambien para ello podemos agregar
         # un par de campos mas para usarlos como filtros,
         # por ejemplo, is_debit_note y type
         self.document_type = document_type
-        self.document_number = str(res['DocNro'])
+        dres = dict(res)
+        self.document_number = str(dict(res).get('DocNro') or dict(res).get('Id_impositivo'))
         self.date_invoice = di  # str(res['CbteFch']),
-        self.amount_total = res['ImpTotal']
-        self.amount_no_taxed = res['ImpTotConc']
-        self.amount_taxed = res['ImpNeto']
-        self.amount_tax = res['ImpIVA'] + res['ImpTrib']
-        self.amount_exempt = res['ImpOpEx']
-        self.cae = str(res['CodAutorizacion'])
+        self.amount_total = dres.get('ImpTotal') or dres.get('Imp_total')
+        self.amount_no_taxed = dres.get('ImpTotConc', 0)
+        self.amount_taxed = dres.get('ImpNeto', 0)
+        self.amount_tax = dres.get('ImpIVA', 0) + dres.get('ImpTrib', 0)
+        self.amount_exempt = dres.get('ImpOpEx', 0)
+        self.cae = str(dres.get('CodAutorizacion') or dres.get('Cae'))
         self.cae_due_date = dd
         self.date_process = dpr
         self.infook = True
@@ -119,15 +148,24 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         else:
             doc_number = [self.document_number]
 
-        domain = [
-            ('amount_total', '=', self.amount_total),
-            ('amount_exempt', '=', self.amount_exempt),
-            ('amount_taxed', '=', self.amount_taxed),
-            ('amount_no_taxed', '=', self.amount_no_taxed),
-            ('state', 'in', ('draft', 'proforma2', 'proforma'))]
+        if not self.use_wsfex:
+            domain = [
+                ('amount_total', '=', self.amount_total),
+                ('amount_exempt', '=', self.amount_exempt),
+                ('amount_taxed', '=', self.amount_taxed),
+                ('amount_no_taxed', '=', self.amount_no_taxed),
+                ('state', 'in', ('draft', 'proforma2', 'proforma'))]
+            if document_type and document_type.afip_code != '99':
+                domain.append(('partner_id.vat', 'in', doc_number))
+        else:
+            domain = [
+                ('partner_id.vat', '=like', str(dres['Id_impositivo'])),
+                ('amount_total', '=', self.amount_total),
+                ('state', 'in', ('draft', 'proforma2', 'proforma')),
+                ('local', '=', False)
+            ]
 
-        if document_type and document_type.afip_code != '99':
-            domain.append(('partner_id.vat', 'in', doc_number))
+
         invoice_ids = invoice_model.search(domain)
         if len(invoice_ids) == 1:
             self.invoice_id = invoice_ids and invoice_ids[0]
