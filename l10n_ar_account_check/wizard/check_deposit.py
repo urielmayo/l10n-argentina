@@ -183,7 +183,7 @@ class AccountCheckDeposit(models.Model):
                 'deposit_move_id': move_id.id,
             }
             check.write(check_vals)
-
+            check.create_account_bank_statement_line(check, 1)
             check.deposit_check()
 
             # Se postea el asiento llamando a la funcion post de account_move.
