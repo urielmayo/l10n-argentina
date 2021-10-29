@@ -280,11 +280,11 @@ class AccountIssuedCheck(models.Model):
             # reconcile_recordset = move_line_obj.browse(move_lines_to_reconcile)
             # reconcile_recordset.reconcile()
 
-            absl = self._create_account_bank_statement_line(
+            absl = self.create_account_bank_statement_line(
                 check, -1)
         return self.write({"state": "issued"})
 
-    def _create_account_bank_statement_line(self, check, factor=-1, date=False):
+    def create_account_bank_statement_line(self, check, factor=-1, date=False):
         if factor == -1:
             ref = "Acreditación de cheque diferido"
         else:
@@ -303,10 +303,10 @@ class AccountIssuedCheck(models.Model):
                     'journal_id': check.checkbook_id.journal_id.id,
                     'check_id': check.id,
                     'company_id': self.company_id.id,
+                    'payment_order_id': check.payment_order_id.id,
                     # 'statement_id': statement_id,
                 }
         return self.env['account.bank.statement.line'].create(line_data)
-
 
     def accredit_checks_cron_task(self):
         """ Search postdated checks and accredit them.
@@ -665,5 +665,6 @@ class AccountThirdCheck(models.Model):
                     'journal_id': check.deposit_journal_id.id,
                     'check_id': check.id,
                     'company_id': self.company_id.id,
+                    'payment_order_id': check.source_payment_order_id.id,
                 }
         return self.env['account.bank.statement.line'].create(line_data)
