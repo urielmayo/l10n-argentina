@@ -66,6 +66,11 @@ class AccountInvoice(models.Model):
         'account.invoice.fiscal.type', 'Fiscal type')
     pos_ar_id = fields.Many2one(domain="[('fcred_is_fce_emitter', '=', False)]")
 
+    def _get_refund_common_fields(self):
+        res = super()._get_refund_common_fields()
+        res.append('fiscal_type_id')
+        return res
+
     @api.multi
     def _get_dup_domain(self):
         res = super()._get_dup_domain()
