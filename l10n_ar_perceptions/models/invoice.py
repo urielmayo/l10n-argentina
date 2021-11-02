@@ -126,8 +126,31 @@ class AccountInvoice(models.Model):
         vals = super()._prepare_refund(
             invoice, date_invoice=date_invoice, date=date,
             description=description, journal_id=journal_id)
+        perceptions = []
+        for p in invoice.perception_ids:
+            perceptions.append((0, 0, {
+                'account_id': p.account_id.id,
+                'ait_id': p.ait_id.id,
+                'amount': p.amount,
+                'base': p.base,
+                'base_amount': p.base_amount,
+                'company_id': p.company_id.id,
+                'concept_id': p.concept_id.id,
+                # 'date': datetime.date(2021, 10, 27),
+                # 'invoice_id': (429, 'CI A00005-00000015'),
+                'manual': p.manual,
+                'name': p.name,
+                'partner_id': p.partner_id.id,
+                'perception_id': p.perception_id.id,
+                'reg_code': p.reg_code,
+                'state_id': p.state_id.id,
+                'tax_amount': p.tax_amount,
+                'tax_app_id': p.tax_app_id.id,
+                'vat': p.vat,
+            }))
         vals.update({
             'address_shipping_id': invoice.address_shipping_id.id,
+            'perception_ids': perceptions,
         })
         return vals
 
