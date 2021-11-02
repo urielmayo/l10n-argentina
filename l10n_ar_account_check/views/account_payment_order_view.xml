@@ -19,7 +19,8 @@
                                 <field name="issue_date"/>
                                 <field name="payment_date"/>
                                 <field name="bank_id"/>
-                                <field name="amount" sum="Total Amount" />
+                                <field name="amount" sum="Total Amount"/>
+                                <field name="amount_currency" sum="Total Amount"/>
                             </tree>
                             <form string="Issued Checks">
                                 <group>
@@ -27,6 +28,7 @@
                                         <field name="number" invisible="1"/>
                                         <field name="type" readonly="1"/>
                                         <field name="amount"/>
+                                        <field name="amount_currency"/>
                                         <field name="bank_id" invisible="1"/>
                                         <field name="company_id" invisible="0"/>
                                     </group>
@@ -56,6 +58,7 @@
                                 <field name="bank_id"/>
                                 <field name="origin"/>
                                 <field name="amount" sum="Total"/>
+                                <field name="amount_currency" sum="Total"/>
                                 <field name="state" invisible="1"/>
                             </tree>
                         </field>

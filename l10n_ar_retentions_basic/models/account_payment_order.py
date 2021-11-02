@@ -53,10 +53,12 @@ class RetentionTaxLine(models.Model):
     base_currency = fields.Float(
         digits=dp.get_precision('Account'),
         compute='_compute_base_currency',
+        string='Base Currency',
     )
     amount_currency = fields.Float(
         digits=dp.get_precision('Account'),
         compute='_compute_amount_currency',
+        string='Amount Currency',
     )
 
     retention_id = fields.Many2one(
@@ -142,7 +144,7 @@ class RetentionTaxLine(models.Model):
             retention_vals['date'] = voucher.date
 
         company_currency = voucher.company_id.currency_id.id
-        current_currency = voucher.currency_id.id
+        current_currency = self.currency_id.id
 
         tax_amount_in_company_currency = \
             voucher._convert_paid_amount_in_company_currency(retention.amount)
@@ -179,7 +181,7 @@ class RetentionTaxLine(models.Model):
             'currency_id': company_currency !=
             current_currency and current_currency or False,
             'amount_currency': company_currency !=
-            current_currency and sign * retention.amount or 0.0,
+            current_currency and sign * retention.amount_currency or 0.0,
             'date': voucher.date,
             'date_maturity': voucher.date_due,
         }

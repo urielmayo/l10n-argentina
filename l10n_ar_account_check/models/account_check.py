@@ -7,6 +7,7 @@ import time
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons import decimal_precision as dp
 
 
 class AccountCheckConfig(models.Model):
@@ -106,6 +107,22 @@ class AccountIssuedCheck(models.Model):
          ('rejected', 'Rejected')],
         string='State',
         default='draft')
+    currency_id = fields.Many2one(
+        related='payment_order_id.currency_id',
+    )
+    currency_rate = fields.Float(
+        related='payment_order_id.payment_rate',
+    )
+    amount_currency = fields.Float(
+        digits=dp.get_precision('Account'),
+        compute='_compute_amount_currency',
+        string='Amount Currency',
+    )
+
+    @api.depends('amount', 'currency_rate')
+    def _compute_amount_currency(self):
+        for rec in self:
+            rec.amount_currency = rec.amount / rec.currency_rate
 
     @api.depends('clearance_move_id')
     def _compute_accredit_state(self):
@@ -146,7 +163,7 @@ class AccountIssuedCheck(models.Model):
         # TODO: Chequear que funcione bien en
         # multicurrency estas dos lineas de abajo
         company_currency = voucher.company_id.currency_id.id
-        current_currency = voucher.currency_id.id
+        current_currency = self.currency_id.id
         amount_in_company_currency = voucher.\
             _convert_paid_amount_in_company_currency(self.amount)
 
@@ -181,7 +198,7 @@ class AccountIssuedCheck(models.Model):
             'currency_id': company_currency !=
             current_currency and current_currency or False,
             'amount_currency': company_currency !=
-            current_currency and sign * self.amount or 0.0,
+            current_currency and sign * self.amount_currency or 0.0,
             'date': voucher.date,
             'date_maturity': date_maturity,
         }
@@ -425,6 +442,22 @@ class AccountThirdCheck(models.Model):
         comodel_name='account.journal',
         string='Deposit Journal',
         readonly=True, compute='_compute_deposit_journal_id')
+    currency_id = fields.Many2one(
+        related='source_payment_order_id.currency_id',
+    )
+    currency_rate = fields.Float(
+        related='source_payment_order_id.payment_rate',
+    )
+    amount_currency = fields.Float(
+        digits=dp.get_precision('Account'),
+        compute='_compute_amount_currency',
+        string='Amount Currency',
+    )
+
+    @api.depends('amount', 'currency_rate')
+    def _compute_amount_currency(self):
+        for rec in self:
+            rec.amount_currency = rec.amount / rec.currency_rate
 
     @api.depends('deposit_move_id')
     def _compute_deposit_journal_id(self):
@@ -448,7 +481,7 @@ class AccountThirdCheck(models.Model):
         # TODO: Chequear que funcione bien en
         # multicurrency estas dos lineas de abajo
         company_currency = voucher.company_id.currency_id.id
-        current_currency = voucher.currency_id.id
+        current_currency = self.currency_id.id
 
         amount_in_company_currency = voucher.\
             _convert_paid_amount_in_company_currency(
@@ -479,7 +512,7 @@ class AccountThirdCheck(models.Model):
             'currency_id': company_currency !=
             current_currency and current_currency or False,
             'amount_currency': company_currency !=
-            current_currency and sign * self.amount or 0.0,
+            current_currency and sign * self.amount_currency or 0.0,
             'date': voucher.date,
             'date_maturity': self.payment_date or self.issue_date,
         }
