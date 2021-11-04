@@ -116,12 +116,12 @@ class RetentionTaxLine(models.Model):
             else:
                 self.state_id = False
 
-    @api.multi
+    @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
         for rec in self:
             rec.amount_currency = rec.amount / rec.currency_rate
 
-    @api.multi
+    @api.depends('amount', 'currency_rate')
     def _compute_base_currency(self):
         for rec in self:
             rec.base_currency = rec.base / rec.currency_rate
