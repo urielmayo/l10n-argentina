@@ -47,7 +47,7 @@
                         <group string="Optionals">
                             <field name="optional_ids" nolabel="1">
                                 <tree editable="bottom">
-                                    <field name="optional_id" options="{'no_create': True, 'no_create_edit':True, 'no_open':True}"/>
+                                    <field name="optional_id" domain="[('wsfe_config_id.company_id', '=', parent.company_id)]" options="{'no_create': True, 'no_create_edit':True, 'no_open':True}"/>
                                     <field name="value"/>
                                 </tree>
                             </field>
