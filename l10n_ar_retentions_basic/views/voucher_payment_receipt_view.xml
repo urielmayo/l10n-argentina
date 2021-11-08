@@ -11,6 +11,7 @@
                 <page string="Retentions">
                     <field name="retention_ids" nolabel="1">
                         <tree string="Retention Lines">
+                            <field name="currency_id" invisible="1"/>
                             <field name="name" invisible="1"/>
                             <field name="state_id" invisible="1"/>
                             <field name="date"/>
@@ -18,7 +19,17 @@
                             <field name="partner_id" invisible="1"/>
                             <field name="certificate_no"/>
                             <field name="base"/>
+                            <field name="base_currency"
+                                widget="monetary"
+                                options="{'currency_field': 'currency_id'}"
+                                attrs="{'column_invisible': [('parent.is_multi_currency', '=', False)]}"
+                                />
                             <field name="amount"/>
+                            <field name="amount_currency"
+                                widget="monetary"
+                                options="{'currency_field': 'currency_id'}"
+                                attrs="{'column_invisible': [('parent.is_multi_currency', '=', False)]}"
+                                />
                             <field name="account_id" invisible="1"/>
                         </tree>
                         <form>

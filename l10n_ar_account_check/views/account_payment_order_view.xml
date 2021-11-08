@@ -14,12 +14,18 @@
                         <field name="third_check_receipt_ids" invisible="1"/>
                         <field name="issued_check_ids" string="Issued Checks" nolabel="1" colspan="4" >
                             <tree string="Issued Checks">
+                                <field name="currency_id" invisible="1"/>
                                 <field name="number"/>
                                 <field name="type"/>
                                 <field name="issue_date"/>
                                 <field name="payment_date"/>
                                 <field name="bank_id"/>
-                                <field name="amount" sum="Total Amount" />
+                                <field name="amount" sum="Total Amount"/>
+                                <field name="amount_currency"
+                                    widget="monetary"
+                                    options="{'currency_field': 'currency_id'}"
+                                    attrs="{'column_invisible': [('parent.is_multi_currency', '=', False)]}"
+                                    sum="Total Amount"/>
                             </tree>
                             <form string="Issued Checks">
                                 <group>
@@ -27,6 +33,7 @@
                                         <field name="number" invisible="1"/>
                                         <field name="type" readonly="1"/>
                                         <field name="amount"/>
+                                        <field name="amount_currency"/>
                                         <field name="bank_id" invisible="1"/>
                                         <field name="company_id" invisible="0"/>
                                     </group>
@@ -49,6 +56,7 @@
                         <label for="third_check_ids"/>
                         <field name="third_check_ids" string="Third Checks" nolabel="1" colspan="4" domain="[('state', '=', 'wallet'), ('company_id', '=', company_id)]">
                             <tree string="Third Checks">
+                                <field name="currency_id" invisible="1"/>
                                 <field name="number"/>
                                 <field name="source_partner_id"/>
                                 <field name="issue_date"/>
@@ -56,6 +64,11 @@
                                 <field name="bank_id"/>
                                 <field name="origin"/>
                                 <field name="amount" sum="Total"/>
+                                <field name="amount_currency"
+                                    widget="monetary"
+                                    options="{'currency_field': 'currency_id'}"
+                                    attrs="{'column_invisible': [('parent.is_multi_currency', '=', False)]}"
+                                    sum="Total Amount"/>
                                 <field name="state" invisible="1"/>
                             </tree>
                         </field>
@@ -78,6 +91,7 @@
                         <field name="third_check_ids" invisible="1"/>
                         <field name="third_check_receipt_ids" string="Third Checks" nolabel="1" colspan="4">
                             <tree string="Third Checks">
+                                <field name="currency_id" invisible="1"/>
                                 <field name="number"/>
                                 <field name="receipt_date"/>
                                 <field name="issue_date"/>
@@ -85,6 +99,11 @@
                                 <field name="bank_id"/>
                                 <field name="type"/>
                                 <field name="amount" sum="Total"/>
+                                <field name="amount_currency"
+                                    widget="monetary"
+                                    options="{'currency_field': 'currency_id'}"
+                                    attrs="{'column_invisible': [('parent.is_multi_currency', '=', False)]}"
+                                    sum="Total Amount"/>
                                 <field name="state"/>
                             </tree>
                             <form string="Third Checks">
