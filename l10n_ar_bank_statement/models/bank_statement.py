@@ -9,6 +9,9 @@ from odoo import api, fields, models
 class AccountBankStatement(models.Model):
     _inherit = 'account.bank.statement'
 
+    # TODO: debug why this module request for check_ids, added as temp fix
+    check_ids = fields.Many2many('account.issued.check', string="Checks")
+
     def _get_next_name(self):
         return self.env["ir.sequence"].next_by_code(self._name)
 
