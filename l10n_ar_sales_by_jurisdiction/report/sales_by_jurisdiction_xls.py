@@ -5,7 +5,7 @@
 
 from datetime import datetime
 
-from odoo import models, _
+from odoo import _, models
 
 
 class SalesExportXlsx(models.AbstractModel):
@@ -151,13 +151,9 @@ class SalesExportXlsx(models.AbstractModel):
         for line in lines:
             # Change date format to dd-mm-yyyy
             line['fecha'] = datetime.strftime(
-                datetime.strptime(
-                    line['fecha'], "%Y-%m-%d"),
-                "%d-%m-%Y") if line['fecha'] else ''
+                line['fecha'], "%d-%m-%Y") if line['fecha'] else ''
             line['fecha_asiento'] = datetime.strftime(
-                datetime.strptime(
-                    line['fecha_asiento'], "%Y-%m-%d"),
-                "%d-%m-%Y") if line['fecha_asiento'] else ''
+                line['fecha_asiento'], "%d-%m-%Y") if line['fecha_asiento'] else ''
             line['monto'] = float(line['monto'])
             row_pos = self._write_line(
                 ws, row_pos, ws_params, col_specs_section='data',
