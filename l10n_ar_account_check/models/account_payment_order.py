@@ -180,3 +180,33 @@ class AccountPaymentOrder(models.Model):
             third_checks.write({'state': 'draft'})
 
         return res
+
+    @api.onchange('third_check_receipt_ids')
+    def onchange_duplicate_checks(self):
+        checks_list = self.third_check_receipt_ids[:].mapped(lambda x: (x.number))
+        bank_names_list = self.third_check_receipt_ids[:].mapped(lambda x: (x.bank_id.name))
+
+        bank_duplicates = []
+        duplicate_flag = False
+
+        for index, element in enumerate(checks_list):
+            if checks_list.count(element) > 1:
+                bank_name = bank_names_list[index]
+
+                if bank_name in bank_duplicates:
+                    check_number_duplicate = element
+                    bank_name_duplicate = bank_name
+                    duplicate_flag = True
+
+
+                bank_duplicates.append(bank_name)
+
+        if duplicate_flag:
+            duplicate_flag = False
+            message = {'title': _('Advertencia'),
+                    'message': _('Usted cuenta con cheques de igual número y mismo banco.\
+                                  Por favor, verificar que no sea un error. \
+                                  Número de cheque: %s, Banco: %s' % (check_number_duplicate, bank_name_duplicate)
+                                  )}
+
+            return {'value': {}, 'warning':message}
