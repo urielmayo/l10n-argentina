@@ -9,6 +9,8 @@ from odoo.addons import decimal_precision as dp
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
+from odoo.http import route, request
+
 _logger = logging.getLogger(__name__)
 
 
@@ -438,6 +440,14 @@ class AccountInvoice(models.Model):
         vals['is_exempt'] = tax_browse.is_exempt
         vals['tax_id'] = tax['id']
         return vals
+
+    @api.multi
+    def invoice_print(self):
+        reportname = 'none'
+        report_jas = request.env['ir.actions.report']._get_report_from_name(reportname)
+        self.ensure_one()
+        self.sent = True
+        return report_jas.report_action(self)
 
 
 class AccountInvoiceTax(models.Model):
