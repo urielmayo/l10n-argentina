@@ -32,6 +32,7 @@
     "data": [
         "security/account_check_security.xml",
         "security/ir.model.access.csv",
+        "security/ir_rule.xml",
         "wizard/annull_checks_view.xml",
         "wizard/view_check_deposit.xml",
         "wizard/view_check_reject.xml",
