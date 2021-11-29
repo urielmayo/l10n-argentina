@@ -6,8 +6,8 @@
 import time
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
 from odoo.addons import decimal_precision as dp
+from odoo.exceptions import UserError, ValidationError
 
 
 class AccountCheckConfig(models.Model):
@@ -46,8 +46,8 @@ class AccountCheckConfig(models.Model):
         domain=[('internal_type', 'not in', ('receivable', 'payable'))],
         required=True)
     company_id = fields.Many2one(
-        comodel_name='res.company', string='Company', required=True)
-
+        comodel_name='res.company', string='Company', required=True,
+        default=lambda self: self.env.user.company_id.id)
 
 class AccountIssuedCheck(models.Model):
     """
