@@ -35,7 +35,7 @@
 			    <p>Account Check Configuration</p>
                         </h1>
                         <group>
-                            <field name="company_id"/>
+                            <field name="company_id" readonly="True"/>
                             <field name="account_id"/>
                             <field name="deferred_account_id"/>
                             <field name="receivable_rejected_account_id"/>
