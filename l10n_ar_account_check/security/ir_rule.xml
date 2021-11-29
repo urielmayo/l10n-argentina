@@ -32,5 +32,14 @@
             </field>
         </record>
 
+        <record id="ir_rule_multicompany_check_config" model="ir.rule">
+            <field name="name">Rule for Multicompany Checks Config</field>
+            <field name="active" eval="1"/>
+            <field name="model_id" ref="model_account_check_config"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                ['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
     </data>
 </odoo>
