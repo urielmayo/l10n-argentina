@@ -139,7 +139,7 @@ class AccountIssuedCheck(models.Model):
         # Buscamos la cuenta contable para el asiento del cheque
         # Esta cuenta se corresponde con la cuenta de banco de donde
         # pertenece el cheque
-        if self.type == 'postdated':
+        if self.type in ('postdated', 'electronic'):
             # Buscamos la configuracion de cheques
             check_config_obj = self.env['account.check.config']
             config = check_config_obj.search(
