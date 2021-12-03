@@ -136,6 +136,10 @@ class WSFEX(AfipWS):
         else:
             shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
 
+        IdImpositivo = inv.partner_id.vat
+        if inv.partner_id.country_id.id == self.env.ref('base.ar').id:
+            cuit_pais = inv.partner_id.vat
+
         Cmp = {
             self.voucher_type_str: inv._get_voucher_type(),
             'Punto_vta': int(inv._get_pos().name),
@@ -151,7 +155,7 @@ class WSFEX(AfipWS):
             'Domicilio_cliente': inv.partner_id.contact_address.encode(
                 'latin-1', errors='ignore').decode('utf8').replace('\n', ' '),
             'Cuit_pais_cliente': cuit_pais,
-            'Id_impositivo': inv.partner_id.vat,
+            'Id_impositivo': IdImpositivo,
             'Moneda_Id': curr_code,
             'Moneda_ctz': curr_rate,
             'Imp_total': inv.amount_total,

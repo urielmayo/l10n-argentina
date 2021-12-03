@@ -10,6 +10,12 @@
                     <xpath expr="//field[@name='property_account_position_id']" position="after">
                         <field name="fcred_transfer" />
                     </xpath>
+
+                    <field name="country_id" position="attributes">
+                        <attribute name="attrs">
+                            {'required': [('property_account_position_id', '=', %(l10n_ar_point_of_sale.fiscal_position_exterior)d)]}
+                        </attribute>
+                    </field>
                 </data>
             </field>
         </record>
