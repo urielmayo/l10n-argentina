@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="account_checkbook_check_view_form" model="ir.ui.view">
+            <field name="name">account.checkbook.check.form</field>
+            <field name="model">account.checkbook.check</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Checkbook Check" create="false" edit="false">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><label for="name"/><field name="name" class="oe_inline"/></h1>
+                        </div>
+                        <group>
+                            <field name="checkbook_id"/>
+                            <field name="state"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
