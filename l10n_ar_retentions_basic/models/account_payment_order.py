@@ -128,6 +128,8 @@ class RetentionTaxLine(models.Model):
     def apply_retention_sequence(self):
         sequence_model = self.env['ir.sequence']
         for rtl in self:
+            if rtl.payment_order_id.type != 'payment':
+                continue
             number = sequence_model.next_by_code('retention.applied')
             rtl.write({
                 'certificate_no': number,
