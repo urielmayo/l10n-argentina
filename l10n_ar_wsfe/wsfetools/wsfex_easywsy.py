@@ -137,7 +137,7 @@ class WSFEX(AfipWS):
             shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
 
         IdImpositivo = inv.partner_id.vat
-        if inv.partner_id.country_id.id == self.env.ref('base.ar').id:
+        if inv.partner_id.country_id.id == inv.env.ref('base.ar').id:
             cuit_pais = inv.partner_id.vat
 
         Cmp = {
