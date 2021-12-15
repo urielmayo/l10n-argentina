@@ -115,7 +115,7 @@ class WSFEX(AfipWS):
                 self.voucher_asoc_str: tipo_cbte,
                 'Cbte_punto_vta': int(pos),
                 'Cbte_nro': int(number),
-                'Cbte_cuit': cuit_pais,
+                'Cbte_cuit': associated_inv.company_id.vat,
             }
             if 'homo' in self.ws_url:
                 Cmp_asoc.update({
