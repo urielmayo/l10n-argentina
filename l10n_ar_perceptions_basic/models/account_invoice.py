@@ -83,6 +83,23 @@ class PerceptionTaxLine(models.Model):
         ondelete='cascade',
     )
 
+    perception_base_amount_cur = fields.Float(
+        string='Base $',
+        digits=dp.get_precision('Account'),
+        compute='_perception_calculate_cur'
+    )
+
+    perception_tax_amount_cur = fields.Float(
+        string='Importe $',
+        digits=dp.get_precision('Account'),
+        compute='_perception_calculate_cur'
+    )
+
+    @api.one
+    def _perception_calculate_cur(self):
+        self.perception_base_amount_cur = self.invoice_id.perception_base_amount_cur
+        self.perception_tax_amount_cur = self.invoice_id.perception_tax_amount_cur
+
     @api.onchange('perception_id')
     def _onchange_perception(self):
         if not self.perception_id:
