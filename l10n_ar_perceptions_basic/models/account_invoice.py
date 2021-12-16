@@ -97,8 +97,8 @@ class PerceptionTaxLine(models.Model):
 
     @api.one
     def _perception_calculate_cur(self):
-        self.perception_base_amount_cur = self.invoice_id.perception_base_amount_cur
-        self.perception_tax_amount_cur = self.invoice_id.perception_tax_amount_cur
+        self.perception_base_amount_cur = self.invoice_id.currency_rate * self.base
+        self.perception_tax_amount_cur = self.invoice_id.currency_rate * self.amount
 
     @api.onchange('perception_id')
     def _onchange_perception(self):
