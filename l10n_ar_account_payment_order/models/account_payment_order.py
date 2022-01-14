@@ -795,7 +795,9 @@ class AccountPaymentOrder(models.Model):
         #     move_lines.append(move_line)
 
         # Creamos un hook para agregar los demas asientos contables de otros modulos  # noqa
-        move_lines = self.create_move_line_hook(move_id, move_lines)
+        move_lines = self.with_context({'check_to_number': True}).\
+            create_move_line_hook(move_id, move_lines)
+
         # Recorremos las lineas para  hacer un chequeo de debit y credit contra total_debit y total_credit  # noqa
         amount_credit = 0.0
         amount_debit = 0.0

@@ -103,6 +103,7 @@ class AccountIssuedCheck(models.Model):
         [('draft', 'Draft'),
          ('waiting', 'Waiting Accreditation'),
          ('issued', 'Issued'),
+         ('to_number', 'To Number'),
          ('cancel', 'Cancelled'),
          ('rejected', 'Rejected')],
         string='State',

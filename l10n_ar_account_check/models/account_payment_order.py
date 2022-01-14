@@ -123,6 +123,10 @@ class AccountPaymentOrder(models.Model):
 
                 if check.type == 'postdated':
                     state = 'waiting'
+            # Use context to try to avoid get modified if come from
+            # another method.
+                elif self._context.get('check_to_number'):
+                    state = 'to_number'
                 else:
                     state = 'issued'
 
