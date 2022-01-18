@@ -19,7 +19,7 @@
 
 import logging
 
-from datetime import datetime
+import datetime
 import time
 
 from odoo import models, fields, api, _
