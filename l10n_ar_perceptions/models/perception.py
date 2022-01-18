@@ -310,7 +310,7 @@ class PerceptionPerception(models.Model):
         return {
             'name': self.name,
             'concept_id': concept_id,
-            'invoice_id': invoice.id,
+            'invoice_id': invoice.id if invoice else False,
             'account_id': self.tax_id.account_id.id,
             'base': vals['base'],
             'amount': vals['amount'],
@@ -319,7 +319,7 @@ class PerceptionPerception(models.Model):
             'tax_app_id': taxapp.id,
             'perception_id': self.id,
             'state_id': self.state_id and self.state_id.id or False,
-            'partner_id': invoice.partner_id.id,
+            'partner_id': invoice.partner_id.id if invoice else False,
         }
 
     @api.returns('perception.tax.line')
