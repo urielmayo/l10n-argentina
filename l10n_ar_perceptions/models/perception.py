@@ -19,6 +19,9 @@
 
 import logging
 
+from datetime import datetime
+import time
+
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.addons import decimal_precision as dp
@@ -102,37 +105,18 @@ class PerceptionPerception(models.Model):
 
         return concepts
 
-    @api.model
-    def _check_perception_applicable(self, invoice, perception_data):
-        sit_iibb = perception_data['sit_iibb']
-        from_padron = perception_data['from_padron']
+    @api.multi
+    def _get_partner_state(self, **kwargs):
+        """
+        Return record or list of recordset
+        with partner_state
+        """
+        partner_state = False
+        invoice = kwargs.get('invoice', False)
+        if not invoice:
+            return partner_state
         partner_obj = self.env['res.partner']
         sale_obj = self.env['sale.order']
-
-        if not self.state_id:
-            return True
-
-        if self.applicable_state == 'always':
-            return True
-
-        if self.always_apply_padron and from_padron:
-            return True
-
-        # Chequeamos la situacion de IIBB,
-        # si es CM, directamente retornamos True
-        if self.check_sit_iibb:
-            _logger.info("Chequeo de situacion IIBB activado")
-            multilateral = self.env.ref(
-                "l10n_ar_point_of_sale.iibb_situation_multilateral")
-            if sit_iibb == multilateral:
-                _logger.info("Partner es Convenio Multilateral, " +
-                             "aplica Percepcion %s", self.name)
-                return True
-
-        # Si la jurisdiccion de aplicacion es la de origen
-        partner_state = False
-        perception_state = self.state_id.id
-
         if self.applicable_state == 'source':
             if self.applicable_location == 'invoice':
                 partner_state = invoice.company_id.partner_id.state_id.id
@@ -172,6 +156,36 @@ class PerceptionPerception(models.Model):
                           'To compute Perception, is needed to know ' +
                           'Delivery State. ' +
                           'Please, configure a Partner Address.'))
+        return partner_state
+
+    @api.model
+    def _check_perception_applicable(self, perception_data, **kwargs):
+        sit_iibb = perception_data['sit_iibb']
+        from_padron = perception_data['from_padron']
+
+        if not self.state_id:
+            return True
+
+        if self.applicable_state == 'always':
+            return True
+
+        if self.always_apply_padron and from_padron:
+            return True
+
+        # Chequeamos la situacion de IIBB,
+        # si es CM, directamente retornamos True
+        if self.check_sit_iibb:
+            _logger.info("Chequeo de situacion IIBB activado")
+            multilateral = self.env.ref(
+                "l10n_ar_point_of_sale.iibb_situation_multilateral")
+            if sit_iibb == multilateral:
+                _logger.info("Partner es Convenio Multilateral, " +
+                             "aplica Percepcion %s", self.name)
+                return True
+
+        # Si la jurisdiccion de aplicacion es la de origen
+        perception_state = self.state_id.id
+        partner_state = self._get_partner_state(**kwargs)
 
         # Hacemos el chequeo de los states
         if isinstance(partner_state, list):
@@ -183,63 +197,55 @@ class PerceptionPerception(models.Model):
 
         return True
 
-    @api.model
-    def _compute_base_perception(self, invoice, perception_data):
-        activity_id = perception_data['activity_id']
-        percent = perception_data['percent']
-        sit_iibb = perception_data['sit_iibb']
+    def _get_taxapps(self, perception_data, account, **kwargs):
         tax_app_obj = self.env['perception.tax.application']
-
-        concept_id = False
+        sit_iibb = perception_data['sit_iibb']
+        activity_id = perception_data['activity_id']
 
         # Obtenemos la actividad configurada para esta Percepcion en el partner
         activity = self.env['perception.activity'].browse(activity_id)
-        # activity_id = activity and activity.id or False
 
-        # Por cada linea, nos fijamos la configuracion del producto
-        perceptions = {}
-        for line in invoice.invoice_line_ids:
-            account_id = line.account_id
+        concepts = self._get_concepts_from_account(account)
 
-            concepts = self._get_concepts_from_account(account_id)
+        # Si algun concepto no esta sujeto a percepcion, continuamos
+        no_subject = False
+        for concept in concepts:
+            if concept and concept.no_subject:
+                no_subject = True
 
-            # Si algun concepto no esta sujeto a percepcion, continuamos
-            no_subject = False
-            for concept in concepts:
-                if concept and concept.no_subject:
-                    no_subject = True
+        if no_subject:
+            return
 
-            if no_subject:
-                continue
+        concept_name = ' '.join(map(lambda a: a.name, concepts))
+        activity_name = activity and activity.name or ''
+        concept_ids = concepts and list(
+            map(lambda a: a.id, concepts)
+        ) or []
 
-            concept_name = ' '.join(map(lambda a: a.name, concepts))
-            activity_name = activity and activity.name or ''
-            concept_ids = concepts and list(map(lambda a: a.id, concepts)) or []
+        # Buscamos las taxapps que concuerden
+        tapp_domain = [('perception_id', '=', self.id),
+                       ('concept_id', 'in', concept_ids),
+                       ('activity_id', '=', activity_id)]
+        iibb_domain = []
 
-            # Buscamos las taxapps que concuerden
-            tapp_domain = [('perception_id', '=', self.id),
-                           ('concept_id', 'in', concept_ids),
-                           ('activity_id', '=', activity_id)]
-            iibb_domain = []
+        if self.type == 'gross_income':
+            iibb_domain.append(
+                ('sit_iibb', '=', sit_iibb.id if sit_iibb else False))
+        taxapps = tax_app_obj.search(tapp_domain+iibb_domain)
 
-            if self.type == 'gross_income':
-                iibb_domain.append(
-                    ('sit_iibb', '=', sit_iibb.id if sit_iibb else False))
-            taxapps = tax_app_obj.search(tapp_domain+iibb_domain)
+        # Si no se encuentra con la situacion de iibb,
+        # buscamos normalmente, aplica regla general
+        if not taxapps:
+            tapp_domain.append(('sit_iibb', '=', False))
+            taxapps = tax_app_obj.search(tapp_domain)
 
-            # Si no se encuentra con la situacion de iibb,
-            # buscamos normalmente, aplica regla general
-            if not taxapps:
-                tapp_domain.append(('sit_iibb', '=', False))
-                taxapps = tax_app_obj.search(tapp_domain)
-
-            if not taxapps:
-                raise ValidationError(
-                    _("Perception Error!\n") +
-                    _("There is no configured a Perception Application (%s) " +
-                      "that corresponds to\nActivity: %s \nConcept: %s\n for" +
-                      " the Account %s") % (self.name, activity_name,
-                                            concept_name, account_id.name))
+        if not taxapps:
+            raise ValidationError(
+                _("Perception Error!\n") +
+                _("There is no configured a Perception Application (%s) " +
+                  "that corresponds to\nActivity: %s \nConcept: %s\n for" +
+                  " the Account %s") % (self.name, activity_name,
+                                        concept_name, account.name))
 
             if len(taxapps) > 1:
                 raise ValidationError(
@@ -248,7 +254,27 @@ class PerceptionPerception(models.Model):
                       "configured that corresponds to\nActivity: %s \n" +
                       "Concept: %s\n for the Account %s") % (
                           self.name, activity_name, concept_name,
-                          account_id.name))
+                          account.name))
+        return taxapps
+
+    @api.model
+    def _compute_base_perception(self, perception_data, **kwargs):
+        invoice = kwargs.get('invoice', False)
+        if not invoice:
+            return {}
+        percent = perception_data['percent']
+
+        concept_id = False
+
+        # activity_id = activity and activity.id or False
+
+        # Por cada linea, nos fijamos la configuracion del producto
+        perceptions = {}
+        for line in invoice.invoice_line_ids:
+            taxapps = self._get_taxapps(perception_data,
+                                        line.account_id, **kwargs)
+            if taxapps is None:
+                continue
 
             concept_id = taxapps.concept_id.id
 
@@ -278,21 +304,39 @@ class PerceptionPerception(models.Model):
 
         return perceptions
 
+    def _prepare_perception_vals(self, concept_id, vals, **kwargs):
+        taxapp = vals['tax_app_id']
+        invoice = kwargs.get('invoice', False)
+        return {
+            'name': self.name,
+            'concept_id': concept_id,
+            'invoice_id': invoice.id,
+            'account_id': self.tax_id.account_id.id,
+            'base': vals['base'],
+            'amount': vals['amount'],
+            'manual': False,  # La creamos por sistema
+            'reg_code': vals['reg_code'],
+            'tax_app_id': taxapp.id,
+            'perception_id': self.id,
+            'state_id': self.state_id and self.state_id.id or False,
+            'partner_id': invoice.partner_id.id,
+        }
+
     @api.returns('perception.tax.line')
     @api.model
-    def compute(self, perception_data, invoice):
+    def compute(self, perception_data, **kwargs):
         # Chequeamos si la Percepcion tiene seteado un state_id, que coincida
         # con el state_id de la direccion de entrega del partner.
         # Sino no se realiza la Percepcion
-        applicable = self._check_perception_applicable(invoice,
-                                                       perception_data)
+        applicable = self._check_perception_applicable(perception_data,
+                                                       **kwargs)
         if not applicable:
             return
 
         # Chequeamos las percepciones a aplicar que matchean
         # (esto corresponde a una percepcion pero que pueden
         # existir varios conceptos y/o actividades)
-        perceptions = self._compute_base_perception(invoice, perception_data)
+        perceptions = self._compute_base_perception(perception_data, **kwargs)
 
         # Creamos las lineas de percepcion
         new_perception_lines = self.env['perception.tax.line']
@@ -310,27 +354,57 @@ class PerceptionPerception(models.Model):
             vals['base'] = base
 
             # Creamos la percepcion.tax.line
-            perception_line_vals = {
-                'name': self.name,
-                'concept_id': concept_id,
-                'invoice_id': invoice.id,
-                'account_id': self.tax_id.account_id.id,
-                'base': vals['base'],
-                'amount': vals['amount'],
-                'manual': False,  # La creamos por sistema
-                'reg_code': vals['reg_code'],
-                'tax_app_id': taxapp.id,
-                'perception_id': self.id,
-                'state_id': self.state_id and self.state_id.id or False,
-                'partner_id': invoice.partner_id.id,
-            }
+            perception_line_vals = self._prepare_perception_vals(
+                concept_id, vals, **kwargs,
+            )
             # Creamos la perception.tax.line correspondiente
             # Le pasamos manual=False para que se cree la account.invoice.tax
             # con manual=False
             new_perception_lines += self.env['perception.tax.line'].\
-                    with_context(manual=False).new(perception_line_vals)
-        invoice.perception_ids = new_perception_lines
+                with_context(manual=False).new(perception_line_vals)
         return new_perception_lines
+
+    @api.model
+    def create_perceptions_from_partner(self, partner, date=False, **kwargs):
+        # Calculamos cada Percepcion configurada en el Partner
+        partner_perceptions = partner._get_perceptions_to_apply()
+        perc_lines = self.env['perception.tax.line']
+        for partner_perc in partner_perceptions.values():
+            excluded_percent = partner_perc['excluded_percent']
+
+            # Chequeamos las fechas de eximision
+            vdate = date or datetime.date.today()
+
+            date_from = False
+            date_to = False
+            if partner_perc['ex_date_from']:
+                date_from = time.strptime(partner_perc['ex_date_from'],
+                                          "%Y-%m-%d")
+            if partner_perc['ex_date_to']:
+                date_to = time.strptime(partner_perc['ex_date_to'],
+                                        "%Y-%m-%d")
+
+            # TODO: Chequear cuando solo se llena uno de las dos fechas
+            if (not date_from and not date_to) or \
+                    (vdate >= date_from and vdate <= date_to):
+                if excluded_percent > 1.0 or excluded_percent < 0.0:
+                    raise ValidationError(
+                        _("Perception Configuration Error!\n" +
+                          "Excluded percent configured has to be " +
+                          "between 0.0 and 1.0"))
+
+                # Si esta totalmente eximido
+                if excluded_percent == 1.0:
+                    continue
+            else:
+                partner_perc['excluded_percent'] = 0.0
+
+            perc = partner_perc['perception']
+            # TODO: compute no crea percepciones,
+            # por ende  al llamar a _compute_perception_invoice_taxes
+            # no genera ningun ait nuevo
+            perc_lines = perc.compute(partner_perc, **kwargs)
+        return perc_lines
 
 
 class PerceptionVatTax(models.Model):
