@@ -132,6 +132,17 @@ class AccountIssuedCheck(models.Model):
             else:
                 check.accredited = False
 
+
+    def _get_account_id_from_company(self, company_id):
+        # Buscamos la configuracion de cheques
+        check_config_obj = self.env['account.check.config']
+        config = check_config_obj.search(
+            [('company_id', '=', company_id)])
+        if not len(config):
+            err = _('There is no check configuration for this Company!')
+            raise ValidationError(err)
+        return config.deferred_account_id.id
+
     @api.model
     def create_voucher_move_line(self):
         voucher = self.payment_order_id
@@ -140,16 +151,13 @@ class AccountIssuedCheck(models.Model):
         # Esta cuenta se corresponde con la cuenta de banco de donde
         # pertenece el cheque
         if self.type == 'postdated':
-            # Buscamos la configuracion de cheques
-            check_config_obj = self.env['account.check.config']
-            config = check_config_obj.search(
-                [('company_id', '=', voucher.company_id.id)])
-            if not len(config):
-                err = _('There is no check configuration for this Company!')
-                raise ValidationError(err)
-
-            account_id = config.deferred_account_id.id
+            account_id = self._get_account_id_from_company(
+                voucher.company_id.id)
             date_maturity = self.payment_date
+        elif self.type == 'electronic':
+            account_id = self._get_account_id_from_company(
+                voucher.company_id.id)
+            date_maturity = voucher.date_due
         else:
             account_id = self.account_bank_id.account_id.id
             date_maturity = voucher.date_due
