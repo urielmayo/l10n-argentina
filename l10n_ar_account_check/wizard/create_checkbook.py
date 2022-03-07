@@ -28,8 +28,12 @@ class WizardCreateCheck(models.Model):
         ('postdated', 'Post-dated')],
         string='Checkbook Type',
         help="If common, checks only have issued_date. \
-        If post-dated they also have payment date",
-        required=True)
+        If post-dated they also have payment date")
+    checkbook_type= fields.Selection([
+        ('physical', 'Physical'),
+        ('virtual', 'Virtual'),
+        ('echeq', 'Echeq')],
+        string='Checkbook Type')
 
     def create_checkbook(self):
         checkbook_obj = self.env['account.checkbook']
