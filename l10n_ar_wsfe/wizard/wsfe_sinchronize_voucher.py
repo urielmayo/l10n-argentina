@@ -70,7 +70,7 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         operator = 'in'
         if not denomination_id:
             operator = '='
-        domain = [('id', 'in', ids),
+        domain = [#('id', 'in', ids),
                   ('denomination_ids', operator, denomination_id)]
         pos_ids = pos_model.search(domain)
         if len(pos_ids) == 1:
