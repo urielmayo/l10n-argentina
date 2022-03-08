@@ -104,7 +104,7 @@
                             <group>                                                            
                                 <label for="issued_check_ids"/>
                                 <field name="issued_check_ids" nolabel="1">
-                                    <tree string="Issued Checks">
+                                    <tree string="Issued Checks" create="false">
                                         <field name="number"/>
                                         <field name="check_id"/>
                                         <field name="receiving_partner_id"/>

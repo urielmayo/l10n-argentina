@@ -11,8 +11,6 @@
                     <group col="4">
                         <field name="bank_account_id" domain="[('company_id','=',company_id)]"/>
                         <field name="checkbook_num"/>
-                        <field name="start_num"/>
-                        <field name="end_num"/>
                         <field name="start_num" attrs="{'required':[('checkbook_type', '!=', 'echeq')]}"/>
                         <field name="end_num" attrs="{'required':[('checkbook_type', '!=', 'echeq')]}"/>
                         <field name="type"/>
