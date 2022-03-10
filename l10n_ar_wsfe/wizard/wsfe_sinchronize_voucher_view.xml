@@ -10,9 +10,9 @@
                 <form string="WSFE Sinchronize Voucher">
                     <group string="Query Information">
                         <group>
-                            <field name="voucher_type" widget="selection"/>
+                            <field name="voucher_type" widget="selection" required="True" />
                             <field name="use_wsfex"/>
-                            <field name="pos_id"/>
+                            <field name="pos_id" required="True"/>
                             <field name="voucher_number"/>
                         </group>
                         <group>
@@ -53,6 +53,30 @@
                 </form>
             </field>
         </record>
+        
+        <record id="view_wsfe_sinchronize_voucher_manual" model="ir.ui.view">
+            <field name="name">WSFE Sinchronize Voucher Manual</field>
+            <field name="model">wsfe.sinchronize.voucher</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="WSFE Sinchronize Voucher Manual">
+                    <group string="Manual Information">
+                            <group>
+                                <field name="manual_pos_id" required="True"/>
+                                <field name="manual_voucher_number" required="True"/>
+                                <field name="manual_date_invoice" required="True"/>
+                                <field name="manual_cae" required="True"/>
+                                <field name="manual_cae_due_date" required="True"/>
+                            </group>
+                    </group>
+                    <footer>
+                        <button name="relate_invoice_manual" string="Relate" type="object" class="oe_highlight"/>
+                        or
+                        <button class="oe_link" special="cancel" string="Cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
 
         <act_window id="action_wsfe_sinchronize_voucher"
             name="WSFE Sinchronize Voucher"
@@ -60,6 +84,15 @@
             src_model="account.invoice"
             view_mode="form"
             target="new"
+            key2="client_action_multi"/>
+        
+        <act_window id="action_wsfe_sinchronize_voucher_manual"
+            name="WSFE Sinchronize Voucher Manual"
+            res_model="wsfe.sinchronize.voucher"
+            src_model="account.invoice"
+            view_mode="form"
+            target="new"
+            view_id="view_wsfe_sinchronize_voucher_manual"
             key2="client_action_multi"/>
 
     </data>

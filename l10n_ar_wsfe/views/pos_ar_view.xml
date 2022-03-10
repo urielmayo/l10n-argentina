@@ -9,6 +9,7 @@
                 <data>
                     <xpath expr="//field[@name='company_id']" position="after">
                         <field name="fcred_is_fce_emitter" />
+                        <field name="allow_manual_sync" />
                     </xpath>
                 </data>
             </field>

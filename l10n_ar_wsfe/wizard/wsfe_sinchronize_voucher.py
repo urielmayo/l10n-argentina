@@ -29,17 +29,20 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         return wsfe_conf_model.get_config()
 
     voucher_type = fields.Many2one(
-        'wsfe.voucher_type', 'Voucher Type', required=True)
-    pos_id = fields.Many2one('pos.ar', 'POS', required=True)
+        'wsfe.voucher_type', 'Voucher Type', required=False)
+    pos_id = fields.Many2one('pos.ar', 'POS', required=False)
+    manual_pos_id = fields.Many2one('pos.ar', 'POS', required=False, domain=[('allow_manual_sync', '=', True)])
     config_id = fields.Many2one(
         'wsfe.config', 'Config', default=_get_def_config)
     config_wsfex_id = fields.Many2one(
         'wsfex.config', 'Config WSFEX', default=_get_def_config_wsfex)
-    voucher_number = fields.Integer('Number', required=True)
+    voucher_number = fields.Integer('Number', required=False)
+    manual_voucher_number = fields.Integer('Number', required=False)
     document_type = fields.Many2one(
         'res.document.type', 'Document Type', readonly=True)
     document_number = fields.Char('Document Number', readonly=True)
     date_invoice = fields.Date('Date Invoice', readonly=False)
+    manual_date_invoice = fields.Date('Date Invoice', required=False)
     amount_total = fields.Float(
         digits=dp.get_precision('Account'), string="Total", readonly=True)
     amount_no_taxed = fields.Float(
@@ -52,7 +55,9 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         digits=dp.get_precision('Account'), string="Amount Exempt",
         readonly=True)
     cae = fields.Char('CAE', size=32, required=False, readonly=False)
+    manual_cae = fields.Char('CAE', size=32, required=False)
     cae_due_date = fields.Date('CAE Due Date', readonly=False)
+    manual_cae_due_date = fields.Date('CAE Due Date', required=False)
     date_process = fields.Datetime('Date Processed', readonly=True)
     infook = fields.Boolean('Info OK', default=False)
     use_wsfex = fields.Boolean('Use WSFEX?', default=False)
@@ -193,5 +198,20 @@ class wsfe_sinchronize_voucher(models.TransientModel):
 
         invoice.wsfe_relate_invoice(pos, number, date_invoice,
                                     self.cae, self.cae_due_date)
+
+        return {'type': 'ir.actions.act_window_close'}
+
+    @api.multi
+    def relate_invoice_manual(self):
+
+        # Obtenemos los datos puestos por el usuario
+        invoice = self.env['account.invoice'].browse(self.env.context['active_id'])
+
+        pos = int(self.manual_pos_id.name)
+        number = self.manual_voucher_number
+        date_invoice = self.manual_date_invoice
+
+        invoice.wsfe_relate_invoice(pos, number, date_invoice,
+                                    self.manual_cae, self.manual_cae_due_date)
 
         return {'type': 'ir.actions.act_window_close'}

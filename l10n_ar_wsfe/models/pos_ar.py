@@ -14,6 +14,7 @@ class ResCompany(models.Model):
     _inherit = 'pos.ar'
 
     fcred_is_fce_emitter = fields.Boolean(string='FCE Emitter?', default=False)
+    allow_manual_sync = fields.Boolean(string='Allow Manual Synchronization for WSFE(x)?', default=False)
 
     @api.constrains('fcred_is_fce_emitter', 'shop_id')
     def _check_no_more_than_one_pos_fce_per_company(self):
