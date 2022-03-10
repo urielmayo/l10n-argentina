@@ -5,18 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Language: Spanish\n"
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-07 19:50+0000\n"
-"PO-Revision-Date: 2019-05-07 16:53-0300\n"
+"POT-Creation-Date: 2022-03-10 19:00+0000\n"
+"PO-Revision-Date: 2022-03-10 16:01-0300\n"
 "Last-Translator: Martín Nicolás Cuesta <cuesta.martin.n@hotmail.com>\n"
 "Language-Team: Spanish; Castilian <>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. module: subjournal_report_xls
 #: model:ir.actions.act_window,name:subjournal_report_xls.action_account_tax_subjournal
@@ -47,6 +47,11 @@ msgstr "Basado en"
 #: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: subjournal_report_xls
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_company_ids
+msgid "Company"
+msgstr "Empresa"
 
 #. module: subjournal_report_xls
 #: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
@@ -83,6 +88,13 @@ msgstr "Exportar Subdiario"
 #: selection:account.tax.subjournal,base_position:0
 msgid "First"
 msgstr "Primero"
+
+#. module: subjournal_report_xls
+#: model:ir.model.fields,help:subjournal_report_xls.field_account_tax_subjournal_perception_retention_grouped
+msgid ""
+"Group by retention / perception grouped in a single column retention / "
+"perception."
+msgstr "Agrupar retenciones / percepciones en una sola columna."
 
 #. module: subjournal_report_xls
 #: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_grouped
@@ -134,6 +146,11 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: subjournal_report_xls
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_perception_retention_grouped
+msgid "Perception / Retention Grouped"
+msgstr "Agrupar retenciones / percepciones"
+
+#. module: subjournal_report_xls
 #: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
 msgid "Print Report"
 msgstr "Imprimir Reporte"
@@ -147,6 +164,12 @@ msgstr "Compras"
 #: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_report_id
 msgid "Report"
 msgstr "Informe"
+
+#. module: subjournal_report_xls
+#: code:addons/subjournal_report_xls/controllers/main.py:24
+#, python-format
+msgid "Report error"
+msgstr "Error en reporte"
 
 #. module: subjournal_report_xls
 #: selection:account.tax.subjournal,based_on:0
@@ -190,7 +213,7 @@ msgid "Taxes Subjournal"
 msgstr "Subdiario de impuestos"
 
 #. module: subjournal_report_xls
-#: code:addons/subjournal_report_xls/report/report_subjournal_xlsx.py:237
+#: code:addons/subjournal_report_xls/report/report_subjournal_xlsx.py:295
 #, python-format
 msgid "There were no moves for this period"
 msgstr "No hubieron apuntes contables en este período"

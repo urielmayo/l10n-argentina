@@ -44,6 +44,10 @@ class AccountTaxSubjournal(models.TransientModel):
         ('second', 'Second')],
         string='Base Column Position', required=True,
         default='first')
+    perception_retention_grouped = fields.Boolean(
+        string="Perception / Retention Grouped",
+        help="Group by retention / perception " +
+        "grouped in a single column retention / perception.")
 
     company_ids = fields.Many2many(
         'res.company', string='Company')
