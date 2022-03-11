@@ -482,7 +482,7 @@ class SubjournalXlsx(models.AbstractModel):
         nc_formula = '{=SUMIF(G5:G%(last_line)s,"NC *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
         total_formula = '{=SUM(%(col)s5:%(col)s%(last_line)s)}'  # noqa
 
-        last_row_num = len(lines) + 1
+        last_row_num = len(lines) + 4
         last_row_char = str(last_row_num)
         fac_row_char = str(last_row_num + 5)
         nc_row_char = str(last_row_num + 6)
