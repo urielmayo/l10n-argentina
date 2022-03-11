@@ -439,7 +439,7 @@ class SubjournalXlsx(models.AbstractModel):
 
         # ADD LOGO
         report_url = self.env['ir.config_parameter'].search([('key', '=', 'report.url')]).value
-        logo_url = report_url + '/web/binary/company_logo?company=' + str(obj.company_id.id)
+        logo_url = report_url + 'web/binary/company_logo?company=' + str(obj.company_id.id)
         logo = BytesIO(urlopen(logo_url).read())
         sheet.set_row(1, 80)
         sheet.set_column(1, 1, 30)
