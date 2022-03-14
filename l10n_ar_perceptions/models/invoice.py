@@ -17,8 +17,6 @@
 #
 ###############################################################################
 
-import datetime
-import time
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
@@ -99,7 +97,13 @@ class AccountInvoice(models.Model):
         for perception in inv.perception_ids:
             print(perception.name, perception.base, perception.amount)
             code = PCODES[perception.perception_id.jurisdiccion]
-            perc = {'Id': code, 'BaseImp': perception.base, 'Importe': perception.amount, 'Alic': 0.0, 'Desc': perception.name}
+            perc = {
+                'Id': code,
+                'BaseImp': perception.base,
+                'Importe': perception.amount,
+                'Alic': 0.0,
+                'Desc': perception.name,
+            }
             perc_array.append(perc)
 
         if detalle.get('Tributos'):
@@ -176,40 +180,10 @@ class AccountInvoice(models.Model):
             if inv.type in ('out_invoice', 'out_refund'):
 
                 # Calculamos cada Percepcion configurada en el Partner
-                partner_perceptions = partner._get_perceptions_to_apply()
-                for partner_perc in partner_perceptions.values():
-                    excluded_percent = partner_perc['excluded_percent']
-
-                    # Chequeamos las fechas de eximision
-                    vdate = inv.date_invoice or datetime.date.today()
-
-                    date_from = False
-                    date_to = False
-                    if partner_perc['ex_date_from']:
-                        date_from = time.strptime(partner_perc['ex_date_from'],
-                                                  "%Y-%m-%d")
-                    if partner_perc['ex_date_to']:
-                        date_to = time.strptime(partner_perc['ex_date_to'],
-                                                "%Y-%m-%d")
-
-                    # TODO: Chequear cuando solo se llena uno de las dos fechas
-                    if (not date_from and not date_to) or \
-                            (vdate >= date_from and vdate <= date_to):
-                        if excluded_percent > 1.0 or excluded_percent < 0.0:
-                            raise ValidationError(
-                                _("Perception Configuration Error!\n" +
-                                  "Excluded percent configured has to be " +
-                                  "between 0.0 and 1.0"))
-
-                        # Si esta totalmente eximido
-                        if excluded_percent == 1.0:
-                            continue
-                    else:
-                        partner_perc['excluded_percent'] = 0.0
-
-                    perc = partner_perc['perception']
-                    #todo: compute no crea percepciones, por ende  al llamar a _compute_perception_invoice_taxes no genera ningun ait nuevo
-                    perc.compute(partner_perc, inv)
+                perception_obj = self.env['perception.perception']
+                perc_lines = perception_obj.create_perceptions_from_partner(
+                        partner, date=inv.date_invoice, invoice=inv)
+                inv.perception_ids = perc_lines
 
             for taxe in ait_obj._compute_perception_invoice_taxes(inv).\
                     values():
@@ -249,7 +223,8 @@ class AccountInvoice_line(models.Model):
             line_taxes = {}
             taxes = line.invoice_line_tax_ids.compute_all(
                 (line.price_unit * (1 - (line.discount or 0.0) / 100.0)),
-                invoice.currency_id, line.quantity, line.product_id, invoice.partner_id)
+                invoice.currency_id, line.quantity,
+                line.product_id, invoice.partner_id)
 
             amount_tax = 0.0
             amount_base = 0.0
@@ -332,43 +307,69 @@ class AccountInvoiceTax(models.Model):
 
     @api.v8
     def _compute_perception_invoice_taxes(self, invoice):
-        tax_grouped = {}
-
         currency = invoice.currency_id.with_context(
             date=invoice.date_invoice or fields.Date.context_today(invoice))
+        company_currency = invoice.company_id.currency_id
+        sign = -1
+        if invoice.type in ('out_invoice', 'in_invoice'):
+            sign = 1
+        tax_grouped = self._compute_perception_taxes(
+            invoice.perception_ids, currency,
+            company_currency, sign=sign, invoice=invoice,
+        )
+        return tax_grouped
+
+    def _prepare_perception_tax_line(self, line, currency, company_currency,
+                                     sign=1, **kwargs):
+        val = {}
+        tax = line.perception_id.tax_id
+        val['name'] = line.name
+        val['amount'] = line.amount
+        val['manual'] = False
+        val['sequence'] = 10
+        val['is_exempt'] = False
+        val['base'] = line.base
+        val['tax_id'] = tax.id
+
+        # Computamos tax_amount y base_amount
+        base_amount = currency.compute(
+            line.base * sign,
+            company_currency,
+            round=False,
+        )
+        tax_amount = currency.compute(
+            line.amount * sign,
+            company_currency,
+            round=False,
+        )
+        val['base'] = base_amount * sign
+        val['amount'] = tax_amount * sign
+        if sign > 0:
+            val['account_id'] = tax.account_id.id
+        else:
+            val['account_id'] = tax.refund_account_id.id
+
+        if 'invoice' in kwargs:
+            val['invoice_id'] = kwargs['invoice'].id
+        return val
+
+    @api.v8
+    def _compute_perception_taxes(self, perceptions, currency,
+                                  company_currency, sign=1, **kwargs):
+        tax_grouped = {}
 
         # Recorremos las percepciones y las computamos como account.invoice.tax
-        for line in invoice.perception_ids:
-            val = {}
-            tax = line.perception_id.tax_id
-            val['invoice_id'] = invoice.id
-            val['name'] = line.name
-            val['amount'] = line.amount
-            val['manual'] = False
-            val['sequence'] = 10
-            val['is_exempt'] = False
-            val['base'] = line.base
-            val['tax_id'] = tax.id
-
-            # Computamos tax_amount y base_amount
-            tax_amount, base_amount = line._compute(invoice, val['base'],
-                                                    val['amount'])
-
-            if invoice.type in ('out_invoice', 'in_invoice'):
-                val['base'] = base_amount
-                val['amount'] = tax_amount
-                val['account_id'] = tax.account_id.id
-            else:
-                val['base'] = base_amount * (-1)
-                val['amount'] = tax_amount * (-1)
-                val['account_id'] = tax.refund_account_id.id
-
-            key = (val['account_id'])
+        for line in perceptions:
+            line_vals = self._prepare_perception_tax_line(
+                line, currency, company_currency,
+                sign=sign, **kwargs,
+            )
+            key = (line_vals['account_id'])
             if key not in tax_grouped:
-                tax_grouped[key] = val
+                tax_grouped[key] = line_vals
             else:
-                tax_grouped[key]['amount'] += val['amount']
-                tax_grouped[key]['base'] += val['base']
+                tax_grouped[key]['amount'] += line_vals['amount']
+                tax_grouped[key]['base'] += line_vals['base']
                 # tax_grouped[key]['base_amount'] += val['base_amount']
                 # tax_grouped[key]['tax_amount'] += val['tax_amount']
 
