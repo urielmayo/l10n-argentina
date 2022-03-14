@@ -8,6 +8,8 @@ import logging
 
 from odoo import models, _
 from odoo.exceptions import UserError
+from io import BytesIO
+from urllib.request import urlopen
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +73,38 @@ class SubjournalXlsx(models.AbstractModel):
         i = 0
         base_first = obj.base_position == 'first'
 
+        already_perception = False
+        already_retention = False
+
         for tax in taxes.sorted(lambda t: getattr(t, obj.sort_by)):
+            if (obj.perception_retention_grouped and \
+                tax.tax_group in ['retention', 'perception']):
+                if (tax.tax_group == 'retention' and not already_retention):
+                    already_retention = True
+                    retention_vals = {
+                        'id': False,
+                        'ids': [t.id for t in taxes if t.tax_group == 'retention'],
+                        'is_exempt': tax.is_exempt,
+                        'name': 'Retenciones',
+                        'type': 'retention',
+                        'column': 7+i,
+                    }
+                    i += 1
+                    all_taxes.append(retention_vals)
+                elif (tax.tax_group == 'perception' and not already_perception):
+                    already_perception = True
+                    perception_vals = {
+                        'id': False,
+                        'ids': [t.id for t in taxes if t.tax_group == 'perception'],
+                        'is_exempt': tax.is_exempt,
+                        'name': 'Percepciones',
+                        'type': 'perception',
+                        'column': 7+i,
+                    }
+                    i += 1
+                    all_taxes.append(perception_vals)
+                continue
+
             perception_tax_group = self.env.ref(
                 'l10n_ar_perceptions_basic.tax_group_perceptions')
             if not (tax.tax_group_id and
@@ -279,6 +312,9 @@ class SubjournalXlsx(models.AbstractModel):
                          l['pos'], l['invoice_id'])
             if dict_hash not in lines:
                 lines[dict_hash] = l
+                lines[dict_hash]['tax_line_ids'] = [l['tax_ids'] or l['tax_line_id']]
+                amount = l['debit'] - l['credit']
+                lines[dict_hash]['tax_line_amounts'] = {l['tax_ids'] or l['tax_line_id']: amount}
 
                 if l['invoice_id'] == -1:
                     l['partner'] = 'Agrupado %s monto menor a %s' % \
@@ -293,12 +329,22 @@ class SubjournalXlsx(models.AbstractModel):
                     l['invoice_type'], l['denomination'], l['is_debit_note'])
             else:
                 ll = lines[dict_hash]
+                ll['tax_line_ids'].append(l['tax_ids'] or l['tax_line_id'])
+                amount = l['debit'] - l['credit']
+                lines[dict_hash]['tax_line_amounts'].update({l['tax_ids'] or l['tax_line_id']: amount})
                 ll['total'] += (l['credit'] - l['debit']) * based_sign
                 ll['no_taxed'] += not l['tax_line_id'] and \
                     not l['tax_ids'] and \
                     (l['debit'] - l['credit']) * sign * sign_no_taxed or 0.0
 
             for i, tax in enumerate(self.columns):
+                if obj.perception_retention_grouped:
+                    if tax.get('ids'):
+                        if l['tax_line_id'] in tax['ids'] or l['tax_ids'] in tax['ids']:
+                            lines[dict_hash]['taxes'][i] += (l['credit'] - l['debit']) * based_sign
+                        if lines[dict_hash]['taxes'][i] != 0:
+                            self.c_taxes[i] += 1
+
                 if l['tax_line_id'] == tax['id'] or (
                         l['tax_ids'] == tax['id'] and tax.get('is_exempt')):
                     if lines[dict_hash]['taxes'][i] == 0:
@@ -387,10 +433,30 @@ class SubjournalXlsx(models.AbstractModel):
         sheet = workbook.add_worksheet(title)
         sheet.set_column('A:L', 20)
         for i, column in enumerate(wanted_list):
-            sheet.write(int2xlscol(i)+'1', column, head_format)
+            sheet.write(int2xlscol(i)+'4', column, head_format)
         self.set_column(sheet, i)
+        retention_perception_summary = {}
+
+        # ADD LOGO
+        report_url = self.env['ir.config_parameter'].search([('key', '=', 'report.url')]).value
+        logo_url = report_url + 'web/binary/company_logo?company=' + str(obj.company_id.id)
+        logo = BytesIO(urlopen(logo_url).read())
+        sheet.set_row(1, 80)
+        sheet.set_column(1, 1, 30)
+        sheet.insert_image('B2', logo_url, {'image_data': logo})
+        sheet.write('D2', obj.company_id.vat, head_format)
+
         for p, line in enumerate(lines):
-            p += 2
+            if wizard_obj.perception_retention_grouped:
+                tax_ids = line['tax_line_ids']
+                taxes = self.env['account.tax'].search([('id', 'in', tax_ids), ('tax_group', 'in', ['retention', 'perception'])])
+                for tax in taxes:
+                    amount = line['tax_line_amounts'][tax.id]
+                    if not retention_perception_summary.get(tax.id):
+                        retention_perception_summary[tax.id] = [tax.name, 0]
+                    retention_perception_summary[tax.id][1] += amount
+
+            p += 5
             cell_format = gray_format
             if p % 2:
                 cell_format = date_format
@@ -412,15 +478,15 @@ class SubjournalXlsx(models.AbstractModel):
             sheet.write(int2xlscol(i+1)+str(p), line['total'], cell_format)
 
         # Formulas
-        fac_formula = '{=SUMIF(G2:G%(last_line)s,"F *",%(col)s2:%(col)s%(last_line)s) + SUMIF(G2:G%(last_line)s,"ND *",%(col)s2:%(col)s%(last_line)s)}'  # noqa
-        nc_formula = '{=SUMIF(G2:G%(last_line)s,"NC *",%(col)s2:%(col)s%(last_line)s)}'  # noqa
-        total_formula = '{=SUM(%(col)s2:%(col)s%(last_line)s)}'  # noqa
+        fac_formula = '{=SUMIF(G5:G%(last_line)s,"F *",%(col)s5:%(col)s%(last_line)s) + SUMIF(G5:G%(last_line)s,"ND *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
+        nc_formula = '{=SUMIF(G5:G%(last_line)s,"NC *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
+        total_formula = '{=SUM(%(col)s5:%(col)s%(last_line)s)}'  # noqa
 
-        last_row_num = len(lines) + 1
+        last_row_num = len(lines) + 4
         last_row_char = str(last_row_num)
-        fac_row_char = str(last_row_num + 3)
-        nc_row_char = str(last_row_num + 4)
-        total_row_char = str(last_row_num + 5)
+        fac_row_char = str(last_row_num + 5)
+        nc_row_char = str(last_row_num + 6)
+        total_row_char = str(last_row_num + 7)
 
         i = -1
         for j, col in enumerate(cols):
@@ -495,6 +561,14 @@ class SubjournalXlsx(models.AbstractModel):
             tot_col_char + total_row_char,
             total_formula % indexes,
             footer_format)
+
+        keyval_row = last_row_num + 8
+        for key, val in retention_perception_summary.items():
+            key_col = int2xlscol(8+len(cols)-i-4)
+            val_col = int2xlscol(8+len(cols)-i-3)
+            keyval_row = keyval_row + 1
+            sheet.write(key_col+str(keyval_row), val[0])
+            sheet.write(val_col+str(keyval_row), val[1])
 
         # formula labels
         sheet.write('A'+fac_row_char, 'Subtotal FC/ND', footer_format)

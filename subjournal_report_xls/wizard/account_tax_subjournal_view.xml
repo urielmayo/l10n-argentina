@@ -29,6 +29,7 @@
                                 <field name="base_position"/>
                             </group>
                             <group>
+				<field name="perception_retention_grouped"/>
                                 <field name="grouped"/>
                                 <field name="grouped_max_amount"
                                     attrs="{'invisible': [('grouped', '=', False)],
