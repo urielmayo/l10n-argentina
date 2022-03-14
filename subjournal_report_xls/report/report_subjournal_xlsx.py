@@ -439,7 +439,7 @@ class SubjournalXlsx(models.AbstractModel):
 
         # ADD LOGO
         report_url = self.env['ir.config_parameter'].search([('key', '=', 'report.url')]).value
-        logo_url = report_url + '/web/binary/company_logo?company=' + str(obj.company_id.id)
+        logo_url = report_url + 'web/binary/company_logo?company=' + str(obj.company_id.id)
         logo = BytesIO(urlopen(logo_url).read())
         sheet.set_row(1, 80)
         sheet.set_column(1, 1, 30)
@@ -482,7 +482,7 @@ class SubjournalXlsx(models.AbstractModel):
         nc_formula = '{=SUMIF(G5:G%(last_line)s,"NC *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
         total_formula = '{=SUM(%(col)s5:%(col)s%(last_line)s)}'  # noqa
 
-        last_row_num = len(lines) + 1
+        last_row_num = len(lines) + 4
         last_row_char = str(last_row_num)
         fac_row_char = str(last_row_num + 5)
         nc_row_char = str(last_row_num + 6)
