@@ -210,6 +210,13 @@ class wsfe_sinchronize_voucher(models.TransientModel):
         pos = int(self.manual_pos_id.name)
         number = self.manual_voucher_number
         date_invoice = self.manual_date_invoice
+        invoice_vals = {
+            'internal_number': '%04d-%08d' % (pos, number),
+            'date_invoice': date_invoice,
+        }
+
+        # Escribimos los campos necesarios de la factura
+        invoice.write(invoice_vals)
 
         invoice.wsfe_relate_invoice(pos, number, date_invoice,
                                     self.manual_cae, self.manual_cae_due_date)
