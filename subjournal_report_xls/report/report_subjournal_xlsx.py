@@ -8,8 +8,6 @@ import logging
 
 from odoo import models, _
 from odoo.exceptions import UserError
-from io import BytesIO
-from urllib.request import urlopen
 
 logger = logging.getLogger(__name__)
 
@@ -433,18 +431,9 @@ class SubjournalXlsx(models.AbstractModel):
         sheet = workbook.add_worksheet(title)
         sheet.set_column('A:L', 20)
         for i, column in enumerate(wanted_list):
-            sheet.write(int2xlscol(i)+'4', column, head_format)
+            sheet.write(int2xlscol(i)+'1', column, head_format)
         self.set_column(sheet, i)
         retention_perception_summary = {}
-
-        # ADD LOGO
-        report_url = self.env['ir.config_parameter'].search([('key', '=', 'report.url')]).value
-        logo_url = report_url + 'web/binary/company_logo?company=' + str(obj.company_id.id)
-        logo = BytesIO(urlopen(logo_url).read())
-        sheet.set_row(1, 80)
-        sheet.set_column(1, 1, 30)
-        sheet.insert_image('B2', logo_url, {'image_data': logo})
-        sheet.write('D2', obj.company_id.vat, head_format)
 
         for p, line in enumerate(lines):
             if wizard_obj.perception_retention_grouped:
@@ -456,7 +445,7 @@ class SubjournalXlsx(models.AbstractModel):
                         retention_perception_summary[tax.id] = [tax.name, 0]
                     retention_perception_summary[tax.id][1] += amount
 
-            p += 5
+            p += 2
             cell_format = gray_format
             if p % 2:
                 cell_format = date_format
@@ -478,15 +467,15 @@ class SubjournalXlsx(models.AbstractModel):
             sheet.write(int2xlscol(i+1)+str(p), line['total'], cell_format)
 
         # Formulas
-        fac_formula = '{=SUMIF(G5:G%(last_line)s,"F *",%(col)s5:%(col)s%(last_line)s) + SUMIF(G5:G%(last_line)s,"ND *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
-        nc_formula = '{=SUMIF(G5:G%(last_line)s,"NC *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
-        total_formula = '{=SUM(%(col)s5:%(col)s%(last_line)s)}'  # noqa
+        fac_formula = '{=SUMIF(G2:G%(last_line)s,"F *",%(col)s2:%(col)s%(last_line)s) + SUMIF(G2:G%(last_line)s,"ND *",%(col)s2:%(col)s%(last_line)s)}'  # noqa
+        nc_formula = '{=SUMIF(G2:G%(last_line)s,"NC *",%(col)s2:%(col)s%(last_line)s)}'  # noqa
+        total_formula = '{=SUM(%(col)s2:%(col)s%(last_line)s)}'  # noqa
 
-        last_row_num = len(lines) + 4
+        last_row_num = len(lines) + 1
         last_row_char = str(last_row_num)
-        fac_row_char = str(last_row_num + 5)
-        nc_row_char = str(last_row_num + 6)
-        total_row_char = str(last_row_num + 7)
+        fac_row_char = str(last_row_num + 2)
+        nc_row_char = str(last_row_num + 3)
+        total_row_char = str(last_row_num + 4)
 
         i = -1
         for j, col in enumerate(cols):
@@ -562,10 +551,10 @@ class SubjournalXlsx(models.AbstractModel):
             total_formula % indexes,
             footer_format)
 
-        keyval_row = last_row_num + 8
+        keyval_row = last_row_num + 6
         for key, val in retention_perception_summary.items():
-            key_col = int2xlscol(8+len(cols)-i-4)
-            val_col = int2xlscol(8+len(cols)-i-3)
+            key_col = int2xlscol(8+len(cols)-i-1)
+            val_col = int2xlscol(8+len(cols)-i)
             keyval_row = keyval_row + 1
             sheet.write(key_col+str(keyval_row), val[0])
             sheet.write(val_col+str(keyval_row), val[1])
