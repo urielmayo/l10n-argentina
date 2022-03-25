@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_tax_retention_perception_type" model="ir.ui.view">
+            <field name="name">Account Tax Retention Perception Type</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="tax_group_id" position="after">
+                    <field name="retention_perception_type"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>
