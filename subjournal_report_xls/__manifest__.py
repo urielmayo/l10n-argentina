@@ -34,6 +34,7 @@
         "security/ir.model.access.csv",
         "wizard/account_tax_subjournal_view.xml",
         "report/move_line_list_xls.xml",
+        "views/account_tax_view.xml",
     ],
     "installable": True,
     "application": True,

@@ -6,3 +6,4 @@
 from . import wizard  # noqa
 from . import report  # noqa
 from . import controllers  # noqa
+from . import models  # noqa

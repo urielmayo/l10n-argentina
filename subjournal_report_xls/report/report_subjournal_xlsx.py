@@ -71,36 +71,49 @@ class SubjournalXlsx(models.AbstractModel):
         i = 0
         base_first = obj.base_position == 'first'
 
-        already_perception = False
-        already_retention = False
+        already_vat = False
+        already_gross = False
+        already_income = False
 
         for tax in taxes.sorted(lambda t: getattr(t, obj.sort_by)):
             if (obj.perception_retention_grouped and \
-                tax.tax_group in ['retention', 'perception']):
-                if (tax.tax_group == 'retention' and not already_retention):
-                    already_retention = True
-                    retention_vals = {
+                tax.retention_perception_type in ['gross_income', 'vat', 'income_tax']):
+                if (tax.retention_perception_type == 'gross_income' and not already_gross):
+                    already_gross = True
+                    gross_vals = {
                         'id': False,
-                        'ids': [t.id for t in taxes if t.tax_group == 'retention'],
+                        'ids': [t.id for t in taxes if t.retention_perception_type == 'gross_income'],
                         'is_exempt': tax.is_exempt,
-                        'name': 'Retenciones',
-                        'type': 'retention',
+                        'name': 'Retenciones / Percepciones IIBB',
+                        'type': 'gross_income',
                         'column': 7+i,
                     }
                     i += 1
-                    all_taxes.append(retention_vals)
-                elif (tax.tax_group == 'perception' and not already_perception):
-                    already_perception = True
-                    perception_vals = {
+                    all_taxes.append(gross_vals)
+                elif (tax.retention_perception_type == 'vat' and not already_vat):
+                    already_vat = True
+                    vat_vals = {
                         'id': False,
-                        'ids': [t.id for t in taxes if t.tax_group == 'perception'],
+                        'ids': [t.id for t in taxes if t.retention_perception_type == 'vat'],
                         'is_exempt': tax.is_exempt,
-                        'name': 'Percepciones',
-                        'type': 'perception',
+                        'name': 'Retenciones / Percepciones IVA',
+                        'type': 'vat',
                         'column': 7+i,
                     }
                     i += 1
-                    all_taxes.append(perception_vals)
+                    all_taxes.append(vat_vals)
+                elif (tax.retention_perception_type == 'income_tax' and not already_income):
+                    already_income = True
+                    income_vals = {
+                        'id': False,
+                        'ids': [t.id for t in taxes if t.retention_perception_type == 'income_tax'],
+                        'is_exempt': tax.is_exempt,
+                        'name': 'Retenciones / Percepciones Ganancias',
+                        'type': 'income_tax',
+                        'column': 7+i,
+                    }
+                    i += 1
+                    all_taxes.append(income_vals)
                 continue
 
             perception_tax_group = self.env.ref(
