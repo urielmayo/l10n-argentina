@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-10 19:00+0000\n"
-"PO-Revision-Date: 2022-03-10 16:01-0300\n"
+"POT-Creation-Date: 2022-03-25 17:57+0000\n"
+"PO-Revision-Date: 2022-03-25 14:58-0300\n"
 "Last-Translator: Martín Nicolás Cuesta <cuesta.martin.n@hotmail.com>\n"
 "Language-Team: Spanish; Castilian <>\n"
 "Language: es\n"
@@ -90,6 +90,11 @@ msgid "First"
 msgstr "Primero"
 
 #. module: subjournal_report_xls
+#: selection:account.tax,retention_perception_type:0
+msgid "Gross Income"
+msgstr "IIBB"
+
+#. module: subjournal_report_xls
 #: model:ir.model.fields,help:subjournal_report_xls.field_account_tax_subjournal_perception_retention_grouped
 msgid ""
 "Group by retention / perception grouped in a single column retention / "
@@ -118,6 +123,11 @@ msgid "If grouped is checked, this will determine the grouping threshold"
 msgstr ""
 "Si 'Agrupado' está tildado, aquí se determinará el monto límite para la "
 "agrupación"
+
+#. module: subjournal_report_xls
+#: selection:account.tax,retention_perception_type:0
+msgid "Income Tax"
+msgstr "Ganancias"
 
 #. module: subjournal_report_xls
 #: model:ir.model,name:subjournal_report_xls.model_account_move_line
@@ -149,6 +159,11 @@ msgstr "Nombre"
 #: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_perception_retention_grouped
 msgid "Perception / Retention Grouped"
 msgstr "Agrupar retenciones / percepciones"
+
+#. module: subjournal_report_xls
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_retention_perception_type
+msgid "Perception / Retention type"
+msgstr "Tipo de Retención / Percepción"
 
 #. module: subjournal_report_xls
 #: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
@@ -202,6 +217,11 @@ msgid "Start of period"
 msgstr "Comienzo del Período"
 
 #. module: subjournal_report_xls
+#: model:ir.model,name:subjournal_report_xls.model_account_tax
+msgid "Tax"
+msgstr "Impuesto"
+
+#. module: subjournal_report_xls
 #: model:ir.model,name:subjournal_report_xls.model_tax_subjournal_report_config
 msgid "Tax Subjournal Report Configuration"
 msgstr "Configuración de subdiarios de impuestos"
@@ -213,7 +233,7 @@ msgid "Taxes Subjournal"
 msgstr "Subdiario de impuestos"
 
 #. module: subjournal_report_xls
-#: code:addons/subjournal_report_xls/report/report_subjournal_xlsx.py:295
+#: code:addons/subjournal_report_xls/report/report_subjournal_xlsx.py:306
 #, python-format
 msgid "There were no moves for this period"
 msgstr "No hubieron apuntes contables en este período"
@@ -226,6 +246,11 @@ msgid ""
 msgstr ""
 "Facturas de tipo B por debajo del monto máximo de agrupación serán "
 "informadas en una sóla línea por día e impuesto."
+
+#. module: subjournal_report_xls
+#: selection:account.tax,retention_perception_type:0
+msgid "Vat"
+msgstr "IVA"
 
 #. module: subjournal_report_xls
 #: model:ir.model,name:subjournal_report_xls.model_report_report_xlsx_move_line_list_subj

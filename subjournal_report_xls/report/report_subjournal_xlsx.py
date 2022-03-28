@@ -8,8 +8,6 @@ import logging
 
 from odoo import models, _
 from odoo.exceptions import UserError
-from io import BytesIO
-from urllib.request import urlopen
 
 logger = logging.getLogger(__name__)
 
@@ -73,36 +71,49 @@ class SubjournalXlsx(models.AbstractModel):
         i = 0
         base_first = obj.base_position == 'first'
 
-        already_perception = False
-        already_retention = False
+        already_vat = False
+        already_gross = False
+        already_income = False
 
         for tax in taxes.sorted(lambda t: getattr(t, obj.sort_by)):
             if (obj.perception_retention_grouped and \
-                tax.tax_group in ['retention', 'perception']):
-                if (tax.tax_group == 'retention' and not already_retention):
-                    already_retention = True
-                    retention_vals = {
+                tax.retention_perception_type in ['gross_income', 'vat', 'income_tax']):
+                if (tax.retention_perception_type == 'gross_income' and not already_gross):
+                    already_gross = True
+                    gross_vals = {
                         'id': False,
-                        'ids': [t.id for t in taxes if t.tax_group == 'retention'],
+                        'ids': [t.id for t in taxes if t.retention_perception_type == 'gross_income'],
                         'is_exempt': tax.is_exempt,
-                        'name': 'Retenciones',
-                        'type': 'retention',
+                        'name': 'Retenciones / Percepciones IIBB',
+                        'type': 'gross_income',
                         'column': 7+i,
                     }
                     i += 1
-                    all_taxes.append(retention_vals)
-                elif (tax.tax_group == 'perception' and not already_perception):
-                    already_perception = True
-                    perception_vals = {
+                    all_taxes.append(gross_vals)
+                elif (tax.retention_perception_type == 'vat' and not already_vat):
+                    already_vat = True
+                    vat_vals = {
                         'id': False,
-                        'ids': [t.id for t in taxes if t.tax_group == 'perception'],
+                        'ids': [t.id for t in taxes if t.retention_perception_type == 'vat'],
                         'is_exempt': tax.is_exempt,
-                        'name': 'Percepciones',
-                        'type': 'perception',
+                        'name': 'Retenciones / Percepciones IVA',
+                        'type': 'vat',
                         'column': 7+i,
                     }
                     i += 1
-                    all_taxes.append(perception_vals)
+                    all_taxes.append(vat_vals)
+                elif (tax.retention_perception_type == 'income_tax' and not already_income):
+                    already_income = True
+                    income_vals = {
+                        'id': False,
+                        'ids': [t.id for t in taxes if t.retention_perception_type == 'income_tax'],
+                        'is_exempt': tax.is_exempt,
+                        'name': 'Retenciones / Percepciones Ganancias',
+                        'type': 'income_tax',
+                        'column': 7+i,
+                    }
+                    i += 1
+                    all_taxes.append(income_vals)
                 continue
 
             perception_tax_group = self.env.ref(
@@ -433,18 +444,9 @@ class SubjournalXlsx(models.AbstractModel):
         sheet = workbook.add_worksheet(title)
         sheet.set_column('A:L', 20)
         for i, column in enumerate(wanted_list):
-            sheet.write(int2xlscol(i)+'4', column, head_format)
+            sheet.write(int2xlscol(i)+'1', column, head_format)
         self.set_column(sheet, i)
         retention_perception_summary = {}
-
-        # ADD LOGO
-        report_url = self.env['ir.config_parameter'].search([('key', '=', 'report.url')]).value
-        logo_url = report_url + 'web/binary/company_logo?company=' + str(obj.company_id.id)
-        logo = BytesIO(urlopen(logo_url).read())
-        sheet.set_row(1, 80)
-        sheet.set_column(1, 1, 30)
-        sheet.insert_image('B2', logo_url, {'image_data': logo})
-        sheet.write('D2', obj.company_id.vat, head_format)
 
         for p, line in enumerate(lines):
             if wizard_obj.perception_retention_grouped:
@@ -456,7 +458,7 @@ class SubjournalXlsx(models.AbstractModel):
                         retention_perception_summary[tax.id] = [tax.name, 0]
                     retention_perception_summary[tax.id][1] += amount
 
-            p += 5
+            p += 2
             cell_format = gray_format
             if p % 2:
                 cell_format = date_format
@@ -478,15 +480,15 @@ class SubjournalXlsx(models.AbstractModel):
             sheet.write(int2xlscol(i+1)+str(p), line['total'], cell_format)
 
         # Formulas
-        fac_formula = '{=SUMIF(G5:G%(last_line)s,"F *",%(col)s5:%(col)s%(last_line)s) + SUMIF(G5:G%(last_line)s,"ND *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
-        nc_formula = '{=SUMIF(G5:G%(last_line)s,"NC *",%(col)s5:%(col)s%(last_line)s)}'  # noqa
-        total_formula = '{=SUM(%(col)s5:%(col)s%(last_line)s)}'  # noqa
+        fac_formula = '{=SUMIF(G2:G%(last_line)s,"F *",%(col)s2:%(col)s%(last_line)s) + SUMIF(G2:G%(last_line)s,"ND *",%(col)s2:%(col)s%(last_line)s)}'  # noqa
+        nc_formula = '{=SUMIF(G2:G%(last_line)s,"NC *",%(col)s2:%(col)s%(last_line)s)}'  # noqa
+        total_formula = '{=SUM(%(col)s2:%(col)s%(last_line)s)}'  # noqa
 
-        last_row_num = len(lines) + 4
+        last_row_num = len(lines) + 1
         last_row_char = str(last_row_num)
-        fac_row_char = str(last_row_num + 5)
-        nc_row_char = str(last_row_num + 6)
-        total_row_char = str(last_row_num + 7)
+        fac_row_char = str(last_row_num + 2)
+        nc_row_char = str(last_row_num + 3)
+        total_row_char = str(last_row_num + 4)
 
         i = -1
         for j, col in enumerate(cols):
@@ -562,10 +564,10 @@ class SubjournalXlsx(models.AbstractModel):
             total_formula % indexes,
             footer_format)
 
-        keyval_row = last_row_num + 8
+        keyval_row = last_row_num + 6
         for key, val in retention_perception_summary.items():
-            key_col = int2xlscol(8+len(cols)-i-4)
-            val_col = int2xlscol(8+len(cols)-i-3)
+            key_col = int2xlscol(8+len(cols)-i-1)
+            val_col = int2xlscol(8+len(cols)-i)
             keyval_row = keyval_row + 1
             sheet.write(key_col+str(keyval_row), val[0])
             sheet.write(val_col+str(keyval_row), val[1])
