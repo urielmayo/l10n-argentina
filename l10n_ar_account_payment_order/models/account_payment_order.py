@@ -1183,8 +1183,8 @@ class AccountPaymentOrder(models.Model):
             for move_lines in rec_list_ids:
                 if len(move_lines) >= 2:
                     move_lines.reconcile(
-                        writeoff_acc_id=payment.writeoff_acc_id.id,
-                        writeoff_journal_id=payment.journal_id.id)
+                        writeoff_acc_id=payment.writeoff_acc_id,
+                        writeoff_journal_id=payment.journal_id)
 
             # Borramos las lineas que estan en 0
             for line in payment.line_ids:
