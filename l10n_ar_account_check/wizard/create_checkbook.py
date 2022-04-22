@@ -33,7 +33,7 @@ class WizardCreateCheck(models.Model):
         ('physical', 'Physical'),
         ('virtual', 'Virtual'),
         ('echeq', 'Echeq')],
-        string='Checkbook Type')
+        string='Checkbook Class')
 
     def create_checkbook(self):
         checkbook_obj = self.env['account.checkbook']
