@@ -124,7 +124,7 @@
             <field name="arch" type="xml">
                 <field name="date_due" position="after">
                     <field name="cae" string="CAI"/>
-                    <field name="cae_due_date"/>
+                    <field name="cae_due_date" required="1"/>
                 </field>
             </field>
         </record>
