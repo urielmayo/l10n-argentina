@@ -122,7 +122,8 @@ class AccountIssuedCheck(models.Model):
     @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
         for rec in self:
-            rec.amount_currency = rec.amount / rec.currency_rate
+            if rec.currency_rate:
+                rec.amount_currency = rec.amount / rec.currency_rate
 
     @api.depends('clearance_move_id')
     def _compute_accredit_state(self):
@@ -457,7 +458,8 @@ class AccountThirdCheck(models.Model):
     @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
         for rec in self:
-            rec.amount_currency = rec.amount / rec.currency_rate
+            if rec.currency_rate:
+                rec.amount_currency = rec.amount / rec.currency_rate
 
     @api.depends('deposit_move_id')
     def _compute_deposit_journal_id(self):
