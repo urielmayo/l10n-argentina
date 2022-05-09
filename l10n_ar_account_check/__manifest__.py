@@ -44,6 +44,7 @@
         "views/account_payment_order_view.xml",
         "views/account_voucher_view.xml",
         "views/partner_view.xml",
+        'views/reason_rejected_check_view.xml',
     ],
     "installable": True,
     "application": True,
