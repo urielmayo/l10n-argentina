@@ -9,6 +9,9 @@
             <field name="priority">2</field>
             <field name="inherit_id" ref="account.view_partner_property_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="nro_insc_iibb"/>
+                </xpath>
                 <page name="accounting_disabled" position="after">
                     <page string="Perceptions">
                         <group colspan="4" col="4">
@@ -29,11 +32,6 @@
                         </group>
                     </page>
                 </page>
-                <group name="accounting_entries" position="after">
-                    <group>
-                        <field name="nro_insc_iibb"/>
-                    </group>
-                </group>
             </field>
         </record>
 
