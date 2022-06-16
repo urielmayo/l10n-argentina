@@ -49,9 +49,11 @@ class AccountCheckReject(models.Model):
         check_objs = third_check_obj.browse(record_ids)
 
         for check in check_objs:
+            if check.state not in ('deposited', 'delivered', 'discounted', 'wallet'):
+                raise ValidationError(_("Error! Check %s has to be deposited, \
+                    delivered, discounted or in wallet!") % (check.number))
 
             check.reject_date = wizard.reject_date
-
             partner = check.source_partner_id
 
             config = check_config_obj.search(
@@ -87,6 +89,8 @@ class AccountCheckReject(models.Model):
                 account_id = check.deposit_bank_id.account_id.id
             elif check.state == 'wallet':
                 account_id = config.account_id.id
+            elif check.state == 'discounted':
+                account_id = check.discount_id.journal_id.default_debit_account_id.id
 
             name = _('Check Rejected') + ' ' + check.number + ' '
             name += datetime.strptime(
@@ -138,7 +142,7 @@ class AccountCheckReject(models.Model):
 
         # TODO: Chequear que es lo mismo el estado en el que este,
         # asi quitamos este if que parece no tener sentido
-        if check.state == 'delivered' or check.state == 'deposited':
+        if check.state == 'delivered' or check.state == 'deposited' or check.state == 'discounted' or check.state == 'wallet':
             check.reject_check()
 
         # Guardamos la referencia a la nota de debito del rechazo

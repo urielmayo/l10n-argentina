@@ -349,7 +349,7 @@ class AccountThirdCheck(models.Model):
     endorsement_date = fields.Date(
         string='Endorsement Date', states={'wallet': [('readonly', False)]})
     deposit_date = fields.Date(
-        string='Deposit Date', readonly=True,
+        string='Deposit Date', readonly=False,
         states={'wallet': [('readonly', False)]})
     reject_date = fields.Date(string='Reject Date')
     source_partner_id = fields.Many2one(

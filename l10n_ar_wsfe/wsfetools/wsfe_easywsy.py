@@ -199,6 +199,28 @@ class WSFE(AfipWS):
                 'AlicIva': vat_array,
             },
         }
+
+        # Associated Comps
+        CbtesAsoc = []
+        voucher_type_obj = invoice.env['wsfe.voucher_type']
+        for associated_inv in invoice.associated_inv_ids:
+            tipo_cbte = voucher_type_obj.get_voucher_type(associated_inv)
+            pos, number = associated_inv.internal_number.split('-')
+            cbte_fch = datetime.strptime(
+                associated_inv.date_invoice, '%Y-%m-%d').strftime('%Y%m%d')
+            CbteAsoc = {
+                'Tipo': tipo_cbte,
+                'PtoVta': int(pos),
+                'Nro': int(number),
+                'Cuit': invoice.company_id.partner_id.vat,
+                'CbteFch': cbte_fch,
+                'invoice': False,
+                'Concepto': False
+            }
+            CbtesAsoc.append(CbteAsoc)
+        if CbtesAsoc:
+            vals['CbtesAsoc'] = {'CbteAsoc': CbtesAsoc}
+
         self._afip_round(vals)
         log = ('Procesando Factura Electronica: %(number)s (id: %(id)s)\n' +
                'Importe Total: %(ImpTotal)s\n' +
@@ -618,6 +640,8 @@ class WSFE(AfipWS):
 
     @wsapi.check(['CbteFch'], reraise=True)
     def validate_invoice_date(val, invoice, Concepto):
+        if not invoice and not Concepto:
+            return True
         if not val:
             return True
         val_dt = datetime.strptime(val, AFIP_DATE_FORMAT)
@@ -655,3 +679,7 @@ class WSFE(AfipWS):
             if isinstance(val, float):
                 return True
         return False
+
+    @wsapi.check(['Tipo', 'Nro'])
+    def validate_cmps_tipo(val, Tipo):
+        return True

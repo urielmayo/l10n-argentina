@@ -65,10 +65,10 @@ class ResPartner(models.Model):
                     ('parent_id', '=', False)
                 ]
                 res = self.search_count(search_param)
-                if res > 1:
-                    raise ValidationError(
-                        _('There is another partner with same ' +
-                          'VAT Information'))
+#                 if res > 1:
+#                     raise ValidationError(
+#                         _('There is another partner with same ' +
+#                           'VAT Information'))
 
     @api.onchange('document_type_id')
     def onchange_document_type(self):

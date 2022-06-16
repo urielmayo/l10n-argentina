@@ -21,15 +21,15 @@ class WSFEX(AfipWS):
 
     @property
     def voucher_type_str(self):
-        return 'homo' in self.ws_url and 'Cbte_Tipo' or 'Tipo_cbte'
+        return 'homo' not in self.ws_url and 'Cbte_Tipo' or 'Tipo_cbte'
 
     @property
     def voucher_asoc_str(self):
-        return 'homo' in self.ws_url and 'Cbte_tipo' or 'CBte_tipo'
+        return 'homo' not in self.ws_url and 'Cbte_tipo' or 'CBte_tipo'
 
     @property
     def voucher_resp_str(self):
-        return 'homo' in self.ws_url and 'Cbte_tipo' or 'Tipo_cbte'
+        return 'homo' not in self.ws_url and 'Cbte_tipo' or 'Tipo_cbte'
 
     def parse_invoices(self, invoices, number=False):
         if len(invoices) > 1:
@@ -115,19 +115,26 @@ class WSFEX(AfipWS):
                 self.voucher_asoc_str: tipo_cbte,
                 'Cbte_punto_vta': int(pos),
                 'Cbte_nro': int(number),
+                'Cbte_cuit':0,# cuit_pais, # Required Lne
             }
-            if 'homo' in self.ws_url:
-                Cmp_asoc.update({
-                    'Cbte_cuit': cuit_pais,
-                })
+            #if 'homo' in self.ws_url:
+            #    Cmp_asoc.update({
+            #        'Cbte_cuit': cuit_pais,
+            #    })
 
             Cmps_asoc.append(Cmp_asoc)
 
         # TODO: Agregar permisos
-        if inv.export_type_id.code == 1:
-            shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
+        #if inv.export_type_id.code == 1:
+        #    shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
+        #else:
+        #    shipping_perm = 'S' and inv.shipping_perm_ids or ''
+
+        tipo_cbte = inv._get_voucher_type() # voucher_type_obj.get_voucher_type(cr, uid, inv, context=context)
+        if tipo_cbte in ('20', '21') or (tipo_cbte == '19' and inv.export_type_id.code in (2,4)):
+            shipping_perm = ''
         else:
-            shipping_perm = 'S' and inv.shipping_perm_ids or ''
+            shipping_perm = 'S' and inv.shipping_perm_ids or 'N'
 
         Cmp = {
             self.voucher_type_str: inv._get_voucher_type(),

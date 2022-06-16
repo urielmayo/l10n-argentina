@@ -78,7 +78,8 @@ class AccountMoveLine(models.Model):
         if self._context.get('bypass_close_date_period_check'):
             return super(AccountMoveLine, self).write(vals)
         bypass_fields = ['reconciled', 'full_reconcile_id']
-        if any(key not in bypass_fields for key in list(vals.keys())):
+        bypass_close_period = self._context.get('bypass_close_period')
+        if any(key not in bypass_fields for key in list(vals.keys())) and not bypass_close_period:
             for rec in self:
                 if rec.move_id.journal_id.id in \
                         rec.move_id.period_id.journal_ids.ids:

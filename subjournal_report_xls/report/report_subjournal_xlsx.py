@@ -263,8 +263,7 @@ class SubjournalXlsx(models.AbstractModel):
 
         # TODO: FIX RAISE USERERROR
         if not len(res):
-            raise UserError(
-                _('There were no moves for this period'))
+            raise UserError('There were no moves for this period')
 
         self.c_taxes = [0] * len(self.columns)
         lines = {}
@@ -273,7 +272,8 @@ class SubjournalXlsx(models.AbstractModel):
             sign_no_taxed = 1
             based_sign = 1
 
-            if l['invoice_type'] in ('out_refund', 'in_refund'):
+            if l['invoice_type'] in ('out_refund', 'in_refund') or (
+                    l['credit'] > l['debit'] and l['invoice_type'] == 'in_invoice'):
                 sign = -1
             if l['invoice_type'] in ('out_invoice', 'in_refund'):
                 sign_no_taxed = -1

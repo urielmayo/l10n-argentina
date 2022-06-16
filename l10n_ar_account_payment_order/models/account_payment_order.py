@@ -9,6 +9,9 @@ from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
 from odoo.exceptions import RedirectWarning, ValidationError, UserError
 from odoo.tools import float_compare
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountPaymentOrder(models.Model):
@@ -298,8 +301,8 @@ class AccountPaymentOrder(models.Model):
     @api.depends('amount')
     def _paid_amount_in_company_currency(self):
         for p in self:
-            payment = self.with_context({'date': p.date})
-            self.paid_amount_in_company_currency = \
+            payment = p.with_context({'date': p.date})
+            payment.paid_amount_in_company_currency = \
                 payment.currency_id.compute(
                     payment.amount,
                     payment.company_id.currency_id)
@@ -688,9 +691,11 @@ class AccountPaymentOrder(models.Model):
         # TODO: Make this logic available.
         # -for sale, purchase we have but for the payment and receipt we do not have as based on the bank/cash journal we can not know its payment or receipt  # noqa
         if self.type in ('purchase', 'payment'):
-            total_credit = self.paid_amount_in_company_currency
+            #total_credit = self.paid_amount_in_company_currency
+            total_credit = self.currency_id.compute(self.amount, self.company_id.currency_id)
         elif self.type in ('sale', 'receipt'):
-            total_debit = self.paid_amount_in_company_currency
+            # total_debit = self.paid_amount_in_company_currency
+            total_debit = self.currency_id.compute(self.amount, self.company_id.currency_id)
         if total_debit < 0:
             total_credit = - total_debit
             total_debit = 0.0
@@ -742,6 +747,7 @@ class AccountPaymentOrder(models.Model):
                 amount_credit -= amount_credit
             if round(amount_credit, 3) != round(total_credit, 3) or \
                     round(amount_debit, 3) != round(total_debit, 3):
+                _logger.warning('amount_credit %s vs total_credit %s or amount_debit %s vs total_debit %s', amount_credit, total_credit, amount_debit, total_debit)
                 raise UserError(_('Voucher Error!\n\
                     Voucher Paid Amount and sum of different payment \
                         mode must be equal'))
