@@ -211,8 +211,9 @@ class AccountIssuedCheck(models.Model):
     def unlink(self):
         if not self:
             return super(AccountIssuedCheck, self).unlink()
-        self.check_id.write({'state': 'draft'})
-        return super(AccountIssuedCheck, self).unlink()
+        for rec in self:
+            rec.check_id.write({'state': 'draft'})
+            super(AccountIssuedCheck, rec).unlink()
 
 
 class AccountPaymentOrder(models.Model):

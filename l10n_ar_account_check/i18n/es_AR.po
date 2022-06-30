@@ -524,6 +524,7 @@ msgstr "Crear Chequeras"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__create_uid
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__create_uid
@@ -542,6 +543,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__create_date
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__create_date
@@ -701,6 +703,7 @@ msgstr "Partner Destino"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__display_name
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__display_name
@@ -847,6 +850,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__id
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__id
@@ -958,6 +962,7 @@ msgstr "Elemento del Diario"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check____last_update
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check____last_update
@@ -976,6 +981,7 @@ msgstr "Última modificación en"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__write_uid
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__write_uid
@@ -994,6 +1000,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_expense__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__write_date
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_accredit_checks__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_annull_checks__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__write_date
@@ -1169,6 +1176,7 @@ msgstr "Rechazar Cheques Propios"
 #: selection:account.issued.check,state:0
 #: selection:account.third.check,state:0
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
+#: selection:reason.rejected.check,type:0
 msgid "Rejected"
 msgstr "Rechazado"
 
@@ -1431,4 +1439,41 @@ msgstr "Orden de Pago"
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.wizard_create_check_view_form
 msgid "or"
 msgstr "o"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__code
+msgid "Code"
+msgstr "Código"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__name
+msgid "Reason"
+msgstr "Motivo"
+
+#. module: l10n_ar_account_check
+#: model:ir.actions.act_window,name:l10n_ar_account_check.reason_rejected_check_action
+msgid "Reasons"
+msgstr "Motivos"
+
+#. module: l10n_ar_account_check
+#: model:ir.model,name:l10n_ar_account_check.model_reason_rejected_check
+#: model:ir.model,name:l10n_ar_account_check.model_rejected_check
+#: model:ir.ui.menu,name:l10n_ar_account_check.menu_treasury_reason_rejected_check
+msgid "Reasons for rejected checks"
+msgstr "Motivos de cheques devueltos"
+
+#. module: l10n_ar_account_check
+#: selection:reason.rejected.check,type:0
+msgid "Returned"
+msgstr "Devuelto"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__type
+msgid "Type"
+msgstr "Tipo"
 
