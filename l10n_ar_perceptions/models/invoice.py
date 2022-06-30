@@ -185,9 +185,10 @@ class AccountInvoice(models.Model):
                         partner, date=inv.date_invoice, invoice=inv)
                 inv.perception_ids = perc_lines
 
-            for taxe in ait_obj._compute_perception_invoice_taxes(inv).\
-                    values():
-                ait_obj.new(taxe)
+            # this line gets commented to avoid duplicates
+            # for taxe in ait_obj._compute_perception_invoice_taxes(inv).\
+            #         values():
+            #     ait_obj.new(taxe)
 
         # Update the stored value (fields.function),
         # so we write to trigger recompute
