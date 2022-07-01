@@ -82,6 +82,13 @@ class AccountCheckbook(models.Model):
         help="If common, checks only have issued_date. \
         If post-dated they also have payment date",
         default='common')
+
+    checkbook_type = fields.Selection([
+        ('physical', 'Physical'),
+        ('virtual', 'Virtual'),
+        ('echeq', 'Echeq')],
+        string='Checkbook Class')
+
     state = fields.Selection([
         ('open', 'Open'),
         ('closed', 'Closed')],
