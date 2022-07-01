@@ -55,6 +55,7 @@
                     <field name="bank_account_id"/>
                     <field name="bank_id"/>
                     <field name="type"/>
+                    <field name="checkbook_type"/>
                     <field name="account_check_id"/>
                     <field name="state"/>
                 </tree>

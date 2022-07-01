@@ -123,7 +123,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <field name="date_due" position="after">
-                    <field name="cae" string="CAI"/>
+                    <field name="cae" string="CAE"/>
                     <field name="cae_due_date" required="1"/>
                 </field>
             </field>
