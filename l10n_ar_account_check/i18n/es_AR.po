@@ -394,6 +394,12 @@ msgid "Checkbook Check"
 msgstr "Chequera Cheque"
 
 #. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__checkbook_type
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_wizard_create_check__checkbook_type
+msgid "Checkbook Class"
+msgstr "Tipo de cheque"
+
+#. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__name
 msgid "Checkbook Number"
 msgstr "Número de Chequera"
