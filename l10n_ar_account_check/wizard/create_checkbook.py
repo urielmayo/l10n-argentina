@@ -60,6 +60,7 @@ class WizardCreateCheck(models.Model):
                     'bank_account_id': form.bank_account_id.id,
                     'check_ids': checks,
                     'type': form.type,
+                    'checkbook_type': form.checkbook_type,
                 }
 
                 checkbook_id = checkbook_obj.create(checkbook_vals)
@@ -69,6 +70,7 @@ class WizardCreateCheck(models.Model):
                     'bank_id': form.bank_account_id.bank_id.id,
                     'bank_account_id': form.bank_account_id.id,
                     'type': form.type,
+                    'checkbook_type': form.checkbook_type,
                 }
 
                 checkbook_id = checkbook_obj.create(checkbook_vals)
