@@ -88,6 +88,7 @@
                             </group>
                             <group>
                                 <field name="type"/>
+                                <field name="checkbook_type"/>
                                 <field name="account_check_id"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
