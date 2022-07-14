@@ -194,7 +194,7 @@ class CheckRejectIssuedCheck(models.Model):
             check.write(
                 {'reject_date': self.reject_date,
                  'generate_rejection_journal_entry': self.generate_rejection_journal_entry,
-                'note': self.note})
+                 'note': self.note})
             if self.generate_rejection_journal_entry:
                 self.create_rejected_journal_entry(check)
             check.reject_check()                
