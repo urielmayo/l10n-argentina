@@ -4,3 +4,4 @@
 ##############################################################################
 
 from . import accredit_checks, add_checks, annull_checks, check_deposit, check_reject, create_checkbook
+from . import check_returned

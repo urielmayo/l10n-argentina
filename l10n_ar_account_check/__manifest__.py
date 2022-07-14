@@ -36,6 +36,7 @@
         "wizard/annull_checks_view.xml",
         "wizard/view_check_deposit.xml",
         "wizard/view_check_reject.xml",
+        "wizard/check_returned_view.xml",
         "wizard/add_checks_view.xml",
         "wizard/accredit_checks_view.xml",
         "views/account_check_view.xml",

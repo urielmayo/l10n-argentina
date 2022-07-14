@@ -104,7 +104,8 @@ class AccountIssuedCheck(models.Model):
          ('waiting', 'Waiting Accreditation'),
          ('issued', 'Issued'),
          ('cancel', 'Cancelled'),
-         ('rejected', 'Rejected')],
+         ('rejected', 'Rejected'),
+         ('returned', 'Returned')],
         string='State',
         default='draft')
     currency_id = fields.Many2one(
@@ -342,6 +343,13 @@ class AccountIssuedCheck(models.Model):
             'state': 'rejected',
         })
         return True
+
+    def return_check(self):
+        for check in self:
+            check.write({
+                'state': 'returned',
+            })
+            return True
 
 
 class AccountThirdCheck(models.Model):
