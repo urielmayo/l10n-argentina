@@ -17,3 +17,4 @@
 "access_account_checkbook_check_user","account.checkbook.check user","model_account_checkbook_check","treasury_user",1,0,0,0
 "access_wizard_create_check_user","wizard.create.check manager","model_wizard_create_check","treasury_manager",1,1,1,1
 "access_reason_rejected_check_manager","account.reason.rejected.check manager","model_reason_rejected_check","treasury_manager",1,1,1,1
+"access_account_returned_check","account.returned.check manager","model_account_returned_check","treasury_manager",1,1,1,1

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="account_returned_check_wizard_form" model="ir.ui.view">
+            <field name="name">account.returned.check.wizard.form</field>
+            <field name="model">account.returned.check</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Returned Check">
+                    <group>
+                        <group>
+                            <field name="return_date"/>
+                        </group>
+                        <group>
+                            <field name="reason"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="generate_journal_entry"/>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                    <footer>
+                        <button type="special" special="cancel"
+                            string="Cancel" class="btn-default"/>
+                        <button type="object" name="action_return"
+                            string="Returned" class="btn-default oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_check_returned"
+            name="Returned Check"
+            res_model="account.returned.check"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"/>
+
+    </data>
+</odoo>
