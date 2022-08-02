@@ -4,3 +4,4 @@
 ##############################################################################
 
 from . import account, account_check, account_payment_order, res_partner_bank, checkbook, reason_rejected_check
+from . import account_invoice

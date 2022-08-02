@@ -46,6 +46,10 @@
         "views/account_voucher_view.xml",
         "views/partner_view.xml",
         'views/reason_rejected_check_view.xml',
+        'views/account_invoice_view.xml',
+    ],
+    'qweb': [
+        'static/src/xml/reverse_payment.xml',
     ],
     "installable": True,
     "application": True,
