@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="account_invoice_widget_form" model="ir.ui.view">
+            <field name="name">account.invoice.widget.form</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payments_widget']" position="after">
+                    <field name="reverse_widget" widget="reverse_payment" nolabel="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <template id="reverse_widget_tpl" name="account_invoice assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/l10n_ar_account_check/static/src/js/widget/account_reverse_field.js"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
