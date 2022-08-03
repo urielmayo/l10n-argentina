@@ -1401,6 +1401,17 @@ class AccountPaymentModeLine(models.Model):
     #         i.currency_id = i.payment_mode_id.currency_id or \
     #             self._get_company_currency()
 
+    # @api.model
+    # def create(self, vals):
+    #     res = super(AccountPaymentModeLine, self).create(vals)
+
+    #     if res.date:
+    #         if res.date < (datetime.today().date() - timedelta(days=60)):
+    #             raise UserError(_("You cannot create a payment method erliear than 60 days before today."))
+    #         elif res.date > datetime.today().date():
+    #             raise UserError(_("You cannot create a payment method later than today."))
+
+    #     return res
 
     def _compute_currency_id(self):
 
