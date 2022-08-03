@@ -236,19 +236,6 @@ class AccountPaymentOrder(models.Model):
                 elif self.is_invalid_date(_date)[1] == "past":
                     raise UserError(_("The payment order cannot have a date earlier than 60 days from today."))
 
-        # if vals.get("payment_mode_line_ids"):
-        #     for payment_mode in vals["payment_mode_line_ids"]:
-        #         if payment_mode[2]:
-        #             if payment_mode[2].get("date"):
-        #                 _date = datetime.strptime(payment_mode[2]["date"], "%Y-%m-%d").date()
-        #                 if self.is_invalid_date(_date)[0]:
-        #                     if self.is_invalid_date(_date)[1] == "future":
-        #                         raise UserError(_("The payment methods cannot have a date later than today."))
-        #                     elif self.is_invalid_date(_date)[1] == "past":
-        #                         raise UserError(_("The payment methods cannot have a date earlier than 60 days from today."))
-        #         else:
-        #             continue
-
         return super(AccountPaymentOrder, self).write(vals)
 
     @api.onchange("date")
@@ -1454,23 +1441,6 @@ class AccountPaymentModeLine(models.Model):
     date = fields.Date(
         string='Payment Date', help="This date is informative only.")
 
-    # @api.depends('payment_mode_id')
-    # def _compute_currency(self):
-    #     for i in self:
-    #         i.currency_id = i.payment_mode_id.currency_id or \
-    #             self._get_company_currency()
-
-    # @api.model
-    # def create(self, vals):
-    #     res = super(AccountPaymentModeLine, self).create(vals)
-
-    #     if res.date:
-    #         if res.date < (datetime.today().date() - timedelta(days=60)):
-    #             raise UserError(_("You cannot create a payment method erliear than 60 days before today."))
-    #         elif res.date > datetime.today().date():
-    #             raise UserError(_("You cannot create a payment method later than today."))
-
-    #     return res
 
     def _compute_currency_id(self):
 
