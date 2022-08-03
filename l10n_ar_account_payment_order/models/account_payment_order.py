@@ -213,6 +213,65 @@ class AccountPaymentOrder(models.Model):
 
     message = fields.Char()
 
+    @api.model
+    def create(self, vals):
+        res = super(AccountPaymentOrder, self).create(vals)
+
+        if res.date:
+            if res.date < (datetime.today().date() - timedelta(days=60)):
+                raise UserError(_("You cannot create a payment order erliear than 60 days before today."))
+            elif res.date > datetime.today().date():
+                raise UserError(_("You cannot create a payment order later than today."))
+
+        return res
+
+    def write(self, vals):
+        _date = False
+
+        if vals.get("date"):
+            _date = datetime.strptime(vals["date"], "%Y-%m-%d").date()
+            if self.is_invalid_date(_date)[0]:
+                if self.is_invalid_date(_date)[1] == "future":
+                    raise UserError(_("The payment order cannot have a date later than today."))
+                elif self.is_invalid_date(_date)[1] == "past":
+                    raise UserError(_("The payment order cannot have a date earlier than 60 days from today."))
+
+        # if vals.get("payment_mode_line_ids"):
+        #     for payment_mode in vals["payment_mode_line_ids"]:
+        #         if payment_mode[2]:
+        #             if payment_mode[2].get("date"):
+        #                 _date = datetime.strptime(payment_mode[2]["date"], "%Y-%m-%d").date()
+        #                 if self.is_invalid_date(_date)[0]:
+        #                     if self.is_invalid_date(_date)[1] == "future":
+        #                         raise UserError(_("The payment methods cannot have a date later than today."))
+        #                     elif self.is_invalid_date(_date)[1] == "past":
+        #                         raise UserError(_("The payment methods cannot have a date earlier than 60 days from today."))
+        #         else:
+        #             continue
+
+        return super(AccountPaymentOrder, self).write(vals)
+
+    @api.onchange("date")
+    def _show_warning_on_date_change(self):
+        if not self.is_invalid_date(self.date)[0]:
+            return {}
+
+        return {
+            "warning": {
+                "title": "Payment Order Date",
+                "message": (_("Date is invalid!"))
+            }
+        }
+
+    def is_invalid_date(self, date):
+        if date:
+            if date < (datetime.today().date() - timedelta(days=60)):
+                return(True, "past")
+            elif date > datetime.today().date():
+                return(True, "future")
+
+        return(False, False)
+
     @api.multi
     def action_clean_lines(self):
         for rec in self:
