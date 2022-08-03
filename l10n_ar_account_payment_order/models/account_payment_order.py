@@ -213,6 +213,52 @@ class AccountPaymentOrder(models.Model):
 
     message = fields.Char()
 
+    @api.model
+    def create(self, vals):
+        res = super(AccountPaymentOrder, self).create(vals)
+
+        if res.date:
+            if res.date < (datetime.today().date() - timedelta(days=60)):
+                raise UserError(_("You cannot create a payment order erliear than 60 days before today."))
+            elif res.date > datetime.today().date():
+                raise UserError(_("You cannot create a payment order later than today."))
+
+        return res
+
+    def write(self, vals):
+        _date = False
+
+        if vals.get("date"):
+            _date = datetime.strptime(vals["date"], "%Y-%m-%d").date()
+            if self.is_invalid_date(_date)[0]:
+                if self.is_invalid_date(_date)[1] == "future":
+                    raise UserError(_("The payment order cannot have a date later than today."))
+                elif self.is_invalid_date(_date)[1] == "past":
+                    raise UserError(_("The payment order cannot have a date earlier than 60 days from today."))
+
+        return super(AccountPaymentOrder, self).write(vals)
+
+    @api.onchange("date")
+    def _show_warning_on_date_change(self):
+        if not self.is_invalid_date(self.date)[0]:
+            return {}
+
+        return {
+            "warning": {
+                "title": "Payment Order Date",
+                "message": (_("Date is invalid!"))
+            }
+        }
+
+    def is_invalid_date(self, date):
+        if date:
+            if date < (datetime.today().date() - timedelta(days=60)):
+                return(True, "past")
+            elif date > datetime.today().date():
+                return(True, "future")
+
+        return(False, False)
+
     @api.multi
     def action_clean_lines(self):
         for rec in self:
@@ -1394,12 +1440,6 @@ class AccountPaymentModeLine(models.Model):
         readonly=True, default=lambda s: s._get_company_currency())
     date = fields.Date(
         string='Payment Date', help="This date is informative only.")
-
-    # @api.depends('payment_mode_id')
-    # def _compute_currency(self):
-    #     for i in self:
-    #         i.currency_id = i.payment_mode_id.currency_id or \
-    #             self._get_company_currency()
 
 
     def _compute_currency_id(self):
