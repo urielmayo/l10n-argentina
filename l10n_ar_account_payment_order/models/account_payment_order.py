@@ -798,7 +798,6 @@ class AccountPaymentOrder(models.Model):
 
     @api.multi
     def create_move_lines(self, move_id, company_currency, current_currency):
-        print('%s.create_move_lines()' % self)
         total_debit = total_credit = 0.0
         # TODO: is there any other alternative then the voucher type ??
         # ANSWER: We can have payment and receipt "In Advance".
@@ -915,7 +914,6 @@ class AccountPaymentOrder(models.Model):
                 'date': self.date,
                 'date_maturity': self.date_due
             }
-        print(move_line)
         return move_line
 
     @api.multi
@@ -1034,7 +1032,6 @@ class AccountPaymentOrder(models.Model):
                 'debit': 0.0,
                 'date': self.date
             }
-            print(move_line)
             if amount < 0:
                 amount = -amount
 
@@ -1073,7 +1070,6 @@ class AccountPaymentOrder(models.Model):
             #             abs(amount_currency)
             #
             # move_line['amount_currency'] = amount_currency
-            print('[AML.create] %s\t%s\t%s\t%s' % (move_line['account_id'], move_line['amount_currency'], move_line['debit'], move_line['credit']))
             payment_line = move_line_obj.create(move_line)
             new_amls = payment_line + line.move_line_id
 
@@ -1109,7 +1105,6 @@ class AccountPaymentOrder(models.Model):
             #     new_amls += new_aml
             if line.move_line_id.id:
                 rec_lst_ids.append(new_amls)
-        print(tot_line, rec_lst_ids)
         return (tot_line, rec_lst_ids)
 
     @api.multi
@@ -1152,7 +1147,6 @@ class AccountPaymentOrder(models.Model):
                 'analytic_account_id': self.analytic_id and
                 self.analytic_id.id or False,
             }
-        print(move_line)
         return move_line
 
     @api.multi
@@ -1187,7 +1181,6 @@ class AccountPaymentOrder(models.Model):
                 line_total = 0.0
                 for vals in move_line_vals:
                     line_total += vals['debit'] - vals['credit']
-                    print('[AML.create] %s\t%s\t%s\t%s\t(payment)' % (vals['account_id'], vals['amount_currency'], vals['debit'], vals['credit']))
                     move_line_obj.with_context(ctx).create(vals)
             else:
                 # Create the first line of the voucher
@@ -1213,7 +1206,6 @@ class AccountPaymentOrder(models.Model):
             ml_writeoff = self.writeoff_move_line_get(
                 line_total, move_id, name, company_currency, current_currency)
             if ml_writeoff:
-                print('[AML.create] %s\t%s\t%s\t%s\t(writeoff)' % (ml_writeoff['account_id'], ml_writeoff['amount_currency'], ml_writeoff['debit'], ml_writeoff['credit']))
                 move_line_obj.with_context(ctx).create(ml_writeoff)
 
             # We post the voucher.
@@ -1225,7 +1217,6 @@ class AccountPaymentOrder(models.Model):
 
             move_recordset.post()
             # We automatically reconcile the account move lines.
-            print('APO-> calling %s.reconcile()' % rec_list_ids)
             for move_lines in rec_list_ids:
                 if len(move_lines) >= 2:
                     move_lines.reconcile(
@@ -1418,7 +1409,6 @@ class AccountPaymentModeLine(models.Model):
     _name = 'account.payment.mode.line'
     _description = 'Payment method lines'
 
-
     name = fields.Text(
         help='Payment reference', string='Description')
     payment_order_id = fields.Many2one(
@@ -1441,11 +1431,15 @@ class AccountPaymentModeLine(models.Model):
     date = fields.Date(
         string='Payment Date', help="This date is informative only.")
 
+    # @api.depends('payment_mode_id')
+    # def _compute_currency(self):
+    #     for i in self:
+    #         i.currency_id = i.payment_mode_id.currency_id or \
+    #             self._get_company_currency()
 
     def _compute_currency_id(self):
 
             return self.payment_order_id.currency_id
-
 
     @api.onchange('currency_id')
     def onchange_currency_id(self):
@@ -1471,7 +1465,6 @@ class AccountPaymentModeLine(models.Model):
 
     @api.onchange('amount')
     def onchange_amount(self):
-
         # parent = self.env['account.payment.order'].browse(self._context['params']['id'])
         parent = self.payment_order_id
         if self.currency_id.id != parent.company_currency.id:
@@ -1483,7 +1476,6 @@ class AccountPaymentModeLine(models.Model):
             return
         else:
             self.amount_currency = amount_computed
-
 
     # @api.onchange('amount_currency')
     # def onchange_amount_currency(self):
@@ -1499,7 +1491,6 @@ class AccountPaymentModeLine(models.Model):
     #         return
     #     else:
     #         self.amount = amount_computed
-
 
     @api.model
     def _get_company_currency(self):
