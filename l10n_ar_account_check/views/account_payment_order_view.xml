@@ -35,6 +35,8 @@
                                         <field name="amount"/>
                                         <field name="amount_currency"/>
                                         <field name="bank_id" invisible="1"/>
+                                        <field name="journal_id"
+                                               attrs="{'readonly': True, 'invisible': [('id', '=', False)]}"/>
                                         <field name="company_id" invisible="0"/>
                                     </group>
                                     <group>

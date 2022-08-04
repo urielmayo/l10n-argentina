@@ -75,6 +75,7 @@ class AccountIssuedCheck(models.Model):
         ('72', '72 hs')], string='Clearing', default='24')
     account_bank_id = fields.Many2one(
         comodel_name='res.partner.bank', string='Bank Account')
+    journal_id = fields.Many2one(comodel_name='account.journal', string='Payment journal')
     payment_order_id = fields.Many2one(
         comodel_name='account.payment.order', string='Voucher')
     payment_move_id = fields.Many2one(
@@ -133,6 +134,39 @@ class AccountIssuedCheck(models.Model):
                 check.accredited = True
             else:
                 check.accredited = False
+
+    def _build_invoices_info(self, lines):
+        """ Copied from l10n_ar_bank_statement/models/account_payment.py"""
+
+        invoices = lines.mapped("invoice_id")
+        return ', '.join(inv.internal_number or '' for inv in invoices)
+
+    def _prepare_statement_line_data(self):
+        payment = self.payment_order_id
+        partner = payment.partner_id
+        journal = self.journal_id
+
+        # HardCodes
+        line_type = "payment"
+        account = journal.default_debit_account_id
+
+        invoices_info = self._build_invoices_info(payment.debt_line_ids)
+
+        st_line_values = {
+            'ref': invoices_info,
+            'name': 'Cheque Propio: ' + self.number,
+            'date': self.payment_date,
+            'journal_id': journal.id,
+            'company_id': self.company_id.id,
+            'payment_order_id': payment.id,
+            'partner_id': partner.id,
+            'account_id': account.id,
+            'line_type': line_type,
+            'amount': self.amount,
+            'state': 'open',
+        }
+
+        return st_line_values
 
     @api.model
     def create_voucher_move_line(self):

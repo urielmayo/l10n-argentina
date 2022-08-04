@@ -44,11 +44,16 @@ class AccountPaymentOrder(models.Model):
         ret = super(AccountPaymentOrder, self).proforma_voucher()
 
         for payment_order in self:
-            for line in payment_order.payment_mode_line_ids:
+            for line in payment_order.payment_mode_line_ids:  # transfers
                 journal = line.payment_mode_id or payment_order.journal_id
                 if not journal.detach_statement_lines():
                     continue
+                self.create_statement_line(line, journal)
 
+            for line in payment_order.issued_check_ids:  # issued checks
+                journal = line.journal_id or payment_order.journal_id
+                if not journal.detach_statement_lines():
+                    continue
                 self.create_statement_line(line, journal)
         return ret
 
