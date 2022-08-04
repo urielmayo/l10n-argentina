@@ -86,6 +86,7 @@ class AccountPayment(models.Model):
         return self.env['account.bank.statement.line'].create(st_line_values)
 
     def create_statement_line(self, data, journal):
+        # 'data' can be an account.issued.check or an account.payment
         st_line_values = data._prepare_statement_line_data()
 
         if journal.type == "cash":

@@ -2,6 +2,7 @@
 import json
 from datetime import date
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class ReturnedCheck(models.Model):
@@ -93,15 +94,19 @@ class ReturnedCheck(models.Model):
     def get_invoice_by_check(self, check):
         # hardcode invoice from check
         original_entry = check.payment_move_id
-        ch_line = original_entry.line_ids.search([('name', '=', 'Cheque Propio ' + check.number),
-                                                  ('debit', '=', 0), ('credit', '!=', 0)])
-        rev_line = original_entry.line_ids.search([('debit', '=', ch_line.credit),
-                                                   ('date_maturity', '=', ch_line.date_maturity),
-                                                   ('partner_id', '=', ch_line.partner_id.id)])
+        ch_line = original_entry.line_ids.filtered(lambda x:
+                                                   x.name == 'Cheque Propio ' + check.number and
+                                                   x.debit == 0 and x.credit != 0)
+        rev_line = original_entry.line_ids.filtered(lambda x:
+                                                    x.debit != 0 and x.credit == 0 and
+                                                    x.date_maturity == ch_line.date_maturity and
+                                                    x.partner_id == ch_line.partner_id)
         return self.env['account.invoice'].search([('internal_number', '=', rev_line.name)])
 
     def update_invoice(self, check):
         ch_invoice = self.get_invoice_by_check(check)
+        if not ch_invoice:
+            raise UserError('No se econtró una factura asociada.')
 
         # outstanding payment
         payment_dict = json.loads(ch_invoice.payments_widget)
@@ -110,8 +115,9 @@ class ReturnedCheck(models.Model):
             if cont['amount'] == check.amount and cont['move_id'] == check.payment_move_id.id:
                 cont['rev_date'] = date.today()
                 reverse_dict['content'].append(cont)
-        ch_invoice.compute_reverse_widget(reverse_dict)
+        if reverse_dict:
+            ch_invoice.compute_reverse_widget(reverse_dict)
 
         if ch_invoice.state == 'paid':
             ch_invoice.state = 'open'
-        ch_invoice.residual -= check.amount
+        ch_invoice.residual += check.amount
