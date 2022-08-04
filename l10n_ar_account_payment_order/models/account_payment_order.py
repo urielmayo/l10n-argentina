@@ -4,7 +4,7 @@
 ##############################################################################
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from odoo import _, api, fields, models
 from odoo.addons import decimal_precision as dp
@@ -217,24 +217,27 @@ class AccountPaymentOrder(models.Model):
     def create(self, vals):
         res = super(AccountPaymentOrder, self).create(vals)
 
-        if res.date:
-            if res.date < (datetime.today().date() - timedelta(days=60)):
-                raise UserError(_("You cannot create a payment order erliear than 60 days before today."))
-            elif res.date > datetime.today().date():
-                raise UserError(_("You cannot create a payment order later than today."))
+        if res.type == "receipt":
+            if res.date:
+                if self.is_invalid_date(res.date)[0]:
+                    if self.is_invalid_date(res.date)[1] == "future":
+                        raise UserError(_("The payment order cannot have a date later than today."))
+                    elif self.is_invalid_date(res.date)[1] == "past":
+                        raise UserError(_("The payment order cannot have a date earlier than 2 days from today."))
 
         return res
 
     def write(self, vals):
         _date = False
 
-        if vals.get("date"):
-            _date = datetime.strptime(vals["date"], "%Y-%m-%d").date()
-            if self.is_invalid_date(_date)[0]:
-                if self.is_invalid_date(_date)[1] == "future":
-                    raise UserError(_("The payment order cannot have a date later than today."))
-                elif self.is_invalid_date(_date)[1] == "past":
-                    raise UserError(_("The payment order cannot have a date earlier than 60 days from today."))
+        if self.type == "receipt":
+            if vals.get("date"):
+                _date = datetime.strptime(vals["date"], "%Y-%m-%d").date()
+                if self.is_invalid_date(_date)[0]:
+                    if self.is_invalid_date(_date)[1] == "future":
+                        raise UserError(_("The payment order cannot have a date later than today."))
+                    elif self.is_invalid_date(_date)[1] == "past":
+                        raise UserError(_("The payment order cannot have a date earlier than 2 days from today."))
 
         return super(AccountPaymentOrder, self).write(vals)
 
@@ -245,14 +248,14 @@ class AccountPaymentOrder(models.Model):
 
         return {
             "warning": {
-                "title": "Payment Order Date",
-                "message": (_("Date is invalid!"))
+                "title": "Invalid Payment Order Date",
+                "message": (_("The date has to be today or not erlier than 2 days from today."))
             }
         }
 
     def is_invalid_date(self, date):
         if date:
-            if date < (datetime.today().date() - timedelta(days=60)):
+            if date < (datetime.today().date() - timedelta(days=2)):
                 return(True, "past")
             elif date > datetime.today().date():
                 return(True, "future")
