@@ -1431,15 +1431,8 @@ class AccountPaymentModeLine(models.Model):
     date = fields.Date(
         string='Payment Date', help="This date is informative only.")
 
-    # @api.depends('payment_mode_id')
-    # def _compute_currency(self):
-    #     for i in self:
-    #         i.currency_id = i.payment_mode_id.currency_id or \
-    #             self._get_company_currency()
-
     def _compute_currency_id(self):
-
-            return self.payment_order_id.currency_id
+        return self.payment_order_id.currency_id
 
     @api.onchange('currency_id')
     def onchange_currency_id(self):
