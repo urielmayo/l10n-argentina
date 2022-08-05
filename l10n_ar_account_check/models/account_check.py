@@ -162,7 +162,7 @@ class AccountIssuedCheck(models.Model):
             'partner_id': partner.id,
             'account_id': account.id,
             'line_type': line_type,
-            'amount': self.amount,
+            'amount': self.amount * -1,
             'state': 'open',
         }
 
