@@ -8,7 +8,7 @@ class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
     def compute_reverse_widget(self, reverse_dict):
-        if self.reverse_widget:
+        if self.reverse_widget and json.loads(self.reverse_widget):
             actual_dict = json.loads(self.reverse_widget)
             actual_dict['content'].append(reverse_dict['content'])
             dump_dict = actual_dict

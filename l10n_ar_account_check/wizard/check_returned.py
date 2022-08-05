@@ -118,6 +118,5 @@ class ReturnedCheck(models.Model):
         if reverse_dict:
             ch_invoice.compute_reverse_widget(reverse_dict)
 
-        if ch_invoice.state == 'paid':
-            ch_invoice.state = 'open'
-        ch_invoice.residual += check.amount
+        if ch_invoice.state == 'paid' and check.payment_order_id:
+            check.payment_order_id.cancel_voucher()
