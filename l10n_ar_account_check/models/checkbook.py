@@ -125,6 +125,13 @@ class AccountCheckbook(models.Model):
     def annull_checks(self):
         return self.mapped("check_ids").annull_check()
 
+    def name_get(self):
+        result = []
+        for rec in self:
+            new_name = rec.name + ' - %s' % (rec.bank_id.name)
+            result.append((rec.id, new_name))
+        return result
+
 
 class CheckbookCheck(models.Model):
 
