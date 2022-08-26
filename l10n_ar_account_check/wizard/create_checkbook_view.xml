@@ -39,7 +39,7 @@
 
         <menuitem id="menu_wizard_create_check"
             action="wizard_create_check_action"
-            sequence="20"
+            sequence="30"
             name="Create Checkbook"
             parent="l10n_ar_account_check.menu_treasury_configuration"
             groups="treasury_user"/>
