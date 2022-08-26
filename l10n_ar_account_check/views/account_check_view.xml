@@ -32,7 +32,7 @@
                 <form string="Check Config" version="7.0">
                     <sheet>
                         <h1>
-			    <p>Account Check Configuration</p>
+                            <p>Account Check Configuration</p>
                         </h1>
                         <group>
                             <field name="company_id" readonly="True"/>
@@ -55,10 +55,11 @@
         </record>
 
         <menuitem id="menu_treasury_check_config"
-            action="account_check_config_action"
-            name="Check Config"
-            parent="menu_treasury_configuration"
-            />
+                  action="account_check_config_action"
+                  sequence="5"
+                  name="Check Config"
+                  parent="menu_treasury_configuration"
+        />
 
         <!-- Cheques Emitidos -->
 
@@ -72,10 +73,10 @@
                     <field name="receiving_partner_id"/>
                     <field name="issue_date"/>
                     <field name="payment_date"/>
-                    <field name="account_bank_id" />
+                    <field name="account_bank_id"/>
                     <field name="bank_id"/>
                     <field name="payment_order_id"/>
-                    <field name="amount" sum="Total Amount" />
+                    <field name="amount" sum="Total Amount"/>
                     <field name="type" invisible="1"/>
                     <field name="state"/>
                 </tree>
@@ -89,17 +90,21 @@
             <field name="arch" type="xml">
                 <form string="Issued Checks">
                     <header>
-                        <button name="accredit_checks" string="Accredit Check" type="object" attrs="{'invisible': [('state', 'not in', ['waiting'])]}" class="oe_highlight"/>
+                        <button name="accredit_checks" string="Accredit Check" type="object"
+                                attrs="{'invisible': [('state', 'not in', ['waiting'])]}" class="oe_highlight"/>
                         <button name="break_conciliation" string="Break Conciliation" type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|', ('state', 'not in', ['issued']), ('accredited', '=', 'False')]}"/>
-                        <button name="%(action_check_returned)d" string="Returned" type="action" attrs="{'invisible': [('state', 'not in', ['issued'])]}" class="oe_highlight"/>
-                        <field name="state" widget="statusbar" statusbar_visible="rejected,returned,draft,issued" statusbar_colors='{"cancel":"red"}'/>
+                                attrs="{'invisible': ['|', ('state', 'not in', ['issued']), ('accredited', '=', 'False')]}"/>
+                        <button name="%(action_check_returned)d" string="Returned" type="action"
+                                attrs="{'invisible': [('state', 'not in', ['issued'])]}" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="rejected,returned,draft,issued"
+                               statusbar_colors='{"cancel":"red"}'/>
                     </header>
                     <sheet>
                         <div class="oe_title">
                             <h1>
-				<label for="number" string="Issued Check"/>
-				<field name="number" class="oe_inline" attrs="{'readonly': [('state', 'in', 'returned')]}"/>
+                                <label for="number" string="Issued Check"/>
+                                <field name="number" class="oe_inline"
+                                       attrs="{'readonly': [('state', 'in', 'returned')]}"/>
                             </h1>
                         </div>
                         <group>
@@ -111,7 +116,8 @@
                             </group>
                             <group>
                                 <field name="issue_date" attrs="{'readonly': [('state', 'in', 'returned')]}"/>
-                                <field name="payment_date" attrs="{'invisible': [('type', '=', 'common')], 'required': [('type','=','postdated')]}"/>
+                                <field name="payment_date"
+                                       attrs="{'invisible': [('type', '=', 'common')], 'required': [('type','=','postdated')]}"/>
                                 <field name="reject_date" attrs="{'invisible': [('state', '!=', 'rejected')]}"/>
                                 <field name="account_bank_id" domain="[('bank_id', '=', bank_id)]" required="1"
                                        attrs="{'readonly': [('state', 'in', 'returned')]}"/>
@@ -127,7 +133,8 @@
                             <group>
                                 <field name="origin"/>
                                 <field name="payment_move_id" readonly="1"/>
-                                <field name="clearance_move_id" attrs="{'readonly': True, 'invisible': [('type', '=', 'common')]}"/>
+                                <field name="clearance_move_id"
+                                       attrs="{'readonly': True, 'invisible': [('type', '=', 'common')]}"/>
                                 <field name="accredited" invisible="1"/>
                             </group>
                         </group>
@@ -149,11 +156,12 @@
                     <separator/>
                     <filter string="Post-dated" name="post_dated" domain="[('type','=', 'postdated')]"/>
                     <separator/>
-		    <filter string="Cancelled" name="cancelled" domain="[('state', '=', 'cancel')]"/>
+                    <filter string="Cancelled" name="cancelled" domain="[('state', '=', 'cancel')]"/>
                     <separator/>
                     <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
                     <separator/>
-		    <filter string="Waiting Accreditation" name="waiting_accreditation" domain="[('state', '=', 'waiting')]"/>
+                    <filter string="Waiting Accreditation" name="waiting_accreditation"
+                            domain="[('state', '=', 'waiting')]"/>
                     <separator/>
                     <filter string="Issued" name="issued" domain="[('state', '=', 'issued')]"/>
                     <separator/>
@@ -166,8 +174,10 @@
                     <field name="payment_date"/>
                     <group expand="0" string="Group By...">
                         <filter string="Bank Account" name="bank_account" context="{'group_by':'account_bank_id'}"/>
-			<filter string="Payment Date" name="payment_date" context="{'group_by':'payment_date'}" help="Payment Date"/>
-                        <filter string="Receiving Partner" name="receiving_partner" context="{'group_by':'receiving_partner_id'}"/>
+                        <filter string="Payment Date" name="payment_date" context="{'group_by':'payment_date'}"
+                                help="Payment Date"/>
+                        <filter string="Receiving Partner" name="receiving_partner"
+                                context="{'group_by':'receiving_partner_id'}"/>
                         <filter string="State" name="state" context="{'group_by': 'state'}"/>
                     </group>
                 </search>
@@ -202,7 +212,7 @@
 
         <!-- Tesoreria/Cheques/Cheques Emitidos -->
 
-	    <record id="account_issued_check_action" model="ir.actions.act_window">
+        <record id="account_issued_check_action" model="ir.actions.act_window">
             <field name="name">Issued Checks</field>
             <field name="res_model">account.issued.check</field>
             <field name="view_type">form</field>
@@ -225,22 +235,22 @@
         </record>
 
         <menuitem id="menu_treasury_issued_check"
-            action="account_issued_check_action"
-            name="Issued Checks"
-            parent="menu_treasury_issued_check_menu"
-            />
+                  action="account_issued_check_action"
+                  name="Issued Checks"
+                  parent="menu_treasury_issued_check_menu"
+        />
 
         <menuitem id="menu_treasury_issued_check_calendar_payment"
-            action="account_issued_check_action_calendar_payment_date"
-            name="Calendar By Payment Date"
-            parent="menu_treasury_issued_check_menu"
-            />
+                  action="account_issued_check_action_calendar_payment_date"
+                  name="Calendar By Payment Date"
+                  parent="menu_treasury_issued_check_menu"
+        />
 
         <menuitem id="menu_treasury_issued_check_calendar_issued"
-            action="account_issued_check_action_calendar_issued_date"
-            name="Calendar By Issue Date"
-            parent="menu_treasury_issued_check_menu"
-            />
+                  action="account_issued_check_action_calendar_issued_date"
+                  name="Calendar By Issue Date"
+                  parent="menu_treasury_issued_check_menu"
+        />
 
         <!-- Third Checks -->
 
@@ -275,12 +285,16 @@
             <field name="arch" type="xml">
                 <form string="Third Checks">
                     <header>
-                        <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet' class="oe_highlight" groups="account.group_account_invoice,account.group_account_manager,l10n_ar_account_check.treasury_manager"/>
+                        <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet'
+                                class="oe_highlight"
+                                groups="account.group_account_invoice,account.group_account_manager,l10n_ar_account_check.treasury_manager"/>
                         <button name="check_to_wallet" type='object' string='Back to Wallet'
-                            class="btn-secondary" groups="account.group_account_invoice,account.group_account_manager,l10n_ar_account_check.treasury_manager"
-                            attrs="{'invisible': [('state','in', ('draft', 'wallet'))]}"
-                            confirm="You are going to delete an account move. Are you sure?"/>
-                        <field name="state" widget="statusbar" statusbar_visible="wallet,deposited,delivered" statusbar_colors='{"wallet":"blue","rejected":"red","cancel":"red"}'/>
+                                class="btn-secondary"
+                                groups="account.group_account_invoice,account.group_account_manager,l10n_ar_account_check.treasury_manager"
+                                attrs="{'invisible': [('state','in', ('draft', 'wallet'))]}"
+                                confirm="You are going to delete an account move. Are you sure?"/>
+                        <field name="state" widget="statusbar" statusbar_visible="wallet,deposited,delivered"
+                               statusbar_colors='{"wallet":"blue","rejected":"red","cancel":"red"}'/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -294,13 +308,16 @@
                                 <field name="type"/>
                                 <field name="amount"/>
                                 <field name="source_partner_id"/>
-                                <field name="destiny_partner_id" attrs="{'invisible': [('state', 'not in', ('delivered', 'rejected'))]}"/>
+                                <field name="destiny_partner_id"
+                                       attrs="{'invisible': [('state', 'not in', ('delivered', 'rejected'))]}"/>
                             </group>
                             <group>
                                 <field name="receipt_date"/>
                                 <field name="issue_date"/>
-                                <field name="endorsement_date" attrs="{'invisible': [('state', 'not in', ('wallet', 'delivered', 'rejected'))]}"/>
-                                <field name="payment_date" attrs="{'invisible': [('type', '=', 'common')], 'required': [('type','=','postdated')]}"/>
+                                <field name="endorsement_date"
+                                       attrs="{'invisible': [('state', 'not in', ('wallet', 'delivered', 'rejected'))]}"/>
+                                <field name="payment_date"
+                                       attrs="{'invisible': [('type', '=', 'common')], 'required': [('type','=','postdated')]}"/>
                             </group>
                         </group>
                         <group string="Other Information">
@@ -320,12 +337,13 @@
                                 <field name="signatory_account"/>
                             </group>
                         </group>
-                        <group string="Check Deposit" attrs="{'invisible': [('state','not in',('deposited', 'rejected'))]}">
+                        <group string="Check Deposit"
+                               attrs="{'invisible': [('state','not in',('deposited', 'rejected'))]}">
                             <group>
                                 <field name="deposit_date"/>
                                 <field name="deposit_slip"/>
                                 <field name="deposit_move_id"/>
-                                <field name="deposit_bank_id" />
+                                <field name="deposit_bank_id"/>
                             </group>
                         </group>
                         <group string="Payments, Receipts and Debits">
@@ -374,34 +392,34 @@
                     </group>
                     <group expand="0" string="Group By..." colspan="4">
                         <filter string="Source Partner" name="source_partner"
-                            domain="[]"
-                            context="{'group_by':'source_partner_id'}"
-                            />
+                                domain="[]"
+                                context="{'group_by':'source_partner_id'}"
+                        />
                         <filter string="Destiny Partner" name="destiny_partner"
-                            domain="[('state','not in', ('draft', 'wallet', 'deposited')), ('endorsement_date','!=',False)]"
-                            context="{'group_by':'destiny_partner_id'}"
-                            />
+                                domain="[('state','not in', ('draft', 'wallet', 'deposited')), ('endorsement_date','!=',False)]"
+                                context="{'group_by':'destiny_partner_id'}"
+                        />
                         <filter string="Payment Date" name="payment_date"
-                            domain="[]"
-                            context="{'group_by':'payment_date'}" help="Payment Date"
-                            />
+                                domain="[]"
+                                context="{'group_by':'payment_date'}" help="Payment Date"
+                        />
                         <filter string="Endorsement Date" name="endorsement_date"
-                            domain="[('endorsement_date','!=',False)]"
-                            context="{'group_by':'endorsement_date'}" help="Endorsement Date"
-                            />
+                                domain="[('endorsement_date','!=',False)]"
+                                context="{'group_by':'endorsement_date'}" help="Endorsement Date"
+                        />
                         <separator orientation="vertical"/>
                         <filter string="Bank" name="bank"
-                            domain="[('state','!=','draft')]"
-                            context="{'group_by':'bank_id'}"
-                            />
+                                domain="[('state','!=','draft')]"
+                                context="{'group_by':'bank_id'}"
+                        />
                         <filter string="Deposit Slip" name="deposit_slip"
-                            domain="[]"
-                            context="{'group_by':'deposit_slip'}"
-                            />
+                                domain="[]"
+                                context="{'group_by':'deposit_slip'}"
+                        />
                         <filter string="State" name="state"
-                            domain="[]"
-                            context="{'group_by':'state'}"
-                            />
+                                domain="[]"
+                                context="{'group_by':'state'}"
+                        />
                     </group>
                 </search>
             </field>
@@ -480,30 +498,30 @@
         </record>
 
         <menuitem id="menu_treasury_third_check_menu"
-            name="Third Checks"
-            parent="menu_treasury_root"
-            sequence="20"/>
+                  name="Third Checks"
+                  parent="menu_treasury_root"
+                  sequence="20"/>
 
         <menuitem id="menu_treasury_third_check"
-            action="account_third_check_action"
-            name="Third Checks"
-            sequence="5"
-            parent="menu_treasury_third_check_menu"/>
+                  action="account_third_check_action"
+                  name="Third Checks"
+                  sequence="5"
+                  parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_payment"
-            action="account_third_check_action_calendar_payment_date"
-            name="Calendar By Payment Date"
-            parent="menu_treasury_third_check_menu"/>
+                  action="account_third_check_action_calendar_payment_date"
+                  name="Calendar By Payment Date"
+                  parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_issued"
-            action="account_third_check_action_calendar_issued_date"
-            name="Calendar By Issue Date"
-            parent="menu_treasury_third_check_menu"/>
+                  action="account_third_check_action_calendar_issued_date"
+                  name="Calendar By Issue Date"
+                  parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_endorsement"
-            action="account_third_check_action_calendar_endorsement_date"
-            name="Calendar By Endorsement Date"
-            parent="menu_treasury_third_check_menu"/>
+                  action="account_third_check_action_calendar_endorsement_date"
+                  name="Calendar By Endorsement Date"
+                  parent="menu_treasury_third_check_menu"/>
 
     </data>
 </odoo>

@@ -44,6 +44,7 @@
 
         <menuitem id="menu_treasury_reason_rejected_check"
                   action="reason_rejected_check_action"
+                  sequence="10"
                   name="Reasons for rejected checks"
                   parent="menu_treasury_configuration"
         />

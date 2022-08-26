@@ -28,6 +28,7 @@
         "account",
         "l10n_ar_account_payment_order",
         "l10n_ar_point_of_sale",
+        'report_xlsx',
     ],
     "data": [
         "security/account_check_security.xml",
@@ -47,6 +48,8 @@
         "views/partner_view.xml",
         'views/reason_rejected_check_view.xml',
         'views/account_invoice_view.xml',
+        'wizard/report_returned_view.xml',
+        'report/report_returned_check_view.xml',
     ],
     'qweb': [
         'static/src/xml/reverse_payment.xml',

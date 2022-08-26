@@ -331,7 +331,6 @@
               </p>
             </field>
         </record>
-        
 
         <record id="account_invoice_action_debit_note_supp" model="ir.actions.act_window">
             <field name="name">Supplier Debit Notes</field>
