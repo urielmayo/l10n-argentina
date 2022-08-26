@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_returned_report_xls" model="ir.actions.report">
+            <field name="name">Report returned checks</field>
+            <field name="model">account.issued.check</field>
+            <field name="type">ir.actions.report</field>
+            <field name="report_name">report_xlsx.report_returned_check</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_file">returned_checks</field>
+        </record>
+    </data>
+</odoo>

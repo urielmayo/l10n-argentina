@@ -17,9 +17,6 @@
                         </group>
                     </group>
                     <group>
-                        <field name="generate_journal_entry"/>
-                    </group>
-                    <group>
                         <field name="note"/>
                     </group>
                     <footer>

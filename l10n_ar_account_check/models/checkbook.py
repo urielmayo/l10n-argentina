@@ -79,8 +79,7 @@ class AccountCheckbook(models.Model):
         ('common', 'Common'),
         ('postdated', 'Post-dated')],
         string='Checkbook Type',
-        help="If common, checks only have issued_date. \
-        If post-dated they also have payment date",
+        help="If common, checks only have issued_date. If post-dated they also have payment date",
         default='common')
 
     checkbook_type = fields.Selection([
