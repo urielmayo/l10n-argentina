@@ -20,6 +20,7 @@ class ReturnedCheck(models.Model):
 
         check_obj.write(
             {'return_date': self.return_date,
+             'reason': self.reason,
              'note': self.note})
 
         # update invoice amounts
@@ -35,7 +36,7 @@ class ReturnedCheck(models.Model):
                                                    x.name == 'Cheque Propio ' + check.number and
                                                    x.debit == 0 and x.credit != 0)
         rev_line = original_entry.line_ids.filtered(lambda x:
-                                                    x.debit != 0 and x.credit == 0 and
+                                                    x.debit == ch_line.credit and x.credit == 0 and
                                                     x.date_maturity == ch_line.date_maturity and
                                                     x.partner_id == ch_line.partner_id)
         return self.env['account.invoice'].search([('internal_number', '=', rev_line.name)])
