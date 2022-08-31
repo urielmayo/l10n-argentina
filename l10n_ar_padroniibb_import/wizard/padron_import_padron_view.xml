@@ -24,18 +24,20 @@
 
                     <group name="files" attrs="{'invisible': [('type_file', 'not in', ('text', 'excel'))]}">
                         <separator string="Files" colspan="4" />
-                        <tree>
-                            <field name="file" widget="binary" height="64" filename="file_name" />
-                            <field name="file_name" invisible="1" />
-                        </tree>
-                        <!--<form>
-                            <field name="file" widget="binary" height="64" filename="file_name" />
-                            <field name="file_name" invisible="1" />
-                        </form>-->
+                        <field name="data_files" nolabel="1">
+                            <tree>
+                                <field name="file" widget="binary" height="64" filename="file_name" />
+                                <field name="file_name" invisible="1" />
+                            </tree>
+                            <form>
+                                <field name="file" widget="binary" height="64" filename="file_name" />
+                                <field name="file_name" invisible="1" />
+                            </form>
+                        </field>
                     </group>
                     <group name="compressed_file" attrs="{'invisible': [('type_file', 'not in', ('zip','rar'))]}">
                         <separator string="Compressed File" colspan="4" />
-                        <field name="file" widget="binary" height="64" />
+                        <field name="data_compressed" widget="binary" height="64" />
                     </group>
                     <footer>
                         <button name="import_file" string="Import" type="object" class="oe_highlight" />
