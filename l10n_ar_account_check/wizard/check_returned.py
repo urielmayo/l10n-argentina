@@ -1,6 +1,6 @@
 
 import json
-from datetime import date
+from datetime import date, timedelta
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -9,7 +9,14 @@ class ReturnedCheck(models.Model):
     _name = 'account.returned.check'
     _description = 'Returned Check'
 
-    return_date = fields.Date(string='Return Date', required=True)
+    @api.constrains('return_date')
+    def constrains_return_date(self):
+        for rec in self:
+            if rec.return_date:
+                if rec.return_date < fields.Date.today() - timedelta(days=1) or rec.return_date > fields.Date.today():
+                    raise UserError("Date not allowed.")
+
+    return_date = fields.Date(string='Return Date', required=True, default=fields.Date.context_today)
     reason_id = fields.Many2one(comodel_name='reason.rejected.check', string='Reason',
                                 domain="[('type', '=', 'returned')]", required=True)
     note = fields.Text(string='Observations')
