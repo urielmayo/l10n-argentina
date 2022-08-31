@@ -26,6 +26,7 @@ import shlex
 from zipfile import ZipFile, is_zipfile
 from tempfile import mkdtemp
 from base64 import b64decode
+from io import StringIO
 from odoo import _, fields, models
 from odoo.tools import config
 from odoo.exceptions import ValidationError, Warning
@@ -76,12 +77,20 @@ TYPE_FILES_DEFAULT = {
 }
 
 
+class PadronImportFiles(models.TransientModel):
+    _name = "padron.import.files"
+
+    wiz_id = fields.Many2one("padron.import.padron", string="Wizard")
+    file = fields.Binary(string="File", help="File to import")
+    file_name = fields.Char(string="File Name")
+
+
 class PadronImportPadron(models.TransientModel):
     _name = "padron.import.padron"
     _description = "Importer of padron file"
 
-    file = fields.Binary(string="File", help="File to import")
-    file_name = fields.Char(string="File Name")
+    data_compressed = fields.Binary(string="Zip or Rar", help="File to import")
+    data_files = fields.One2many("padron.import.files", "wiz_id", string="Files")
     province_id = fields.Many2one("res.country.state", string="Province")
     type_file = fields.Selection(
         [("excel", "Excel"), ("text", "Text"), ("zip", "Zip"), ("rar", "Rar")],
@@ -105,20 +114,32 @@ class PadronImportPadron(models.TransientModel):
 
         return {"value": {"type_file": TYPE_FILES_DEFAULT.get(jur_code, "")}}
 
-    def extract_file(self, cr, uid, out_path, file_like):
+    def extract_file(self, out_path, data_compressed, context=None):
+        """
+        Extract file using Zipfile or RarfileL
+
+        @param self: The object pointer.
+        @param cr: A database cursor
+        @param uid: ID of the user currently logged in
+        @param out_path: path of temp folder
+        @param data_compressed: files compressed
+        @param context: A standard dictionary
+
+        :return: a list with the path of the created files
+
+        """
+        decoded = b64decode(data_compressed)
+        file_like = StringIO(decoded)
         files_extracted = []
 
-        # Soportamos zip y rar
         if is_rarfile(file_like):
             z = RarFile(file_like)
         elif is_zipfile(file_like):
             z = ZipFile(file_like)
         else:
-            raise ValidationError(
-                _(
-                    "Format of compressed file not recognized, "
-                    + "please check if it is the correct file."
-                )
+            # TODO: Deberiamos hacer un raise de otro tipo de excepcion
+            raise Exception(
+                "Format of compressed file not recognized, please check if it is the correct file."
             )
 
         for name in z.namelist():
@@ -127,7 +148,7 @@ class PadronImportPadron(models.TransientModel):
 
         return files_extracted
 
-    def create_tmp_file(self, out_path, data_files):
+    def create_tmp_file(self, cr, uid, out_path, data_files):
         """
         Convert data to temporaly files
 
@@ -135,7 +156,7 @@ class PadronImportPadron(models.TransientModel):
         @param cr: A database cursor
         @param uid: ID of the user currently logged in
         @param out_path: path of temp folder
-        @param data_files: A list whit record of model padron.import.file
+        @param data_files: A list whit record of model padron.import.files
         @param context: A standard dictionary
 
         :return: a list with the path of the created files
@@ -154,7 +175,7 @@ class PadronImportPadron(models.TransientModel):
 
         return files_path
 
-    def import_file(self, cr, uid, ids, context=None):
+    def import_file(self, context=None):
         """
         Import padron of uploaded files
 
@@ -164,28 +185,28 @@ class PadronImportPadron(models.TransientModel):
         @param ids: List of IDs selected
         @param context: A standard dictionary
         """
-        record = self.browse(cr, uid, ids[0])
+
+        record = self.browse()
         type_file = record.type_file
         province = record.province_id
-        if record.file or record.data_files:
+
+        if record.data_compressed or record.data_files:
 
             if not province:
-                raise Exception("Province is not set.")
+                raise ValueError("Province is not set.")
 
             if not province.jurisdiction_code:
-                raise Exception("Province not have set Jurisdiction Code.")
+                raise ValueError("Province not have set Jurisdiction Code.")
 
             out_path = mkdtemp()  # Directorio temporal
 
             if type_file in ("zip", "rar"):
-                data = record.file
-                files = self.extract_file(cr, uid, out_path, data, context=context)
+                data = record.data_crompressed
+                files = self.extract_file(out_path, data, context=context)
 
             elif type_file in ("text", "excel"):
                 data_files = record.data_files
-                files = self.create_tmp_file(
-                    cr, uid, out_path, data_files, context=context
-                )
+                files = self.create_tmp_file(out_path, data_files, context=context)
 
             msg = (
                 "["
@@ -195,6 +216,7 @@ class PadronImportPadron(models.TransientModel):
                 + province.name
                 + " is loaded: START"
             )
+
             _logger.info(msg)
 
             # Las funciones de importacion de cada jurisdiccion
@@ -203,6 +225,5 @@ class PadronImportPadron(models.TransientModel):
             # y un subfijo
             func_name = "import_" + province.jurisdiction_code + "_file"
             function_import = getattr(self, func_name)
-            function_import(cr, uid, out_path, files, province, context=context)
-
+            function_import(out_path, files, province, context=context)
         return True
