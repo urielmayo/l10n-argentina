@@ -1025,6 +1025,7 @@ class AccountPaymentOrder(models.Model):
                 'account_id': line.account_id.id,
                 'move_id': move_id,
                 'partner_id': self.partner_id.id,
+                'invoice_id': line.invoice_id.id,
                 'currency_id': line.original_currency_id != company_currency and
                 line.original_currency_id.id or False,
                 'amount_currency': line.amount_currency and

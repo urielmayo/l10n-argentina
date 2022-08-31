@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -8,25 +9,25 @@ class ReturnedCheckReport(models.Model):
     _name = 'account.returned.check.report'
     _description = 'Returned Check Report'
 
-    filter_by = fields.Selection([('payment', 'Payment Date'), ('returned', 'Returned Date')],
-                                 string='Filter by', default='payment')
+    reason = fields.Many2one(comodel_name='reason.rejected.check', string='Reason',
+                             domain="[('type', '=', 'returned')]")
     date_since = fields.Date(string='Since')
     date_to = fields.Date(string='To')
     check_qty = fields.Integer(string='Found Checks', compute='_compute_returned_check_qty')
 
-    @api.onchange('date_since', 'date_to')
+    @api.onchange('date_since', 'date_to', 'reason')
     def _compute_returned_check_qty(self):
         for rec in self:
             returned_checks = rec._compute_returned_check_ids()
             rec.check_qty = len(returned_checks) if returned_checks else 0
 
     def _compute_returned_check_ids(self):
-        if self.date_since and self.date_to:
-            field_date = 'reject_date' if self.filter_by == 'returned' else 'payment_date'  #TODO cambiar a return_date
+        if self.date_since and self.date_to and self.reason:
             returned_checks = self.env['account.issued.check'].search([
                 ('state', '=', 'returned'),
-                (field_date, '>=', self.date_since),
-                (field_date, '<=', self.date_to),
+                ('return_date', '>=', self.date_since),
+                ('return_date', '<=', self.date_to),
+                ('reason', '=', self.reason),
             ])
             return returned_checks
 

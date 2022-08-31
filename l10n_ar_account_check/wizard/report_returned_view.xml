@@ -8,8 +8,13 @@
             <field name="arch" type="xml">
                 <form>
                     <group>
-                        <field name="date_since" class="oe_inline"/>
-                        <field name="date_to" class="oe_inline"/>
+                        <group>
+                            <field name="date_since" class="oe_inline"/>
+                            <field name="date_to" class="oe_inline"/>
+                        </group>
+                        <group>
+                            <field name="reason" class="oe_inline"/>
+                        </group>
                     </group>
                     <group>
                         <field name="check_qty" class="oe_inline"/>
