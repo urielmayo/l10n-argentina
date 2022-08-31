@@ -11,8 +11,8 @@ class ReturnedCheckReport(models.Model):
 
     reason_id = fields.Many2one(comodel_name='reason.rejected.check', string='Reason',
                                 domain="[('type', '=', 'returned')]")
-    date_since = fields.Date(string='Since')
-    date_to = fields.Date(string='To')
+    date_since = fields.Date(string='Since', required=True)
+    date_to = fields.Date(string='To', required=True)
     check_qty = fields.Integer(string='Found Checks', compute='_compute_returned_check_qty')
 
     @api.onchange('date_since', 'date_to', 'reason_id')
@@ -22,13 +22,14 @@ class ReturnedCheckReport(models.Model):
             rec.check_qty = len(returned_checks) if returned_checks else 0
 
     def _compute_returned_check_ids(self):
-        if self.date_since and self.date_to and self.reason_id:
+        if self.date_since and self.date_to:
             returned_checks = self.env['account.issued.check'].search([
                 ('state', '=', 'returned'),
                 ('return_date', '>=', self.date_since),
                 ('return_date', '<=', self.date_to),
-                ('reason_id', '=', self.reason_id.id),
             ])
+            if self.reason_id:
+                returned_checks = returned_checks.filtered(lambda x: x.reason_id == self.reason_id)
             return returned_checks
 
     def print_report(self):
