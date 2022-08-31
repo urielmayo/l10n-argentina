@@ -9,25 +9,25 @@ class ReturnedCheckReport(models.Model):
     _name = 'account.returned.check.report'
     _description = 'Returned Check Report'
 
-    reason = fields.Many2one(comodel_name='reason.rejected.check', string='Reason',
-                             domain="[('type', '=', 'returned')]")
+    reason_id = fields.Many2one(comodel_name='reason.rejected.check', string='Reason',
+                                domain="[('type', '=', 'returned')]")
     date_since = fields.Date(string='Since')
     date_to = fields.Date(string='To')
     check_qty = fields.Integer(string='Found Checks', compute='_compute_returned_check_qty')
 
-    @api.onchange('date_since', 'date_to', 'reason')
+    @api.onchange('date_since', 'date_to', 'reason_id')
     def _compute_returned_check_qty(self):
         for rec in self:
             returned_checks = rec._compute_returned_check_ids()
             rec.check_qty = len(returned_checks) if returned_checks else 0
 
     def _compute_returned_check_ids(self):
-        if self.date_since and self.date_to and self.reason:
+        if self.date_since and self.date_to and self.reason_id:
             returned_checks = self.env['account.issued.check'].search([
                 ('state', '=', 'returned'),
                 ('return_date', '>=', self.date_since),
                 ('return_date', '<=', self.date_to),
-                ('reason', '=', self.reason),
+                ('reason_id', '=', self.reason_id.id),
             ])
             return returned_checks
 

@@ -13,7 +13,7 @@
                             <field name="return_date"/>
                         </group>
                         <group>
-                            <field name="reason"/>
+                            <field name="reason_id"/>
                         </group>
                     </group>
                     <group>

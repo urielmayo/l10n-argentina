@@ -13,7 +13,7 @@
                             <field name="date_to" class="oe_inline"/>
                         </group>
                         <group>
-                            <field name="reason" class="oe_inline"/>
+                            <field name="reason_id" class="oe_inline"/>
                         </group>
                     </group>
                     <group>
