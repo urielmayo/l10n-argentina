@@ -6,6 +6,7 @@
             <field name="name">account.invoice.widget.form</field>
             <field name="model">account.invoice</field>
             <field name="type">form</field>
+            <field name="priority">32</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='payments_widget']" position="after">

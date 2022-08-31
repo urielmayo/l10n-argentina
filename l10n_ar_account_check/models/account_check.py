@@ -187,7 +187,7 @@ class AccountIssuedCheck(models.Model):
             account_id = config.deferred_account_id.id
             date_maturity = self.payment_date
         else:
-            account_id = self.account_bank_id.account_id.id
+            account_id = self.account_bank_id.account_id.id or self.journal_id.default_debit_account_id.id
             date_maturity = voucher.date_due
 
         if not account_id:

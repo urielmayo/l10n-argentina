@@ -593,7 +593,7 @@ class WsfeVoucherType(models.Model):
     fiscal_type_id = fields.Many2one('account.invoice.fiscal.type', 'Fiscal type')
 
     @api.model
-    def get_voucher_type(self, voucher):
+    def get_voucher_type(self, voucher, get_types=False):
         voucher.ensure_one()
         # Chequeamos el modelo
         voucher_model = None
@@ -626,13 +626,16 @@ class WsfeVoucherType(models.Model):
                     _("There is no voucher type that corresponds " +
                       "to this object"))
 
-            if len(res) > 1:
+            if len(res) > 1 and not get_types:
                 raise UserError(
                     _("Voucher type error!\n") +
                     _("There is more than one voucher type that " +
                       "corresponds to this object"))
 
-            return res.code
+            if not get_types:
+                return res.code
+            else:
+                return res
 
         elif model == 'account_voucher':
             voucher_model = 'voucher'
