@@ -27,6 +27,7 @@
     "depends": [
         "base_period",
 #        "l10n_ar_invoice_currency",
+        'account_financial_report',  # only for translation in i18n/
     ],
     "data": [
         "security/payment_rule.xml",
