@@ -63,6 +63,8 @@ class AccountIssuedCheck(models.Model):
     payment_date = fields.Date(
         string='Payment Date', help="Only if this check is post dated")
     reject_date = fields.Date(string='Reject Date')
+    return_date = fields.Date(string='Return Date')
+    reason_id = fields.Many2one(comodel_name='reason.rejected.check', string='Reason')
     receiving_partner_id = fields.Many2one(
         comodel_name='res.partner', string='Receiving Entity',
         required=False, readonly=True)
