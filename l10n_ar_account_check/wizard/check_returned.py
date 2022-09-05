@@ -96,7 +96,7 @@ class ReturnedCheck(models.Model):
             'journal_id': original_move_data['journal_id'],
             'currency_id': payment_check_line.currency_id.id,
             'analytic_account_id': payment_check_line.analytic_account_id.id,
-            'ref': ch_invoice.internal_number,
+            'ref': ch_invoice.internal_number or '',
         }
         move_line_obj.with_context(ctx).create(inverse_check_line)
 
@@ -105,12 +105,13 @@ class ReturnedCheck(models.Model):
         original_entry = check.payment_move_id
         ch_line = original_entry.line_ids.filtered(lambda x:
                                                    x.name == 'Cheque Propio ' + check.number and
-                                                   x.debit == 0 and x.credit != 0)
+                                                   x.debit == 0 and x.credit == check.amount)
         rev_line = original_entry.line_ids.filtered(lambda x:
-                                                    x.debit == ch_line.credit and x.credit == 0 and
+                                                    x.debit != 0 and x.credit == 0 and
                                                     x.date_maturity == ch_line.date_maturity and
                                                     x.partner_id == ch_line.partner_id)
-        return self.env['account.invoice'].search([('internal_number', '=', rev_line.name)])
+        line_invoice = rev_line.invoice_id
+        return line_invoice or self.env['account.invoice'].search([('internal_number', '=', rev_line.name)]) or False
 
     def update_invoice(self, check):
         ch_invoice = self.get_invoice_by_check(check)
