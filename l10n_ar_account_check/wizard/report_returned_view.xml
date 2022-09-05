@@ -39,7 +39,7 @@
                   action="returned_check_report_wizard_action"
                   sequence="20"
                   name="Report Returned Check"
-                  parent="menu_treasury_configuration"
+                  parent="menu_treasury_issued_check_menu"
         />
 
     </data>

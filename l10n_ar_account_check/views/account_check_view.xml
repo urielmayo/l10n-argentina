@@ -236,18 +236,21 @@
 
         <menuitem id="menu_treasury_issued_check"
                   action="account_issued_check_action"
+                  sequence="1"
                   name="Issued Checks"
                   parent="menu_treasury_issued_check_menu"
         />
 
         <menuitem id="menu_treasury_issued_check_calendar_payment"
                   action="account_issued_check_action_calendar_payment_date"
+                  sequence="5"
                   name="Calendar By Payment Date"
                   parent="menu_treasury_issued_check_menu"
         />
 
         <menuitem id="menu_treasury_issued_check_calendar_issued"
                   action="account_issued_check_action_calendar_issued_date"
+                  sequence="10"
                   name="Calendar By Issue Date"
                   parent="menu_treasury_issued_check_menu"
         />
