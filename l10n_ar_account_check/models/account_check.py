@@ -49,6 +49,7 @@ class AccountCheckConfig(models.Model):
         comodel_name='res.company', string='Company', required=True,
         default=lambda self: self.env.user.company_id.id)
 
+
 class AccountIssuedCheck(models.Model):
     """
     Account Issued Check

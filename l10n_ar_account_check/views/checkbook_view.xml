@@ -70,15 +70,18 @@
                 <form string="Checkbook" version="7.0">
                     <header>
                         <button string="Annull Checks" type="action"
-                            name="%(wizard_annull_checks_wizard_action)d" class="oe_highlight"/>
+                                name="%(wizard_annull_checks_wizard_action)d" class="oe_highlight"/>
                         <button string="Restore Checks" type="action"
-                            name="%(wizard_restore_checks_wizard_action)d" class="oe_highlight"
-                            attrs="{'invisible': [('annulled_checks', '=', [])]}"/>
+                                name="%(wizard_restore_checks_wizard_action)d" class="oe_highlight"
+                                attrs="{'invisible': [('annulled_checks', '=', [])]}"/>
                         <field name="state" statusbar_visible=" " widget="statusbar"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
-                            <h1><label for="name"/><field name="name" class="oe_inline"/></h1>
+                            <h1>
+                                <label for="name"/>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
                         </div>
                         <group>
                             <group>
@@ -95,31 +98,31 @@
                         </group>
                         <notebook>
                             <page string="Checks">
-                            <group>
-                                <label for="check_ids" class="oe_title"/>
-                                <field name="check_ids" widget="many2many_tags" nolabel="1"/>
-                            </group>                                
-                            <group>                            
-                                <label for="annulled_checks" class="oe_title"/>
-                                <field name="annulled_checks" widget="many2many_tags" nolabel="1"/>
-                            </group>
-                            <group>                                                            
-                                <label for="issued_check_ids"/>
-                                <field name="issued_check_ids" nolabel="1">
-                                    <tree string="Issued Checks" create="false">
-                                        <field name="number"/>
-                                        <field name="check_id"/>
-                                        <field name="receiving_partner_id"/>
-                                        <field name="issue_date"/>
-                                        <field name="payment_date"/>
-                                        <field name="account_bank_id"/>
-                                        <field name="bank_id"/>
-                                        <field name="payment_order_id"/>
-                                        <field name="state"/>
-                                        <field name="amount" sum="Total Amount" />
-                                    </tree>
-                                </field>
-                            </group>                                
+                                <group>
+                                    <label for="check_ids" class="oe_title"/>
+                                    <field name="check_ids" widget="many2many_tags" nolabel="1"/>
+                                </group>
+                                <group>
+                                    <label for="annulled_checks" class="oe_title"/>
+                                    <field name="annulled_checks" widget="many2many_tags" nolabel="1"/>
+                                </group>
+                                <group>
+                                    <label for="issued_check_ids"/>
+                                    <field name="issued_check_ids" nolabel="1">
+                                        <tree string="Issued Checks" create="false">
+                                            <field name="number"/>
+                                            <field name="check_id"/>
+                                            <field name="receiving_partner_id"/>
+                                            <field name="issue_date"/>
+                                            <field name="payment_date"/>
+                                            <field name="account_bank_id"/>
+                                            <field name="bank_id"/>
+                                            <field name="payment_order_id"/>
+                                            <field name="state"/>
+                                            <field name="amount" sum="Total Amount"/>
+                                        </tree>
+                                    </field>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -134,12 +137,39 @@
             <field name="view_mode">tree,form</field>
         </record>
 
+        <record id="account_checkbook_limit_view_tree" model="ir.ui.view">
+            <field name="name">account_checkbook_limit_tree</field>
+            <field name="model">account.checkbook.limit</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Checkbook Limit" editable="top">
+                    <field name="checkbook_id"/>
+                    <field name="limit"/>
+                    <field name="check_ids"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_checkbook_limit_action" model="ir.actions.act_window">
+            <field name="name">Checkbook Limit</field>
+            <field name="res_model">account.checkbook.limit</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
         <menuitem id="menu_checkbook"
-            action="account_checkbook_action"
-            sequence="40"
-            name="Checkbooks"
-            parent="l10n_ar_account_check.menu_treasury_issued_check_menu"
-            />
+                  action="account_checkbook_action"
+                  sequence="40"
+                  name="Checkbooks"
+                  parent="l10n_ar_account_check.menu_treasury_issued_check_menu"
+        />
+
+        <menuitem id="menu_checkbook_limit"
+                  action="account_checkbook_limit_action"
+                  sequence="20"
+                  name="Checkbook Limit"
+                  parent="l10n_ar_account_check.menu_treasury_configuration"
+        />
 
     </data>
 </odoo>
