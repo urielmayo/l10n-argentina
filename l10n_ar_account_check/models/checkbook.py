@@ -253,7 +253,7 @@ class AccountCheckbookLimit(models.Model):
                     message=_("Estimados usuarios, la chequerá N° %s del banco '%s' ha llegado al límite configurado."
                               " Por favor, recuerde realizar la solicitud de una nueva chequera.") % (
                         rec.checkbook_id.name, rec.checkbook_id.bank_id.name),
-                    title=_("Check Limit"), sticky=False)
+                    title=_("Check Limit"), sticky=True)
 
 
 class AccountPaymentOrder(models.Model):

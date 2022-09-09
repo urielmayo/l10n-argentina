@@ -96,7 +96,7 @@ class ReturnedCheck(models.Model):
             'journal_id': original_move_data['journal_id'],
             'currency_id': payment_check_line.currency_id.id,
             'analytic_account_id': payment_check_line.analytic_account_id.id,
-            'ref': ch_invoice.internal_number or '',
+            'ref': _('Cheque devuelto') + ': Cheque Propio ' + (check.number or '/'),
         }
         move_line_obj.with_context(ctx).create(inverse_check_line)
 
