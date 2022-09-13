@@ -83,6 +83,8 @@ class AccountIssuedCheck(models.Model):
         comodel_name='account.payment.order', string='Voucher')
     payment_move_id = fields.Many2one(
         comodel_name='account.move', string='Payment Account Move')
+    invoice_id = fields.Many2one(comodel_name='account.invoice',
+                                 help='Automatic relationship when the voucher is created from a proposal.')
     clearance_move_id = fields.Many2one(
         comodel_name='account.move', string='Clearance Account Move')
     accredited = fields.Boolean(
