@@ -831,17 +831,6 @@ class AccountPaymentOrder(models.Model):
 
             move_lines.append(move_line)
 
-        # Si es pago contado
-        # TODO
-        # if self.journal_id.type not in ('receipt', 'payment'):
-        #     move_line = self._create_move_line_payment(
-        #         move_id, _('Immediate'),
-        #         self.account_id,
-        #         self.amount, company_currency,
-        #         current_currency, sign)
-        #
-        #     move_lines.append(move_line)
-
         # Creamos un hook para agregar los demas asientos contables de otros modulos  # noqa
         move_lines = self.create_move_line_hook(move_id, move_lines)
         # Recorremos las lineas para  hacer un chequeo de debit y credit contra total_debit y total_credit  # noqa
@@ -1227,7 +1216,15 @@ class AccountPaymentOrder(models.Model):
                         writeoff_acc_id=payment.writeoff_acc_id.id,
                         writeoff_journal_id=payment.journal_id.id)
 
-            # Borramos las lineas que estan en 0
+                    # close account awaiting bank transfer
+                    for ml in move_lines:
+                        transfers = self.env['account.awaiting.bank.transfer'].search([('voucher_id', '=', self.id)])
+                        for tr in transfers:
+                            transfers_move_line_rel = tr.proposal_move_ids.mapped('move_line_id')
+                            if transfers_move_line_rel.id == ml.id:
+                                tr.state = 'done'
+
+            # Borramos las líneas que están en 0
             for line in payment.line_ids:
                 if not line.amount:
                     line.unlink()

@@ -38,7 +38,6 @@ class AccountPayment(models.Model):
         """
         Show invoices name concatenated.
         """
-
         invoices = self.mapped("invoice_ids")
         return ', '.join(inv.internal_number or '' for inv in invoices)
 

@@ -62,6 +62,7 @@ class ReturnedCheck(models.Model):
 
                 # haber: cuenta a pagar establecida en la ficha del proveedor
                 inverse_supplier_line = {
+                    'invoice_id': check.invoice_id.id or False,
                     'name': '/',
                     'account_id': partner_id.property_account_payable_id.id,
                     'move_id': move_id,
@@ -74,12 +75,14 @@ class ReturnedCheck(models.Model):
                     'journal_id': original_move_data['journal_id'],
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
+                    'issued_check_id': check.id,
                     'ref': _('Cheque devuelto') + ': Cheque Propio ' + (check.number or '/'),
                 }
                 move_line_obj.with_context(ctx).create(inverse_supplier_line)
 
                 # debe: cuenta del banco donde se emitió el cheque
                 inverse_check_line = {
+                    'invoice_id': check.invoice_id.id or False,
                     'name': _('Cheque devuelto') + ': Cheque Propio ' + (check.number or '/'),
                     'account_id': payment_line.account_id.id,
                     'move_id': move_id,

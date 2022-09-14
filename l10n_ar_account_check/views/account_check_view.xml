@@ -129,6 +129,7 @@
                             <group>
                                 <field name="clearing"/>
                                 <field name="signatory"/>
+                                <field name="replaced"/>
                             </group>
                             <group>
                                 <field name="origin"/>
@@ -139,7 +140,7 @@
                             </group>
                         </group>
                         <group>
-                            <field name="note" attrs="{'invisible': [('state', '!=', 'rejected')]}"/>
+                            <field name="note" attrs="{'invisible': [('state', 'not in', ('rejected', 'returned'))]}"/>
                         </group>
                     </sheet>
                 </form>
