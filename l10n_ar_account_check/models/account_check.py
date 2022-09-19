@@ -94,6 +94,9 @@ class AccountIssuedCheck(models.Model):
     crossed = fields.Boolean(string='Crossed')
     not_order = fields.Boolean(string='Not Order')
     replaced = fields.Boolean(string='Replaced', help='Auto-marked when a returned check is replaced.', readonly=True)
+    replacement_payment_order_id = fields.Many2one(
+        comodel_name='account.payment.order', string='Replacement Voucher',
+        help='Payment order whose check was returned and replaced by this one.')
     note = fields.Text(string="Note")
 
     type = fields.Selection([

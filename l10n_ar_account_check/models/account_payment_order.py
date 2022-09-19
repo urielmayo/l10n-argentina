@@ -97,6 +97,7 @@ class AccountPaymentOrder(models.Model):
             for check in returned_checks:
                 if dline.amount == check.amount:
                     check.replaced = True
+                    check.replacement_payment_order_id = self.id
                     replacement += 1
 
         if replacement == 0:

@@ -25,7 +25,7 @@ def write_lines(workbook, lines):
         sheet.write(i+1, 2, check.amount, money_format)
         sheet.write(i+1, 3, check.payment_order_id.number, font_format)
         sheet.write(i+1, 4, check.reason_id.code + ' - ' + check.reason_id.name if check.reason_id else '-', font_format)
-        sheet.write(i+1, 5, 'Yes' if check.replaced else 'No', font_format)
+        sheet.write(i+1, 5, check.replacement_payment_order_id.number if check.replaced else 'No', font_format)
         sheet.write(i+1, 6, check.note if check.note else '-', font_format)
 
 
