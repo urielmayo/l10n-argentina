@@ -94,6 +94,9 @@ class AccountIssuedCheck(models.Model):
     crossed = fields.Boolean(string='Crossed')
     not_order = fields.Boolean(string='Not Order')
     replaced = fields.Boolean(string='Replaced', help='Auto-marked when a returned check is replaced.', readonly=True)
+    replacement_payment_order_id = fields.Many2one(
+        comodel_name='account.payment.order', string='Replacement Voucher',
+        help='Payment order whose check was returned and replaced by this one.')
     note = fields.Text(string="Note")
 
     type = fields.Selection([
@@ -132,7 +135,7 @@ class AccountIssuedCheck(models.Model):
     def _compute_journal_id(self):
         for rec in self:
             if rec.account_bank_id:
-                journal = self.env['account.journal'].search([('bank_account_id', '=', rec.account_bank_id.id)])[0]
+                journal = self.env['account.journal'].search([('bank_account_id', '=', rec.account_bank_id.id)])
                 rec.journal_id = journal.id
 
     @api.depends('amount', 'currency_rate')

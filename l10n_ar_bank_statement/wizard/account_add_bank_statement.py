@@ -54,6 +54,7 @@ class WizardAddAccountBankStatementLine(models.TransientModel):
             ("journal_id", "=", statement.journal_id.id),
             ("statement_id", "=", False),
             ("state", "=", "open"),
+            ("line_type", "=", 'payment'),
         ]
 
         lines = self.env["account.bank.statement.line"].search(domain)
