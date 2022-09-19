@@ -380,6 +380,13 @@
                         string="Draft" domain="[('state','=','draft')]" help="Draft Vouchers"/>
                     <filter name="posted" icon="terp-camera_test"
                         string="Posted" domain="[('state','=','posted')]" help="Posted Vouchers"/>
+                    <filter string="Today" name="today"
+                            domain="[
+                            ('date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
+                            ('date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))
+                            ]"
+                    />
+                    <filter name="checks" string="Checks" domain="[('payment_type', '=', 'check')]"/>
                     <field name="partner_id" string="Supplier" filter_domain="[('partner_id','child_of',self)]"/>
                     <field name="journal_id" widget="selection"
                         context="{'journal_id': self, 'set_visible':False}"

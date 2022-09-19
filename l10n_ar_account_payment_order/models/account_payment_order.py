@@ -284,7 +284,6 @@ class AccountPaymentOrder(models.Model):
             period = period_obj._get_period(rec.date)
             rec.period_id = period.id
 
-
     @api.onchange('date')
     def _payment_rate(self):
 
@@ -1215,14 +1214,6 @@ class AccountPaymentOrder(models.Model):
                     move_lines.reconcile(
                         writeoff_acc_id=payment.writeoff_acc_id.id,
                         writeoff_journal_id=payment.journal_id.id)
-
-                    # close account awaiting bank transfer
-                    for ml in move_lines:
-                        transfers = self.env['account.awaiting.bank.transfer'].search([('voucher_id', '=', self.id)])
-                        for tr in transfers:
-                            transfers_move_line_rel = tr.proposal_move_ids.mapped('move_line_id')
-                            if transfers_move_line_rel.id == ml.id:
-                                tr.state = 'done'
 
             # Borramos las líneas que están en 0
             for line in payment.line_ids:

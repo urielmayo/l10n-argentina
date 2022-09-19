@@ -132,7 +132,7 @@ class AccountIssuedCheck(models.Model):
     def _compute_journal_id(self):
         for rec in self:
             if rec.account_bank_id:
-                journal = self.env['account.journal'].search([('bank_account_id', '=', rec.account_bank_id.id)])[0]
+                journal = self.env['account.journal'].search([('bank_account_id', '=', rec.account_bank_id.id)])
                 rec.journal_id = journal.id
 
     @api.depends('amount', 'currency_rate')
