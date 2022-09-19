@@ -28,6 +28,9 @@ class AccountCheckReject(models.Model):
         return res and res.id or False
 
     reject_date = fields.Date(string='Reject Date', required=True)
+    reason_id = fields.Many2one(
+        comodel_name='reason.rejected.check', string='Reason',
+        domain="[('type', '=', 'rejected')]", required=True)
     journal_id = fields.Many2one(
         comodel_name='account.journal', string='Journal',
         required=True, default=_get_journal)
@@ -51,7 +54,10 @@ class AccountCheckReject(models.Model):
 
         for check in check_objs:
 
-            check.reject_date = wizard.reject_date
+            check.write({
+                'reject_date': wizard.reject_date,
+                'reason_id': wizard.reason_id.id,
+            })
 
             partner = check.source_partner_id
 
