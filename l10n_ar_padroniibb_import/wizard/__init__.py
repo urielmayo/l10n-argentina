@@ -5,4 +5,3 @@
 
 from . import padron_import  # noqa
 from . import padron_mass_update  # noqa
-from . import padron_import_padron  # noqa

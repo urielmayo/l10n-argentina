@@ -36,7 +36,7 @@
         "views/retention_view.xml",
         "wizard/padron_import_view.xml",
         "wizard/padron_mass_update_view.xml",
-        "wizard/padron_import_padron_view.xml",
+
     ],
     # ~ "external_dependencies": {
     # ~ "python": [
