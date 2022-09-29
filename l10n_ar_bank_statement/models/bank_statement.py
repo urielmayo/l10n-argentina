@@ -108,7 +108,7 @@ class AccountBankStatementLine(models.Model):
         """ Lines from pos does not have line_type defined, set it """
         line_type = vals.get('line_type')
         if not line_type:
-            amount = vals.get('amount')
+            amount = float(vals.get('amount'))
             lt = 'in' if amount > 0 else 'out'
             vals['line_type'] = lt
 
