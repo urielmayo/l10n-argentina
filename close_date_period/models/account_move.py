@@ -8,6 +8,11 @@ from datetime import datetime
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
+def get_date(date):
+    if not isinstance(date, str):
+        return date
+    else:
+        return datetime.strptime(date, '%Y-%m-%d')
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -16,7 +21,7 @@ class AccountMove(models.Model):
     def create(self, vals):
         period_model = self.env['date.period']
         date = vals.get('date', fields.Date.context_today(self))
-        period_date = datetime.strptime(date, '%Y-%m-%d')
+        period_date = get_date(date)
         period = period_model._get_period(period_date)
         journal_id = vals.get('journal_id', self._get_default_journal())
         if not journal_id:
@@ -37,7 +42,7 @@ class AccountMove(models.Model):
         date = vals.get('date', self.date)
         if not date:
             return super(AccountMove, self).write(vals)
-        period_date = datetime.strptime(date, '%Y-%m-%d')
+        period_date = get_date(date)
         period = period_model._get_period(period_date)
         journal_id = vals.get('journal_id', self.journal_id.id)
         if isinstance(journal_id, models.BaseModel):
@@ -66,7 +71,7 @@ class AccountMoveLine(models.Model):
             return super(AccountMoveLine, self).create(vals)
         move = move_model.browse(move_id)
         period_model = self.env['date.period']
-        period_date = datetime.strptime(move.date, '%Y-%m-%d')
+        period_date = get_date(move.date)
         period = period_model._get_period(period_date)
         if move.journal_id.id in period.journal_ids.ids:
             raise ValidationError(

@@ -49,6 +49,7 @@ class AccountCheckConfig(models.Model):
         comodel_name='res.company', string='Company', required=True,
         default=lambda self: self.env.user.company_id.id)
 
+
 class AccountIssuedCheck(models.Model):
     """
     Account Issued Check
@@ -63,6 +64,8 @@ class AccountIssuedCheck(models.Model):
     payment_date = fields.Date(
         string='Payment Date', help="Only if this check is post dated")
     reject_date = fields.Date(string='Reject Date')
+    return_date = fields.Date(string='Return Date')
+    reason_id = fields.Many2one(comodel_name='reason.rejected.check', string='Reason')
     receiving_partner_id = fields.Many2one(
         comodel_name='res.partner', string='Receiving Entity',
         required=False, readonly=True)
@@ -75,11 +78,14 @@ class AccountIssuedCheck(models.Model):
         ('72', '72 hs')], string='Clearing', default='24')
     account_bank_id = fields.Many2one(
         comodel_name='res.partner.bank', string='Bank Account')
-    journal_id = fields.Many2one(comodel_name='account.journal', string='Payment journal')
+    journal_id = fields.Many2one(comodel_name='account.journal', string='Payment journal',
+                                 compute='_compute_journal_id', store=True)
     payment_order_id = fields.Many2one(
         comodel_name='account.payment.order', string='Voucher')
     payment_move_id = fields.Many2one(
         comodel_name='account.move', string='Payment Account Move')
+    invoice_id = fields.Many2one(comodel_name='account.invoice',
+                                 help='Automatic relationship when the voucher is created from a proposal.')
     clearance_move_id = fields.Many2one(
         comodel_name='account.move', string='Clearance Account Move')
     accredited = fields.Boolean(
@@ -87,6 +93,10 @@ class AccountIssuedCheck(models.Model):
     origin = fields.Char(string='Origin', size=64)
     crossed = fields.Boolean(string='Crossed')
     not_order = fields.Boolean(string='Not Order')
+    replaced = fields.Boolean(string='Replaced', help='Auto-marked when a returned check is replaced.', readonly=True)
+    replacement_payment_order_id = fields.Many2one(
+        comodel_name='account.payment.order', string='Replacement Voucher',
+        help='Payment order whose check was returned and replaced by this one.')
     note = fields.Text(string="Note")
 
     type = fields.Selection([
@@ -121,6 +131,13 @@ class AccountIssuedCheck(models.Model):
         string='Amount Currency',
     )
 
+    @api.depends('account_bank_id')
+    def _compute_journal_id(self):
+        for rec in self:
+            if rec.account_bank_id:
+                journal = self.env['account.journal'].search([('bank_account_id', '=', rec.account_bank_id.id)])
+                rec.journal_id = journal.id
+
     @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
         for rec in self:
@@ -137,7 +154,6 @@ class AccountIssuedCheck(models.Model):
 
     def _build_invoices_info(self, lines):
         """ Copied from l10n_ar_bank_statement/models/account_payment.py"""
-
         invoices = lines.mapped("invoice_id")
         return ', '.join(inv.internal_number or '' for inv in invoices)
 
@@ -155,7 +171,8 @@ class AccountIssuedCheck(models.Model):
         st_line_values = {
             'ref': invoices_info,
             'name': 'Cheque Propio: ' + self.number,
-            'date': self.payment_date,
+            'date': self.payment_date or payment.date_due or fields.Date.context_today(self),
+            'invoice_id': self.invoice_id.id,
             'journal_id': journal.id,
             'company_id': self.company_id.id,
             'payment_order_id': payment.id,
@@ -216,7 +233,7 @@ class AccountIssuedCheck(models.Model):
             credit = 0.0
         sign = debit - credit < 0 and -1 or 1
 
-        # Creamos la linea contable perteneciente al cheque
+        # Creamos la línea contable perteneciente al cheque
         if self.number:
             reference = _('Issued Check %s') % (self.number or '/')
         else:
@@ -237,6 +254,7 @@ class AccountIssuedCheck(models.Model):
             current_currency and sign * self.amount_currency or 0.0,
             'date': voucher.date,
             'date_maturity': date_maturity,
+            'issued_check_id': self.id,
         }
 
         return move_line

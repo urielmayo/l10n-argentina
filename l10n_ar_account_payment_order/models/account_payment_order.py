@@ -284,7 +284,6 @@ class AccountPaymentOrder(models.Model):
             period = period_obj._get_period(rec.date)
             rec.period_id = period.id
 
-
     @api.onchange('date')
     def _payment_rate(self):
 
@@ -831,17 +830,6 @@ class AccountPaymentOrder(models.Model):
 
             move_lines.append(move_line)
 
-        # Si es pago contado
-        # TODO
-        # if self.journal_id.type not in ('receipt', 'payment'):
-        #     move_line = self._create_move_line_payment(
-        #         move_id, _('Immediate'),
-        #         self.account_id,
-        #         self.amount, company_currency,
-        #         current_currency, sign)
-        #
-        #     move_lines.append(move_line)
-
         # Creamos un hook para agregar los demas asientos contables de otros modulos  # noqa
         move_lines = self.create_move_line_hook(move_id, move_lines)
         # Recorremos las lineas para  hacer un chequeo de debit y credit contra total_debit y total_credit  # noqa
@@ -1227,7 +1215,7 @@ class AccountPaymentOrder(models.Model):
                         writeoff_acc_id=payment.writeoff_acc_id.id,
                         writeoff_journal_id=payment.journal_id.id)
 
-            # Borramos las lineas que estan en 0
+            # Borramos las líneas que están en 0
             for line in payment.line_ids:
                 if not line.amount:
                     line.unlink()

@@ -197,6 +197,12 @@ class AccountIssuedCheck(models.Model):
 
         ret = super(AccountIssuedCheck, self).write(vals)
 
+        # check checkbook limit
+        checkbook_limit = self.env['account.checkbook.limit'].search([
+            ('checkbook_id', 'in', self.mapped('checkbook_id').ids)]
+        )
+        checkbook_limit.notify_check_limit()
+
         state = vals.get('state', '')
         if state == 'issued':
             # update checkbook after the check was issued
@@ -227,6 +233,27 @@ class AccountIssuedCheck(models.Model):
         for rec in self:
             rec.check_id.write({'state': 'draft'})
             super(AccountIssuedCheck, rec).unlink()
+
+class AccountCheckbookLimit(models.Model):
+    _name = "account.checkbook.limit"
+    _description = "Checkbook Check Limit"
+
+    checkbook_id = fields.Many2one('account.checkbook', 'Checkbook')
+    check_ids = fields.One2many(related='checkbook_id.check_ids')
+    limit = fields.Integer('Limit')
+
+    @api.onchange('check_ids')
+    def notify_check_limit(self):
+        for rec in self:
+            if rec.checkbook_id and (len(rec.check_ids) <= rec.limit):
+                manager_group = self.env.ref('l10n_ar_account_check.treasury_manager')
+                treasury_manager_users = self.env['res.users'].search([('groups_id', 'in', manager_group.id)])
+                for user in treasury_manager_users:
+                    user.notify_info(
+                    message=_("Estimados usuarios, la chequerá N° %s del banco '%s' ha llegado al límite configurado."
+                              " Por favor, recuerde realizar la solicitud de una nueva chequera.") % (
+                        rec.checkbook_id.name, rec.checkbook_id.bank_id.name),
+                    title=_("Check Limit"), sticky=True)
 
 
 class AccountPaymentOrder(models.Model):

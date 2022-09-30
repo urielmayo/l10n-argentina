@@ -29,6 +29,7 @@
         "l10n_ar_account_payment_order",
         "l10n_ar_point_of_sale",
         'report_xlsx',
+        'web_notify',
     ],
     "data": [
         "security/account_check_security.xml",

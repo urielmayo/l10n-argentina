@@ -592,6 +592,16 @@ class WsfeVoucherType(models.Model):
                                       'Denomination', required=False)
     fiscal_type_id = fields.Many2one('account.invoice.fiscal.type', 'Fiscal type')
 
+    @api.multi
+    def name_get(self):
+        result = []
+        for rec in self:
+            name = rec.name
+            if rec.code:
+                name = ' - '.join([rec.code, name])
+            result.append((rec.id, name))
+        return result
+
     @api.model
     def get_voucher_type(self, voucher, get_types=False):
         voucher.ensure_one()
