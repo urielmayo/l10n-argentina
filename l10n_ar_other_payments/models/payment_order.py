@@ -14,7 +14,8 @@ class AccountPaymentOrder(models.Model):
     concept_line_ids = fields.One2many(
         comodel_name='account.payment.order.concept.line',
         inverse_name='payment_order_id', string="Other Concepts")
-    other_payment = fields.Boolean('Other Payments', default=False)
+    other_payment = fields.Boolean(string='Other Payments')
+    employee_payment = fields.Boolean(string='Employee Payments')
 
     @api.depends('debt_line_ids', 'income_line_ids', 'amount',
                  'concept_line_ids')
