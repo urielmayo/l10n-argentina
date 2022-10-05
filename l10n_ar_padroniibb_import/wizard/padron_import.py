@@ -135,6 +135,8 @@ class PadronImport(models.Model):
             cursor.commit()
         return True
 
+
+
     def correct_padron_file(self, filename):
         exp_reg = "^((\d+;){4}(\w;){3}([\d,]+;){4})(.*)$"
         regex = re.compile(exp_reg)
@@ -185,17 +187,22 @@ class PadronImport(models.Model):
             files_extracted.append(out_path + "/" + name)
         return files_extracted
 
-    @api.multi
-    def import_zip_file(self):
-        self.ensure_one()
-        if self.datas:
-            _logger.info('[AGIP] Zip file from AGIP is loaded: START')
-            self.import_agip_file(self.datas)
-        if self.datas_arba:
-            _logger.info('[ARBA] Zip file from ARBA is loaded: START')
-            self.import_arba_file(self.datas_arba)
+    @api.model
+    def create_tmp_file(self, out_path, data_files):
+        files_path = []
+        for rec_data in data_files:
+            file = b64decode(rec_data.file)
+            file = file.decode()
+            file_name = rec_data.file_name
+            file_path = out_path + "/" + file_name
 
-        raise Warning(_("Hey!\nThe import ended Successfully"))
+            with open(file_path, "w+") as f:
+                f.write(file)
+
+            files_path.append(file_path)
+
+        return files_path
+
     @api.model
     def import_file(self, archivo):
         record = self.browse(archivo)
@@ -218,6 +225,7 @@ class PadronImport(models.Model):
             elif type_file in ("text", "excel"):
                 data_files = record.data_files
                 files = self.create_tmp_file(out_path, data_files)
+
             msg = (
                 "["
                 + province.name
