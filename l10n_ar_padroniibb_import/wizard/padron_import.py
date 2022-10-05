@@ -55,15 +55,56 @@ def get_dsn_pg(cr):
     res_list = shlex.split(res_string)
     return res_list
 
+TYPE_FILES_DEFAULT = {
+    "901": "zip",
+    "902": "zip",
+    "914": "excel",
+    "924": "text",
+}
 
-class PadronImport(models.TransientModel):
-    _name = 'padron.import'
-    _description = 'Importer of padron file'
+class PadronImportFiles(models.Model):
+    _name = "padron.import.files"
 
-    datas_agip = fields.Binary('Data AGIP')
-    filename_agip = fields.Char('Filename AGIP')
-    datas_arba = fields.Binary('Data ARBA')
-    filename_arba = fields.Char('Filename ARBA')
+    wiz_id = fields.Many2one("padron.import", string="Wizard")
+    file = fields.Binary(string="File", help="File to import")
+    file_name = fields.Char(string="File Name")
+
+
+class PadronImport(models.Model):
+    _name = "padron.import"
+    _description = "Importer of padron file"
+
+    data_compressed = fields.Binary(string="Zip or Rar", help="File to import")
+    data_files = fields.One2many("padron.import.files", "wiz_id", string="Files")
+    province_id = fields.Many2one("res.country.state", string="Province", required=True)
+    type_file = fields.Selection(
+        [("excel", "Excel"), ("text", "Text"), ("zip", "Zip"), ("rar", "Rar")],
+        string="Type of File",
+        required=True,
+    )
+    def onchange_province(self, province_id):
+        if not province_id:
+            return False
+
+        res_state_obj = self.pool["res.country.state"]
+        province = res_state_obj.browse(province_id)
+        jur_code = province.jurisdiction_code
+
+        if not jur_code:
+            raise NameError(
+                _("Error"),
+                _("The Province does not have a Jurisdiccion Code"),
+            )
+        func_name = "import_" + jur_code + "_file"
+
+        if not hasattr(self, func_name):
+            raise ValueError(
+                _("Support Error"),
+                _("The Province does not have support to import the Padron"),
+            )
+
+        return {"value": {"type_file": TYPE_FILES_DEFAULT.get(jur_code, "")}}
+
 
     @api.model
     def create_temporary_table(self):
@@ -95,271 +136,107 @@ class PadronImport(models.TransientModel):
         return True
 
     def correct_padron_file(self, filename):
-        regex = re.compile("^((\d+;){4}(\w;){3}([\d,]+;){4})(.*)$")
-        temp = tempfile.mkstemp()[1]
+        exp_reg = "^((\d+;){4}(\w;){3}([\d,]+;){4})(.*)$"
+        regex = re.compile(exp_reg)
+        new_file_path = tempfile.mkstemp()[1]
+        with open(filename, "r", encoding='latin1') as old_file:
+            with open(new_file_path, "w", encoding='latin1') as new_file:
+                for line in old_file.readlines():
+                    reg = regex.match(line)
+                    if not reg:
+                        _logger.info("[AGIP] Linea de archivo ignorada: %s" % line)
+                        continue
+                    newline = reg.groups()[0]
+                    new_file.write(newline)
+                    new_file.write("\n")
+        return new_file_path
 
-        f = open(filename, 'r', encoding='latin1')
-        f2 = open(temp, 'w', encoding='latin1')
-
-        for l in f.readlines():
-            r = regex.match(l)
-            if not r:
-                continue
-            # Los mostros de AGIP mandan caracteres raros o csv mal formado
-            newline = r and r.groups()[0]
-            f2.write(newline)
-            f2.write('\n')
-
-        f.close()
-        f2.close()
-
-        return temp
-
-    def extract_file(self, out_path, file_like):
+    def extract_file(self, out_path, data_compressed):
+        decoded = b64decode(data_compressed)
+        file_like = BytesIO(decoded)
         files_extracted = []
 
-        # Soportamos zip y rar
         if is_rarfile(file_like):
+            is_rar = True
             z = RarFile(file_like)
+            os.system("mkdir -p " + out_path)
+
+            with open(out_path + "f.rar", "wb") as f:
+                f.write(decoded)
+            os.system("unrar e -y %s %s" % (out_path + "f.rar", out_path))
+            _logger.info("Rarfile type")
         elif is_zipfile(file_like):
+            is_rar = False
             z = ZipFile(file_like)
+            _logger.info("Zipfile type")
         else:
-            raise ValidationError(
-                _('Format of compressed file not recognized, ' +
-                  'please check if it is the correct file.'))
+            # TODO: Deberiamos hacer un raise de otro tipo de excepcion
+            raise TypeError(
+                _("Extract Error"),
+                _(
+                    "Format of compressed file not recognized, \
+                  please check if it is the correct file."
+                ),
+            )
 
         for name in z.namelist():
-            z.extract(name, out_path)
-            files_extracted.append(out_path + '/' + name)
-
+            if not is_rar:
+                z.extract(name, out_path)
+            files_extracted.append(out_path + "/" + name)
         return files_extracted
-
-    @api.model
-    def import_agip_file(self, rar_file_agip):
-        _logger.info('[AGIP] Inicio de importacion')
-        dsn_pg_splitted = get_dsn_pg(self.env.cr)
-        decoded = b64decode(rar_file_agip)
-        file_like = BytesIO(decoded)
-        out_path = mkdtemp()
-        files_extracted = self.extract_file(out_path, file_like)
-
-        _logger.info('[AGIP] Files extracted: ' + str(len(files_extracted)))
-        if len(files_extracted) != 1:
-            raise ValidationError(
-                _("Expected only one file compressed, got: %d") %
-                len(files_extracted))
-
-        # Corregimos porque los craneos de AGIP hacen mal el arhivo,
-        # metiendo ; donde no deberian ir
-        txt_path = self.correct_padron_file(files_extracted[0])
-        dbname = self.env.cr.dbname
-        cursor = registry(dbname).cursor()  # Get a new cursor
-        try:
-            _logger.info('[AGIP] Creando tabla temporal')
-            create_q = """
-            CREATE TABLE temp_import(
-            create_date varchar(8),
-            from_date varchar(8),
-            to_date varchar(8),
-            vat varchar(32),
-            multilateral varchar(2),
-            u1 varchar,
-            u2 varchar,
-            percentage_perception varchar(10),
-            percentage_retention varchar(10),
-            group_per varchar,
-            group_ret varchar,
-            name_partner varchar
-            )
-            """
-            cursor.execute("DROP TABLE IF EXISTS temp_import")
-            cursor.execute(create_q)
-        except Exception:
-            cursor.rollback()
-            raise ValidationError(
-                _("Could not create the temporary table with the file data"))
-        else:
-            cursor.commit()
-
-        _logger.info('[AGIP] Copiando del csv a tabla temporal')
-        psql_args_list = [
-            "psql",
-            "--command=\copy temp_import(create_date,from_date,to_date,vat,multilateral,u1,u2,percentage_perception,percentage_retention,group_per,group_ret,name_partner) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
-        ]
-        psql_args_list[1:1] = dsn_pg_splitted
-        retcode = call(psql_args_list, stderr=STDOUT)
-        assert retcode == 0, \
-            "Call to psql subprocess copy command returned: " + str(retcode)
-
-        try:
-            # TODO: Creacion de los grupos de retenciones y percepciones
-            _logger.info('[AGIP] Verificando grupos')
-
-            _logger.info('[AGIP] Copiando de tabla temporal a definitiva')
-            query = """
-            INSERT INTO padron_agip_percentages
-            (create_uid, create_date, write_date, write_uid,
-            from_date, to_date, percentage_perception, percentage_retention,
-            vat, multilateral, name_partner)
-            SELECT 1 as create_uid,
-            to_date(create_date, 'DDMMYYYY'),
-            current_date,
-            1,
-            to_date(from_date, 'DDMMYYYY'),
-            to_date(to_date, 'DDMMYYYY'),
-            to_number(percentage_perception, '999.99')/100,
-            to_number(percentage_retention, '999.99')/100,
-            vat,
-            (CASE
-                WHEN multilateral = 'C' THEN True
-                ELSE False
-            END) as multilateral,
-            name_partner FROM temp_import
-            """
-            cursor.execute("DELETE FROM padron_agip_percentages")
-            cursor.execute(query)
-            cursor.execute("DROP TABLE IF EXISTS temp_import")
-        except Exception:
-            cursor.rollback()
-            _logger.warning('[AGIP] ERROR: Rollback')
-        else:
-            # Mass Update
-            mass_wiz_obj = self.env['padron.mass.update']
-            wiz = mass_wiz_obj.create({
-                'arba': False,
-                'agip': True,
-            })
-            # TODO
-            wiz.action_update()
-
-            cursor.commit()
-            _logger.info('[AGIP] SUCCESS: Fin de carga de padron de agip')
-
-        finally:
-            rmtree(out_path)  # Delete temp folder
-            cursor.close()
-        return True
-
-    @api.model
-    def import_arba_file(self, zip_file_arba):
-        _logger.info('[ARBA] Inicio de importacion')
-        dsn_pg_splitted = get_dsn_pg(self.env.cr)
-        decoded = b64decode(zip_file_arba)
-        file_like = BytesIO(decoded)
-        out_path = mkdtemp()
-        files_extracted = self.extract_file(out_path, file_like)
-
-        _logger.info('[ARBA] Files extracted: ' + str(len(files_extracted)))
-        if len(files_extracted) != 2:
-            raise ValidationError(
-                _('Expected two files compressed, got: %d') %
-                len(files_extracted))
-
-        dbname = self.env.cr.dbname
-        cursor = registry(dbname).cursor()  # Get a new cursor
-        for file_name in files_extracted:
-            txt_path = "'" + file_name + "'"
-            if 'Ret' in file_name:
-                _logger.info('[ARBA] Ret - Inicio de carga ')
-                # copiar a postgresql padron_arba_retention
-                self.create_temporary_table()
-                _logger.info('[ARBA] Ret - Copiando a tabla temporal')
-                psql_args_list = [
-                    "psql",
-                    "--command=\copy temp_import(regimen,create_date,from_date,to_date,vat,multilateral,u1,u2,percentage,u3,u4) FROM " + txt_path + " WITH DELIMITER ';' NULL '' "  # noqa
-                ]
-                psql_args_list[1:1] = dsn_pg_splitted
-                retcode = call(psql_args_list, stderr=STDOUT)
-                assert retcode == 0, 'Call expected return 0'
-                try:
-                    query = """
-                    INSERT INTO padron_arba_retention
-                    (create_uid, create_date, write_date, write_uid,
-                    vat, percentage, from_date, to_date, multilateral)
-                    SELECT 1 as create_uid,
-                    to_date(create_date,'DDMMYYYY'),
-                    current_date,
-                    1,
-                    vat,
-                    to_number(percentage, '999.99')/100,
-                    to_date(from_date,'DDMMYYYY'),
-                    to_date(to_date,'DDMMYYYY'),
-                    (CASE
-                        WHEN multilateral = 'C'
-                        THEN True ELSE False
-                    END) as multilateral
-                    FROM temp_import
-                    """
-                    cursor.execute("DELETE FROM padron_arba_retention")
-                    _logger.info('[ARBA] Ret - Copiando a tabla definitiva')
-                    cursor.execute(query)
-                    cursor.execute("DROP TABLE IF EXISTS temp_import")
-                except Exception:
-                    cursor.rollback()
-                    _logger.warning('[ARBA]ERROR: Rollback')
-                else:
-                    cursor.commit()
-                    _logger.info('[ARBA]SUCCESS: Fin de carga de retenciones')
-            if 'Per' in file_name:
-                self.create_temporary_table()
-                _logger.info('[ARBA] Per - Copiando a tabla temporal')
-                psql_args_list = [
-                    "psql",
-                    "--command=\copy temp_import(regimen,create_date,from_date,to_date,vat,multilateral,u1,u2,percentage,u3,u4) FROM " + txt_path + " WITH DELIMITER ';' NULL '' "  # noqa
-                ]
-                psql_args_list[1:1] = dsn_pg_splitted
-                retcode = call(psql_args_list, stderr=STDOUT)
-                assert retcode == 0, 'Call expected return 0'
-                try:
-                    query = """
-                    INSERT INTO padron_arba_perception
-                    (create_uid, create_date, write_date, write_uid,
-                    vat, percentage, from_date, to_date, multilateral)
-                    SELECT 1 as create_uid,
-                    to_date(create_date,'DDMMYYYY'),
-                    current_date,
-                    1,
-                    vat,
-                    to_number(percentage, '999.99')/100,
-                    to_date(from_date,'DDMMYYYY'),
-                    to_date(to_date,'DDMMYYYY'),
-                    (CASE
-                        WHEN multilateral = 'C'
-                        THEN True ELSE False
-                    END) as multilateral
-                    FROM temp_import
-                    """
-                    cursor.execute("DELETE FROM padron_arba_perception")
-                    _logger.info('[ARBA] Per - Copiando a tabla definitiva')
-                    cursor.execute(query)
-                    cursor.execute("DROP TABLE IF EXISTS temp_import")
-                except Exception:
-                    cursor.rollback()
-                    _logger.warning('[ARBA]ERROR: Rollback')
-                else:
-                    # Mass Update
-                    mass_wiz_obj = self.env['padron.mass.update']
-                    wiz = mass_wiz_obj.create({
-                        'arba': True,
-                        'agip': False,
-                    })
-                    # TODO
-                    wiz.action_update()
-
-                    cursor.commit()
-                    _logger.info('[ARBA]SUCCESS: Fin de carga de percepciones')
-        rmtree(out_path)  # Delete temp folder
-        cursor.close()
-        return True
 
     @api.multi
     def import_zip_file(self):
         self.ensure_one()
-        if self.datas_agip:
+        if self.datas:
             _logger.info('[AGIP] Zip file from AGIP is loaded: START')
-            self.import_agip_file(self.datas_agip)
+            self.import_agip_file(self.datas)
         if self.datas_arba:
             _logger.info('[ARBA] Zip file from ARBA is loaded: START')
             self.import_arba_file(self.datas_arba)
 
         raise Warning(_("Hey!\nThe import ended Successfully"))
+    @api.model
+    def import_file(self, archivo):
+        record = self.browse(archivo)
+        type_file = record.type_file
+        province = record.province_id
+        _logger.info("Inicio de importacion")
+        out_path = mkdtemp()
+        if record.data_compressed or record.data_files:
+            if not province:
+                raise ValueError(_("Error"), _("Province is not set."))
+            if not province.jurisdiction_code:
+                raise ValueError(
+                    _("Error"), _("Province not have set Jurisdiction Code.")
+                )
+            out_path = mkdtemp()  # Directorio temporal
+            if type_file in ("zip", "rar"):
+                data = record.data_compressed
+                files = self.extract_file(out_path, data)
+
+            elif type_file in ("text", "excel"):
+                data_files = record.data_files
+                files = self.create_tmp_file(out_path, data_files)
+            msg = (
+                "["
+                + province.name
+                + "]"
+                + " file from "
+                + province.name
+                + " is loaded: START"
+            )
+            _logger.info(msg)
+
+            if province.jurisdiction_code == "901":
+                func_name = "import_agip_file"
+            elif province.jurisdiction_code == "902":
+                func_name = "import_arba_file"
+            else:
+                code = province.jurisdiction_code
+                func_name = "import_" + code + "_file"
+
+            function_import = getattr(self, func_name)
+            function_import(out_path, files, province)
+
+        return True

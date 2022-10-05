@@ -6,6 +6,7 @@
 from odoo import models, fields
 
 
+
 class AgipRetentionGroup(models.Model):
     _name = 'agip.retention.group'
     _description = 'Group number of Retention'
@@ -71,3 +72,9 @@ class ArbaRetentions(models.Model):
     vat = fields.Char('Afip code', size=15, index=1)
     percentage = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
+
+class res_country_state(models.Model):
+    _name = "res.country.state"
+    _inherit = "res.country.state"
+
+    jurisdiction_code = fields.Char(string="Jurisdiction Code", size=15)
