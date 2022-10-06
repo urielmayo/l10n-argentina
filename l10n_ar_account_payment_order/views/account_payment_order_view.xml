@@ -659,9 +659,7 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('journal_id.type', '=', 'payment'), ('type','=','payment')]</field>
             <field name="context">{'type':'payment'}</field>
-            <field name="views" eval="[
-            (ref('account_payment_order_view_tree_receipt'), 'tree'),
-            (ref('account_payment_order_view_form_vendor'), 'form')]"/>
+            <field name="view_id" eval="False"/>
             <field name="search_view_id" ref="account_payment_order_view_filter_vendor_pay"/>
             <field name="target">current</field>
             <field name="help" type="html">
@@ -671,6 +669,19 @@
                     Odoo helps you easily track payments you make and the remaining balances you need to pay your suppliers.
                 </p>
             </field>
+        </record>
+
+        <record id="account_payment_order_action_vendor_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="account_payment_order_action_vendor"/>
+        </record>
+
+        <record id="account_payment_order_action_vendor_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_payment_order_view_form_vendor"/>
+            <field name="act_window_id" ref="account_payment_order_action_vendor"/>
         </record>
 
         <menuitem id="account_payment_order_menu_vendor"
