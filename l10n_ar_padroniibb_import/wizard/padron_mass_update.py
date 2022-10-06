@@ -271,7 +271,7 @@ class PadronMassUpdate(models.TransientModel):
             if res[6] == 'UPDATE':  # Change the amount of percentage
                 q = """
                 UPDATE res_partner_retention SET
-                    percent=%(percent)s
+                    percent=%(percent)s,
                     from_padron = True
                 WHERE id=%(id)s
                 """
@@ -283,7 +283,7 @@ class PadronMassUpdate(models.TransientModel):
             elif res[6] == 'DELETE':   # Set the percentage to -1
                 q = """
                 UPDATE res_partner_retention SET
-                    percent=%(percent)s
+                    percent=%(percent)s,
                     from_padron = True
                 WHERE id=%(id)s
                 """
@@ -386,7 +386,7 @@ class PadronMassUpdate(models.TransientModel):
             elif res[6] == 'DELETE':   # Set the percentage to -1
                 q = """
                 UPDATE res_partner_perception SET
-                    percent=%(percent)s
+                    percent=%(percent)s,
                     from_padron = True
                 WHERE id=%(id)s
                 """
