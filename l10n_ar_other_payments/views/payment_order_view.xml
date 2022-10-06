@@ -196,7 +196,8 @@
 		<field name="name">Other Payments</field>
 		<field name="res_model">account.payment.order</field>
 		<field name="view_type">form</field>
-		<field name="domain">[('journal_id.type','=','payment'), ('type','=','payment'), ('other_payment', '=', True)]</field>
+		<field name="domain">[('journal_id.type','=','payment'), ('type','=','payment'),
+			('other_payment', '=', True), ('employee_payment', '=', False)]</field>
 		<field name="context">{'default_type': 'payment', 'type': 'payment', 'default_other_payment': True}</field>
 		<field name="view_id" eval="False"/>
 		<field name="search_view_id" ref="l10n_ar_account_payment_order.account_payment_order_view_filter_vendor_pay"/>

@@ -109,7 +109,7 @@
                                 <field name="company_currency" invisible="0" readonly="1"/>
                                 <field name="currency_id" attrs="{'readonly': True}" force_save="True"
                                 />
-                                            
+
                                 <div attrs="{'invisible':[('is_multi_currency','=',False)]}">
                                     <field name="is_multi_currency" invisible="1"/>
                                     <field name="payment_rate" required="1" class="oe_inline" attrs="{'readonly': [('state', 'not in', ('draft'))]}"/>
@@ -140,7 +140,7 @@
                                 <field name="payment_mode_line_ids" attrs="{'readonly': [('state', 'not in', ('draft'))]}">
                                     <tree string="Payment Methods" editable="bottom" decoration-muted="amount == 0">
                                         <field name="payment_mode_id" invisible="0"
-                                            attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']), 
+                                            attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']),
                                             ('company_id', '=', parent.company_id),
                                             '|',('currency_id', '=', False), ('currency_id', '=', parent.currency_id)
                                             ]"
@@ -155,7 +155,7 @@
                                         <field name="currency_id"
                                             readonly="1"
                                             force_save="1"
-                                            groups="base.group_multi_currency" 
+                                            groups="base.group_multi_currency"
                                             attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"/>
 
                                         <field name="amount_currency" sum="Total CCY" groups="base.group_multi_currency"
@@ -288,8 +288,6 @@
                             </page>
                             <page string="Journal Items" name="journal_items" attrs="{'invisible': [('state','!=','posted')]}">
                                 <group col="4">
-                                    <!-- TODO: Este campo era un related a 'to_check' en account.move pero ya no existe mas -->
-                                    <!-- <field name="audit"/> -->
                                     <field name="move_id"/>
                                 </group>
                                 <field name="move_line_ids" readonly="1">
@@ -303,10 +301,6 @@
                                         <field name="name"/>
                                         <field name="debit"/>
                                         <field name="credit"/>
-                                        <!-- TODO: No existe mas el campo state -->
-                                        <!-- <field name="state"/> -->
-                                        <!-- TODO: No existe el modelo 'account.move.reconcile' -->
-                                        <!-- <field name="reconcile_id"/> -->
                                         <field name="amount_currency"/>
                                         <field name="currency_id" groups="base.group_multi_currency"/>
                                     </tree>
@@ -321,7 +315,6 @@
                 </form>
             </field>
         </record>
-
 
         <record id="account_payment_order_action_receipt" model="ir.actions.act_window">
             <field name="name">Customer Payments</field>
@@ -363,8 +356,7 @@
             sequence="10"/>
 
 
-
-<!-- ###################################################################### -->
+        <!-- ###################################################################### -->
 
 
         <!-- Vendor Views, Actions, and menus -->
@@ -431,7 +423,7 @@
                                 <field name="journal_id"
                                     invisible="context.get('line_type', False)"
                                     options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True}"
-                                    string="Journal"/>                                
+                                    string="Journal"/>
                                 <!-- <field name="journal_id"
                                     domain="[('type', '=', 'payment'), ('company_id', '=', company_id)]"
                                     invisible="context.get('line_type', False)"
@@ -483,7 +475,7 @@
                                 <field name="payment_mode_line_ids">
                                     <tree string="Payment Methods" editable="bottom" decoration-muted="amount == 0">
                                         <field name="payment_mode_id" invisible="0"
-                                            attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']), 
+                                            attrs="{'required': True}" domain="[('type', 'in', ['cash', 'bank']),
                                             ('company_id', '=', parent.company_id),
                                             '|',('currency_id', '=', False), ('currency_id', '=', parent.currency_id)
                                             ]"
@@ -498,7 +490,7 @@
                                         <field name="currency_id"
                                             readonly="1"
                                             force_save="1"
-                                            groups="base.group_multi_currency" 
+                                            groups="base.group_multi_currency"
                                             attrs="{'column_invisible':[('parent.is_multi_currency','=',False)]}"/>
 
                                         <field name="amount_currency" sum="Total CCY" groups="base.group_multi_currency"
@@ -632,9 +624,6 @@
                             </page>
                             <page string="Journal Items" name="journal_items" attrs="{'invisible': [('state','!=','posted')]}">
                                 <group col="4">
-                                    <!-- <field name="period_id"/> -->
-                                    <!-- <field name="audit"/> -->
-                                    <!-- <field name="number"/> -->
                                     <field name="move_id"/>
                                 </group>
                                 <field name="move_line_ids" readonly="1">
@@ -648,10 +637,6 @@
                                         <field name="name"/>
                                         <field name="debit"/>
                                         <field name="credit"/>
-                                        <!-- TODO: No existe mas el campo state -->
-                                        <!-- <field name="state"/> -->
-                                        <!-- TODO: No existe el modelo 'account.move.reconcile' -->
-                                        <!-- <field name="reconcile_id"/> -->
                                         <field name="amount_currency" groups="base.group_multi_currency"/>
                                         <field name="currency_id" groups="base.group_multi_currency"/>
                                     </tree>

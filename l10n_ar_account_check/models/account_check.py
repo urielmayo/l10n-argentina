@@ -23,7 +23,6 @@ class AccountCheckConfig(models.Model):
         for config in self:
             ret.append((config.id, "%s: %s" % (
                 config.company_id.name, config.account_id.name)))
-
         return ret
 
     account_id = fields.Many2one(
@@ -434,6 +433,9 @@ class AccountThirdCheck(models.Model):
         string='Deposit Date', readonly=True,
         states={'wallet': [('readonly', False)]})
     reject_date = fields.Date(string='Reject Date')
+    reason_id = fields.Many2one(comodel_name='reason.rejected.check', string='Reason')
+    payment_order_id = fields.Many2one(
+        comodel_name='account.payment.order', string='Voucher')
     source_partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Source Partner',

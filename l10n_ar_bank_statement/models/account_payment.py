@@ -61,7 +61,8 @@ class AccountPayment(models.Model):
         st_line_values = {
             'ref': invoices_info or self.communication,
             'name': self.name or self.communication,
-            'date': self.payment_date,
+            'date': self.payment_date or self.date_due,
+            'invoice_id': self.invoice_id.id or False,
             'journal_id': journal.id,
             'company_id': self.company_id.id,
             'payment_id': self.id,

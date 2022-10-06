@@ -13,3 +13,6 @@ class AccountMoveLine(models.Model):
     issued_check_id = fields.Many2one(
         comodel_name='account.issued.check',
         string='Issued Check')
+    third_check_id = fields.Many2one(
+        comodel_name='account.third.check',
+        string='Third Check')
