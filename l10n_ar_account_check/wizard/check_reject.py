@@ -5,8 +5,6 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ###############################################################################
 
-from datetime import datetime
-
 import odoo.addons.decimal_precision as dp
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
@@ -14,16 +12,15 @@ from odoo.exceptions import ValidationError
 
 class AccountCheckReject(models.Model):
     _name = 'account.check.reject'
-    _description = 'Check Reject'
+    _description = 'Third Check Reject'
 
     @api.model
     def _get_journal(self):
         user = self.env.user
         company_id = self.env.context.get('company_id', user.company_id.id)
         journal_obj = self.env['account.journal']
-        domain = [('company_id', '=', company_id)]
+        domain = [('company_id', '=', company_id), ('type', '=', 'sale')]
 
-        domain.append(('type', '=', 'sale'))
         res = journal_obj.search(domain, limit=1)
         return res and res.id or False
 
@@ -46,131 +43,180 @@ class AccountCheckReject(models.Model):
 
     @api.multi
     def action_reject(self):
-        check_config_obj = self.env['account.check.config']
         third_check_obj = self.env['account.third.check']
-        invoice_obj = self.env['account.invoice']
-
-        wizard = self
         record_ids = self.env.context.get('active_ids', [])
         check_objs = third_check_obj.browse(record_ids)
 
         for check in check_objs:
+            if check.state not in ('devlivered', 'deposited'):
+                raise ValidationError(_('You can not reject a check in this state.'))
 
             check.write({
-                'reject_date': wizard.reject_date,
-                'reason_id': wizard.reason_id.id,
+                'reject_date': self.reject_date,
+                'reason_id': self.reason_id.id or False,
+                'note': self.note,
             })
 
-            partner = check.source_partner_id
+            if self.generate_rejection_journal_entry:
+                self.create_rejected_journal_entry(check)
+                check.reject_check()
+            else:
+                # debit_note_id = self.create_debit_note(check)
+                pass  # la creación de nota de débito queda deshabilitada hasta nuevo aviso. Ver versiones anteriores
+        return {'type': 'ir.actions.act_window_close'}
 
-            config = check_config_obj.search(
-                [('company_id', '=', check.company_id.id)])
-            if not config:
-                raise ValidationError(_('ERROR! There is no check \
-                    configuration for this Company!'))
+    def create_rejected_journal_entry(self, check):
+        # TODO: Improve Methods
+        account_obj = self.env['account.account']
+        move_obj = self.env['account.move']
+        move_line_obj = self.env['account.move.line']
+        payment = check.payment_order_id
+        company = self.env.user.company_id
+        check_conf_obj = self.env['account.check.config']
+        def_check_account = check_conf_obj.search([('company_id', '=', company.id)]).deferred_account_id.id
+        ctx = {
+            'date': self.reject_date,
+            'check_move_validity': False,
+        }
+        for payment_line in payment.move_line_ids:
+            if payment_line.third_check_id == check:
+            # Create the account move record.
+                # TODO: change hardcoded journal_id
+                original_move_data = payment.account_move_get()
+                original_move_data['journal_id'] = 3  # operaciones varias
+                original_move_data['state'] = 'posted'
+                move_recordset = move_obj.with_context(ctx).create(
+                    original_move_data)
 
-            inv_account_id = config.receivable_rejected_account_id
-            if not inv_account_id:
-                inv_account_id = partner.property_account_receivable_id
+            # Get the name of the account_move just created
+                move_id = move_recordset.id
+                counterpart_account = account_obj.search([('code', '=', payment_line.counterpart)]).id
+                inverse_supplier_line = {
+                    'name': '/',
+                    'account_id': counterpart_account,
+                    'move_id': move_id,
+                    'partner_id': payment_line.partner_id.id,
+                    'period_id': payment_line.period_id.id,
+                    'date': self.reject_date,
+                    'credit': payment_line.credit,
+                    'debit': 0,
+                    'amount_currency': payment_line.amount_currency,
+                    'journal_id': original_move_data['journal_id'],
+                    'currency_id': payment_line.currency_id.id,
+                    'analytic_account_id': payment_line.analytic_account_id.id,
+                    'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
+                    'invoice_id': check.invoice_id.id or False,
+                }
+                move_line_obj.with_context(ctx)\
+                    .create(inverse_supplier_line)
 
-            invoice_vals = {
-                'origin': _('Check : %s') % check.number,
-                'name': _('Debit Note due to rejected check %s [%s]') %
-                (check.number or '', check.source_payment_order_id.number),
-                'type': 'out_invoice',
-                'is_debit_note': True,
-                'account_id': inv_account_id.id,
-                'partner_id': partner.id,
-                'journal_id': wizard.journal_id.id,
-                'fiscal_position': partner.property_account_position_id.id,
-                'company_id': wizard.company_id.id,
-            }
+                inverse_check_line = {
+                    'name': _('Cheque Rechazado')+': '+(payment_line.name or '/'),
+                    'account_id': def_check_account,
+                    'move_id': move_id,
+                    'partner_id': payment_line.partner_id.id,
+                    'period_id': payment_line.period_id.id,
+                    'date': self.reject_date,
+                    'credit': 0,
+                    'debit': payment_line.credit,
+                    'amount_currency': payment_line.amount_currency,
+                    'journal_id': original_move_data['journal_id'],
+                    'currency_id': payment_line.currency_id.id,
+                    'analytic_account_id': payment_line.analytic_account_id.id,
+                    'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
+                    'invoice_id': check.invoice_id.id or False,
+                }
+                move_line_obj.with_context(ctx)\
+                    .create(inverse_check_line)
 
-            lines = []
-            # Linea del cheque rechazado
+    def create_debit_note(self, check):
+        check_config_obj = self.env['account.check.config']
+        invoice_obj = self.env['account.invoice']
+        partner = check.source_partner_id
 
-            account_id = False
-            if check.state == 'delivered':
-                account_id = config.rejected_account_id.id
-            elif check.state == 'deposited':
-                account_id = check.deposit_bank_id.account_id.id
-            elif check.state == 'wallet':
-                account_id = config.account_id.id
+        config = check_config_obj.search(
+            [('company_id', '=', check.company_id.id)])
+        if not config:
+            raise ValidationError(_('ERROR! There is no check \
+                configuration for this Company!'))
 
-            date_format = self.env["res.lang"].search([("code", "=", self.env.user.lang)]).date_format
-            rejected_date = wizard.reject_date.strftime(date_format)
-            name = _('Check Rejected %s %s') % (check.number, rejected_date)
+        inv_account_id = config.receivable_rejected_account_id
+        if not inv_account_id:
+            inv_account_id = partner.property_account_receivable_id
+
+        invoice_vals = {
+            'origin': _('Check : %s') % check.number,
+            'name': _('Debit Note due to rejected check %s [%s]') %
+            (check.number or '', check.source_payment_order_id.number),
+            'type': 'out_invoice',
+            'is_debit_note': True,
+            'account_id': inv_account_id.id,
+            'partner_id': partner.id,
+            'journal_id': self.journal_id.id,
+            'fiscal_position': partner.property_account_position_id.id,
+            'company_id': self.company_id.id,
+        }
+
+        lines = []
+        # Linea del cheque rechazado
+
+        account_id = False
+        if check.state == 'delivered':
+            account_id = config.rejected_account_id.id
+        elif check.state == 'deposited':
+            account_id = check.deposit_bank_id.account_id.id
+        elif check.state == 'wallet':
+            account_id = config.account_id.id
+
+        date_format = self.env["res.lang"].search([("code", "=", self.env.user.lang)]).date_format
+        rejected_date = self.reject_date.strftime(date_format)
+        name = _('Check Rejected %s %s') % (check.number, rejected_date)
+
+        invoice_line_vals = {
+            'name': name,
+            'quantity': 1,
+            'price_unit': check.amount,
+            'account_id': account_id,
+        }
+
+        lines.append((0, 0, invoice_line_vals))
+
+        # Lineas de gastos
+        for expense in self.expense_line_ids:
+
+            product = expense.product_id
+            account_id = product.property_account_expense_id
+            if not account_id:
+                account_id = product.categ_id.\
+                    property_account_expense_categ_id
+            if not account_id:
+                raise ValidationError(
+                    _('Please, fill the expense account in the product.'))
 
             invoice_line_vals = {
-                'name': name,
+                'name': expense.product_id.name,
+                'product_id': expense.product_id.id,
                 'quantity': 1,
-                'price_unit': check.amount,
-                'account_id': account_id,
+                'price_unit': expense.price,
+                'account_id': account_id.id,
+                'invoice_line_tax_ids': [
+                    (6, 0, expense.product_id.taxes_id.ids)],
             }
 
             lines.append((0, 0, invoice_line_vals))
 
-            # Lineas de gastos
-            for expense in wizard.expense_line_ids:
+        invoice_vals['invoice_line_ids'] = lines
 
-                product = expense.product_id
-                account_id = product.property_account_expense_id
-                if not account_id:
-                    account_id = product.categ_id.\
-                        property_account_expense_categ_id
-                if not account_id:
-                    raise ValidationError(
-                        _('Please, fill the expense account in the product.'))
+        # Creamos la nota de debito
+        debit_note_id = invoice_obj.create(invoice_vals)
 
-                invoice_line_vals = {
-                    'name': expense.product_id.name,
-                    'product_id': expense.product_id.id,
-                    'quantity': 1,
-                    'price_unit': expense.price,
-                    'account_id': account_id.id,
-                    'invoice_line_tax_ids': [
-                        (6, 0, expense.product_id.taxes_id.ids)],
-                }
+        debit_note_id._onchange_partner_id()
 
-                lines.append((0, 0, invoice_line_vals))
+        # Volvemos a cambiar la cuenta que sobreescribio el onchange
+        debit_note_id.account_id = inv_account_id
 
-            invoice_vals['invoice_line_ids'] = lines
-
-            # Creamos la nota de debito
-            debit_note_id = invoice_obj.create(invoice_vals)
-
-            debit_note_id._onchange_partner_id()
-
-            # Volvemos a cambiar la cuenta que sobreescribio el onchange
-            debit_note_id.account_id = inv_account_id
-
-            debit_note_id._onchange_invoice_line_ids()
-
-        # TODO: Chequear que es lo mismo el estado en el que este,
-        # asi quitamos este if que parece no tener sentido
-        if check.state == 'delivered' or check.state == 'deposited':
-            check.reject_check()
-
-        # Guardamos la referencia a la nota de debito del rechazo
-        check.state = 'rejected'
-        check.debit_note_id = debit_note_id
-
-        form_res = self.env.ref('l10n_ar_point_of_sale.view_pos_invoice_form')
-        form_id = form_res and form_res.id or False
-        tree_res = self.env.ref(
-            'l10n_ar_point_of_sale.view_pos_invoice_filter')  # ????
-        tree_id = tree_res and tree_res.id or False
-
-        return {
-            'name': _('Invoice'),
-            'view_type': 'form',
-            'view_mode': 'form,tree',
-            'res_model': 'account.invoice',
-            'res_id': debit_note_id.id,
-            'view_id': False,
-            'views': [(form_id, 'form'), (tree_id, 'tree')],
-            'type': 'ir.actions.act_window',
-        }
+        debit_note_id._onchange_invoice_line_ids()
+        return debit_note_id
 
 
 class CheckRejectExpense(models.Model):
@@ -203,6 +249,7 @@ class CheckRejectIssuedCheck(models.Model):
         for check in check_objs:
             check.write(
                 {'reject_date': self.reject_date,
+                 'reason_id': self.reason_id.id or False,
                  'generate_rejection_journal_entry': self.generate_rejection_journal_entry,
                  'note': self.note})
             if self.generate_rejection_journal_entry:
@@ -228,7 +275,7 @@ class CheckRejectIssuedCheck(models.Model):
             # Create the account move record.
                 # TODO: change hardcoded journal_id            
                 original_move_data = payment.account_move_get()
-                original_move_data['journal_id'] = 3
+                original_move_data['journal_id'] = 3  # operaciones varias
                 original_move_data['state'] = 'posted'
                 move_recordset = move_obj.with_context(ctx).create(
                     original_move_data)
@@ -250,6 +297,7 @@ class CheckRejectIssuedCheck(models.Model):
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
                     'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
+                    'invoice_id': check.invoice_id.id or False,
                 }
                 move_line_obj.with_context(ctx)\
                     .create(inverse_supplier_line)
@@ -268,6 +316,7 @@ class CheckRejectIssuedCheck(models.Model):
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
                     'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
+                    'invoice_id': check.invoice_id.id or False,
                 }
                 move_line_obj.with_context(ctx)\
                     .create(inverse_check_line)
