@@ -30,17 +30,19 @@ class AccountCheckReject(models.Model):
     reject_date = fields.Date(string='Reject Date', required=True)
     reason_id = fields.Many2one(
         comodel_name='reason.rejected.check', string='Reason',
-        domain="[('type', '=', 'rejected')]", required=True)
+        domain="[('type', '=', 'rejected')]")
     journal_id = fields.Many2one(
         comodel_name='account.journal', string='Journal',
-        required=True, default=_get_journal)
+        default=_get_journal)
     expense_line_ids = fields.One2many(
         comodel_name='check.reject.expense', inverse_name='reject_id',
         string='Expenses')
     company_id = fields.Many2one(
-        comodel_name='res.company', string='Company', required=True,
+        comodel_name='res.company', string='Company',
         default=lambda self: self.env['res.company']._company_default_get(
             'account.invoice'))
+    generate_rejection_journal_entry = fields.Boolean(string='Generate Rejection Journal Entry', default=True)
+    note = fields.Text(string='Note')
 
     @api.multi
     def action_reject(self):
