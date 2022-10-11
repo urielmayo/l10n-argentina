@@ -125,7 +125,7 @@ class PadronImport(models.Model):
                 'agip': False,
             })
             # TODO
-            wiz.action_update()
+            wiz.action_update(province)
 
             cursor.commit()
             _logger.info('[JUJUY] SUCCESS: Fin de carga de padron de jujuy')

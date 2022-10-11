@@ -178,7 +178,6 @@ class PadronImport(models.Model):
                 ),
             )
 
-        print("ARchivo extraido:",files_extracted)
         return files_extracted
 
     @api.model
@@ -202,7 +201,6 @@ class PadronImport(models.Model):
         record = self.browse(archivo)
         type_file = record.type_file
         province = record.province_id
-        print("province:", province)
         _logger.info("Inicio de importacion")
         out_path = mkdtemp()
         if record.data_compressed or record.data_files:

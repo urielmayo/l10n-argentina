@@ -148,7 +148,7 @@ class PadronImport(models.Model):
                         'agip': False,
                     })
                     # TODO
-                    wiz.action_update()
+                    wiz.action_update(province)
 
                     cursor.commit()
                     _logger.info('[ARBA]SUCCESS: Fin de carga de percepciones')
