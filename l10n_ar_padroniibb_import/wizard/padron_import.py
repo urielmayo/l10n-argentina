@@ -8,24 +8,17 @@ import os
 import shlex
 import tempfile
 import re
+import patoolib
 from base64 import b64decode
 from io import BytesIO
 from zipfile import ZipFile, is_zipfile
+from rarfile import RarFile, is_rarfile
 from tempfile import mkdtemp
-from subprocess import call, STDOUT
-from shutil import rmtree
-
-from odoo import registry
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError, Warning
-from odoo.tools import config
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
-try:
-    from rarfile import RarFile, is_rarfile
-except (ImportError, IOError) as err:
-    _logger.warning(err)
 
 
 def get_dsn_pg(cr):
@@ -165,7 +158,7 @@ class PadronImport(models.Model):
 
             with open(out_path + "f.rar", "wb") as f:
                 f.write(decoded)
-            os.system("unrar e -y %s %s" % (out_path + "f.rar", out_path))
+            patoolib.extract_archive(out_path + "f.rar",  program='rar', outdir="/tmp")
             _logger.info("Rarfile type")
         elif is_zipfile(file_like):
             is_rar = False
