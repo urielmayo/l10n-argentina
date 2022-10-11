@@ -13,6 +13,7 @@ class RetentionRetention(models.Model):
 
     from_register_ARBA = fields.Boolean('From ARBA Register')
     from_register_AGIP = fields.Boolean('From AGIP Register')
+    from_register_JUJUY = fields.Boolean('From JUJUY Register')
 
     @api.model
     def _get_retention_from_arba(self, province):
@@ -42,7 +43,7 @@ class RetentionRetention(models.Model):
 
     @api.model
     def _get_retention_from_jujuy(self, province):
-        ret = self.search([('from_register_AGIP', '=', False), ('from_register_ARBA', '=', False), ('state_id', '=', province)])
+        ret = self.search([('from_register_JUJUY', '=', True), ('state_id', '=', province)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +

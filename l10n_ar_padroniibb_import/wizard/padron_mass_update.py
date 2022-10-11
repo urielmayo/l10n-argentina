@@ -16,6 +16,7 @@ class PadronMassUpdate(models.TransientModel):
 
     arba = fields.Boolean('Update ARBA')
     agip = fields.Boolean('Update AGIP')
+    jujuy = fields.Boolean('Update JUJUY')
 
     @api.model
     def _update_retention_arba(self, retention):
