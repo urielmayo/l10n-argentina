@@ -423,12 +423,12 @@ class PadronMassUpdate(models.TransientModel):
                 raise ValidationError(e_title + e_msg)
 
     @api.multi
-    def action_update(self):
+    def action_update(self, state_id):
         perception_obj = self.env['perception.perception']
         retention_obj = self.env['retention.retention']
         if self.arba:
             # Actualizamos Percepciones
-            percep_arba = perception_obj._get_perception_from_arba()
+            percep_arba = perception_obj._get_perception_from_arba(state_id)
             if not percep_arba:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -436,7 +436,7 @@ class PadronMassUpdate(models.TransientModel):
                       "from Padron ARBA"))
             self._update_perception_arba(percep_arba[0])
             # Actualizamos Retenciones
-            retent_arba = retention_obj._get_retention_from_arba()
+            retent_arba = retention_obj._get_retention_from_arba(state_id)
             if not retent_arba:
                 raise ValidationError(
                     _("Retention Error!\n") +
@@ -445,7 +445,7 @@ class PadronMassUpdate(models.TransientModel):
             self._update_retention_arba(retent_arba[0])
         if self.agip:
             # Actualizamos Percepciones
-            percep_agip = perception_obj._get_perception_from_agip()
+            percep_agip = perception_obj._get_perception_from_agip(state_id)
             if not percep_agip:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -453,7 +453,7 @@ class PadronMassUpdate(models.TransientModel):
                       "from Padron AGIP"))
             self._update_perception_agip(percep_agip[0])
             # Actualizamos Retenciones
-            retent_agip = retention_obj._get_retention_from_agip()
+            retent_agip = retention_obj._get_retention_from_agip(state_id)
             if not retent_agip:
                 raise ValidationError(
                     _("Retention Error!\n") +

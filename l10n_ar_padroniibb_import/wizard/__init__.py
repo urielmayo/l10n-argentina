@@ -7,3 +7,4 @@ from . import padron_import  # noqa
 from . import padron_mass_update  # noqa
 from . import padron_agip # noqa
 from . import padron_arba #  noqa
+from . import padron_jujuy #  noqa

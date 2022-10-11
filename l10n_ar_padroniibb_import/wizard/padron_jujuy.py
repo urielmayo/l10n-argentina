@@ -48,12 +48,12 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_agip_file(self, out_path, files, province):
-        _logger.info('[AGIP] Inicio de importacion')
+    def import_914_file(self, out_path, files, province):
+        _logger.info('[JUJUY] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
 
-        _logger.info('[AGIP] Files extracted: ' + str(len(files)))
+        _logger.info('[JUJUY] Files extracted: ' + str(len(files)))
         if len(files) != 1:
             raise ValidationError(
                 _("Expected only one file compressed, got: %d") %
@@ -65,21 +65,13 @@ class PadronImport(models.Model):
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
         try:
-            _logger.info('[AGIP] Creando tabla temporal')
+            _logger.info('[JUJUY] Creando tabla temporal')
             create_q = """
             CREATE TABLE temp_import(
-            create_date varchar(8),
-            from_date varchar(8),
-            to_date varchar(8),
             vat varchar(32),
-            multilateral varchar(2),
-            u1 varchar,
-            u2 varchar,
+            period varchar(6),
             percentage_perception varchar(10),
             percentage_retention varchar(10),
-            group_per varchar,
-            group_ret varchar,
-            name_partner varchar
             )
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
@@ -103,47 +95,40 @@ class PadronImport(models.Model):
 
         try:
             # TODO: Creacion de los grupos de retenciones y percepciones
-            _logger.info('[AGIP] Verificando grupos')
+            _logger.info('[JUJUY] Verificando grupos')
 
-            _logger.info('[AGIP] Copiando de tabla temporal a definitiva')
+            _logger.info('[JUJUY] Copiando de tabla temporal a definitiva')
             query = """
-            INSERT INTO padron_agip_percentages
-            (create_uid, create_date, write_date, write_uid,
-            from_date, to_date, percentage_perception, percentage_retention,
-            vat, multilateral, name_partner)
+            INSERT INTO padron_jujuy_percentages
+            (create_uid, write_date, write_uid,
+            period, percentage_perception, percentage_retention,
+            vat)
             SELECT 1 as create_uid,
-            to_date(create_date, 'DDMMYYYY'),
             current_date,
             1,
-            to_date(from_date, 'DDMMYYYY'),
-            to_date(to_date, 'DDMMYYYY'),
+            period(period, 'YYYYMM'),
             to_number(percentage_perception, '999.99')/100,
             to_number(percentage_retention, '999.99')/100,
-            vat,
-            (CASE
-                WHEN multilateral = 'C' THEN True
-                ELSE False
-            END) as multilateral,
-            name_partner FROM temp_import
+            vat
             """
-            cursor.execute("DELETE FROM padron_agip_percentages")
+            cursor.execute("DELETE FROM padron_jujuy_percentages")
             cursor.execute(query)
             cursor.execute("DROP TABLE IF EXISTS temp_import")
         except Exception:
             cursor.rollback()
-            _logger.warning('[AGIP] ERROR: Rollback')
+            _logger.warning('[JUJUY] ERROR: Rollback')
         else:
             # Mass Update
             mass_wiz_obj = self.env['padron.mass.update']
             wiz = mass_wiz_obj.create({
                 'arba': False,
-                'agip': True,
+                'agip': False,
             })
             # TODO
-            wiz.action_update(province)
+            wiz.action_update()
 
             cursor.commit()
-            _logger.info('[AGIP] SUCCESS: Fin de carga de padron de agip')
+            _logger.info('[JUJUY] SUCCESS: Fin de carga de padron de jujuy')
 
         finally:
             rmtree(out_path)  # Delete temp folder

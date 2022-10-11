@@ -3,11 +3,13 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
+from ast import Interactive
 import logging
 import os
 import shlex
 import tempfile
 import re
+import patoolib
 from base64 import b64decode
 from io import BytesIO
 from zipfile import ZipFile, is_zipfile
@@ -15,6 +17,7 @@ from rarfile import RarFile, is_rarfile
 from tempfile import mkdtemp
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
 
@@ -151,17 +154,19 @@ class PadronImport(models.Model):
         files_extracted = []
 
         if is_rarfile(file_like):
-            is_rar = True
             z = RarFile(file_like)
             os.system("mkdir -p " + out_path)
-
             with open(out_path + "f.rar", "wb") as f:
                 f.write(decoded)
-            #patoolib.extract_archive(out_path + "f.rar",  program='rar', outdir="/tmp")
+            patoolib.extract_archive(out_path + "f.rar",  program="rar", outdir="/tmp")
+            for name in z.namelist():
+                files_extracted.append(out_path + "/" + name)
             _logger.info("Rarfile type")
         elif is_zipfile(file_like):
-            is_rar = False
             z = ZipFile(file_like)
+            for name in z.namelist():
+                z.extract(name, out_path)
+            files_extracted.append(out_path + "/" + name)
             _logger.info("Zipfile type")
         else:
             # TODO: Deberiamos hacer un raise de otro tipo de excepcion
@@ -173,10 +178,7 @@ class PadronImport(models.Model):
                 ),
             )
 
-        for name in z.namelist():
-            if not is_rar:
-                z.extract(name, out_path)
-            files_extracted.append(out_path + "/" + name)
+        print("ARchivo extraido:",files_extracted)
         return files_extracted
 
     @api.model
@@ -200,6 +202,7 @@ class PadronImport(models.Model):
         record = self.browse(archivo)
         type_file = record.type_file
         province = record.province_id
+        print("province:", province)
         _logger.info("Inicio de importacion")
         out_path = mkdtemp()
         if record.data_compressed or record.data_files:
@@ -237,6 +240,6 @@ class PadronImport(models.Model):
                 func_name = "import_" + code + "_file"
 
             function_import = getattr(self, func_name)
-            function_import(out_path, files, province)
+            function_import(out_path, files, province.name)
 
         return True

@@ -15,8 +15,8 @@ class RetentionRetention(models.Model):
     from_register_AGIP = fields.Boolean('From AGIP Register')
 
     @api.model
-    def _get_retention_from_arba(self):
-        ret = self.search([('from_register_ARBA', '=', True), ('company_id', '=', self.env.user.company_id.id)])
+    def _get_retention_from_arba(self, province):
+        ret = self.search([('from_register_ARBA', '=', True), ('state_id', '=', province)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
@@ -28,8 +28,8 @@ class RetentionRetention(models.Model):
             return ret
 
     @api.model
-    def _get_retention_from_agip(self):
-        ret = self.search([('from_register_AGIP', '=', True), ('company_id', '=', self.env.user.company_id.id)])
+    def _get_retention_from_agip(self, province):
+        ret = self.search([('from_register_AGIP', '=', True), ('state_id', '=', province)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
