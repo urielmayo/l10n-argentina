@@ -99,20 +99,17 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     retention_id,
-                    from_padron,
-                    company_id
+                    from_padron
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(retention_id)s,
-                    True,
-                    %(company_id)s
+                    True
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'retention_id': retention.id,
-                    'company_id': retention.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -192,21 +189,18 @@ class PadronMassUpdate(models.TransientModel):
                     percent,
                     perception_id,
                     from_padron,
-                    sit_iibb,
-                    company_id
+                    sit_iibb
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
                     True,
-                    %(sit_iibb)s,
-                    %(company_id)s
+                    %(sit_iibb)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
-                    'company_id': perception.company_id.id,
                     'sit_iibb': multilateral_record.id if res[2]
                     else local_record.id,
                 }
@@ -299,20 +293,17 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     retention_id,
-                    from_padron,
-                    company_id
+                    from_padron
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(retention_id)s,
-                    True,
-                    %(company_id)s
+                    True
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'retention_id': retention.id,
-                    'company_id': retention.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -402,20 +393,18 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     perception_id,
-                    from_padron,
-                    company_id
+                    from_padron
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
-                    True,
-                    %(company_id)s
+                    True
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
-                    'company_id': perception.company_id.id,
+
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -504,20 +493,17 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     perception_id,
-                    from_padron,
-                    company_id
+                    from_padron
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
-                    True,
-                    %(company_id)s
+                    True
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
-                    'company_id': perception.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -605,20 +591,17 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     retention_id,
-                    from_padron,
-                    company_id
+                    from_padron
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(retention_id)s,
-                    True,
-                    %(company_id)s
+                    True
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'retention_id': retention.id,
-                    'company_id': retention.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
