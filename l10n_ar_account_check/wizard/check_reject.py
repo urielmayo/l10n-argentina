@@ -48,7 +48,7 @@ class AccountCheckReject(models.Model):
         check_objs = third_check_obj.browse(record_ids)
 
         for check in check_objs:
-            if check.state not in ('devlivered', 'deposited'):
+            if check.state not in ('wallet', 'delivered', 'deposited'):
                 raise ValidationError(_('You can not reject a check in this state.'))
 
             check.write({
@@ -70,7 +70,7 @@ class AccountCheckReject(models.Model):
         account_obj = self.env['account.account']
         move_obj = self.env['account.move']
         move_line_obj = self.env['account.move.line']
-        payment = check.payment_order_id
+        payment = check.source_payment_order_id
         company = self.env.user.company_id
         check_conf_obj = self.env['account.check.config']
         def_check_account = check_conf_obj.search([('company_id', '=', company.id)]).deferred_account_id.id
@@ -105,7 +105,6 @@ class AccountCheckReject(models.Model):
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
                     'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
-                    'invoice_id': check.invoice_id.id or False,
                 }
                 move_line_obj.with_context(ctx)\
                     .create(inverse_supplier_line)
@@ -124,7 +123,6 @@ class AccountCheckReject(models.Model):
                     'currency_id': payment_line.currency_id.id,
                     'analytic_account_id': payment_line.analytic_account_id.id,
                     'ref': _('Rechazado Cheque')+': '+(payment_line.name or '/'),
-                    'invoice_id': check.invoice_id.id or False,
                 }
                 move_line_obj.with_context(ctx)\
                     .create(inverse_check_line)
