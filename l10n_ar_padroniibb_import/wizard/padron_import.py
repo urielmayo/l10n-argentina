@@ -158,15 +158,15 @@ class PadronImport(models.Model):
             os.system("mkdir -p " + out_path)
             with open(out_path + "f.rar", "wb") as f:
                 f.write(decoded)
-            patoolib.extract_archive(out_path + "f.rar",  program="rar", outdir="/tmp")
+            patoolib.extract_archive(out_path + "f.rar",  program="rar", outdir="/tmp", interactive=False)
             for name in z.namelist():
-                files_extracted.append(out_path + "/" + name)
+                files_extracted.append("/tmp/" + name)
             _logger.info("Rarfile type")
         elif is_zipfile(file_like):
             z = ZipFile(file_like)
             for name in z.namelist():
                 z.extract(name, out_path)
-            files_extracted.append(out_path + "/" + name)
+                files_extracted.append(out_path + "/" + name)
             _logger.info("Zipfile type")
         else:
             # TODO: Deberiamos hacer un raise de otro tipo de excepcion
