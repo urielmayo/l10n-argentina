@@ -16,8 +16,6 @@ class PadronMassUpdate(models.TransientModel):
 
     arba = fields.Boolean('Update ARBA')
     agip = fields.Boolean('Update AGIP')
-    jujuy = fields.Boolean('Update JUJUY')
-    santa_fe = fields.Boolean('Update Santa Fe')
 
     @api.model
     def _update_retention_arba(self, retention):
@@ -100,17 +98,20 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     retention_id,
-                    from_padron
+                    from_padron,
+                    company_id
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(retention_id)s,
-                    True
+                    True,
+                    %(company_id)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'retention_id': retention.id,
+                    'company_id': retention.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -190,18 +191,21 @@ class PadronMassUpdate(models.TransientModel):
                     percent,
                     perception_id,
                     from_padron,
-                    sit_iibb
+                    sit_iibb,
+                    company_id
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
                     True,
-                    %(sit_iibb)s
+                    %(sit_iibb)s,
+                    %(company_id)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
+                    'company_id': perception.company_id.id,
                     'sit_iibb': multilateral_record.id if res[2]
                     else local_record.id,
                 }
@@ -294,17 +298,20 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     retention_id,
-                    from_padron
+                    from_padron,
+                    company_id
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(retention_id)s,
-                    True
+                    True,
+                    %(company_id)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'retention_id': retention.id,
+                    'company_id': retention.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -394,25 +401,26 @@ class PadronMassUpdate(models.TransientModel):
                     partner_id,
                     percent,
                     perception_id,
-                    from_padron
+                    from_padron,
+                    company_id
                 ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
-                    True
+                    True,
+                    %(company_id)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
-
+                    'company_id': perception.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
                 e_title = _('Query Error\n')
                 e_msg = _('Unexpected result: %s' % str(res))
                 raise ValidationError(e_title + e_msg)
-
     #jujuy
     @api.model
     def _update_perception_jujuy(self, perception):
@@ -499,12 +507,14 @@ class PadronMassUpdate(models.TransientModel):
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
-                    True
+                    True,
+                    %(company_id)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
+                    'company_id': perception.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -597,12 +607,14 @@ class PadronMassUpdate(models.TransientModel):
                     %(partner_id)s,
                     %(percent)s,
                     %(retention_id)s,
-                    True
+                    True,
+                    %(company_id)s
                 )"""
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
                     'retention_id': retention.id,
+                    'company_id': retention.company_id.id,
                 }
                 self._cr.execute(q, q_params)
             else:
@@ -612,13 +624,14 @@ class PadronMassUpdate(models.TransientModel):
                 _logger.error('ERROR with register %s' % str(res))
 
 
+
     @api.multi
-    def action_update(self, province):
+    def action_update(self):
         perception_obj = self.env['perception.perception']
         retention_obj = self.env['retention.retention']
         if self.arba:
             # Actualizamos Percepciones
-            percep_arba = perception_obj._get_perception_from_arba(province)
+            percep_arba = perception_obj._get_perception_from_arba()
             if not percep_arba:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -626,7 +639,7 @@ class PadronMassUpdate(models.TransientModel):
                       "from Padron ARBA"))
             self._update_perception_arba(percep_arba[0])
             # Actualizamos Retenciones
-            retent_arba = retention_obj._get_retention_from_arba(province)
+            retent_arba = retention_obj._get_retention_from_arba()
             if not retent_arba:
                 raise ValidationError(
                     _("Retention Error!\n") +
@@ -635,7 +648,7 @@ class PadronMassUpdate(models.TransientModel):
             self._update_retention_arba(retent_arba[0])
         if self.agip:
             # Actualizamos Percepciones
-            percep_agip = perception_obj._get_perception_from_agip(province)
+            percep_agip = perception_obj._get_perception_from_agip()
             if not percep_agip:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -643,7 +656,7 @@ class PadronMassUpdate(models.TransientModel):
                       "from Padron AGIP"))
             self._update_perception_agip(percep_agip[0])
             # Actualizamos Retenciones
-            retent_agip = retention_obj._get_retention_from_agip(province)
+            retent_agip = retention_obj._get_retention_from_agip()
             if not retent_agip:
                 raise ValidationError(
                     _("Retention Error!\n") +
@@ -653,7 +666,7 @@ class PadronMassUpdate(models.TransientModel):
 
         if self.jujuy:
             # Actualizamos Percepciones
-            percep_jujuy = perception_obj._get_perception_from_jujuy(province)
+            percep_jujuy = perception_obj._get_perception_from_jujuy()
             if not percep_jujuy:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -661,7 +674,7 @@ class PadronMassUpdate(models.TransientModel):
                       "from Padron JUJUY"))
             self._update_perception_jujuy(percep_jujuy[0])
             # Actualizamos Retenciones
-            retent_jujuy = retention_obj._get_retention_from_jujuy(province)
+            retent_jujuy = retention_obj._get_retention_from_jujuy()
             if not retent_jujuy:
                 raise ValidationError(
                     _("Retention Error!\n") +

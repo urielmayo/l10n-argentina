@@ -238,6 +238,6 @@ class PadronImport(models.Model):
                 func_name = "import_" + code + "_file"
 
             function_import = getattr(self, func_name)
-            function_import(out_path, files, province.name)
+            function_import(out_path, files, province)
 
         return True
