@@ -13,11 +13,10 @@ class PerceptionPerception(models.Model):
 
     from_register_ARBA = fields.Boolean('From ARBA Register')
     from_register_AGIP = fields.Boolean('From AGIP Register')
-    from_register_JUJUY = fields.Boolean('From JUJUY Register')
 
     @api.model
     def _get_perception_from_arba(self):
-        ret = self.search([('from_register_ARBA', '=', True)])
+        ret = self.search([('from_register_ARBA', '=', True), ('company_id', '=', self.env.user.company_id.id)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Perceptions Improperly Configured\n') +
@@ -30,7 +29,7 @@ class PerceptionPerception(models.Model):
 
     @api.model
     def _get_perception_from_agip(self):
-        ret = self.search([('from_register_AGIP', '=', True)])
+        ret = self.search([('from_register_AGIP', '=', True), ('company_id', '=', self.env.user.company_id.id)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Perceptions Improperly Configured\n') +
@@ -43,7 +42,7 @@ class PerceptionPerception(models.Model):
 
     @api.model
     def _get_perception_from_jujuy(self):
-        ret = self.search([('from_register_JUJUY', '=', True)])
+        ret = self.search([('from_register_JUJUY', '=', True), ('company_id', '=', self.env.user.company_id.id)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
@@ -56,7 +55,7 @@ class PerceptionPerception(models.Model):
 
     @api.model
     def _get_perception_from_santa_fe(self):
-        ret = self.search([('from_register_SANTA_FE', '=', True)])
+        ret = self.search([('from_register_SANTA_FE', '=', True), ('company_id', '=', self.env.user.company_id.id)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +

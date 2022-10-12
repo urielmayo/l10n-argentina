@@ -134,7 +134,7 @@ class PadronImport(models.Model):
                 'agip': True,
             })
             # TODO
-            wiz.action_update(province)
+            wiz.action_update()
 
             cursor.commit()
             _logger.info('[AGIP] SUCCESS: Fin de carga de padron de agip')
