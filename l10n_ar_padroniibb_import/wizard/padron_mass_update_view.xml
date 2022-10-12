@@ -12,6 +12,7 @@
                         <field name="arba" />
                         <field name="agip" />
                         <field name="jujuy" />
+                        <field name="santa fe" />
                     </group>
                     <footer>
                         <button name="action_update" type="object" string="Update" class="oe_highlight" />
