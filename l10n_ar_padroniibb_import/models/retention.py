@@ -16,8 +16,8 @@ class RetentionRetention(models.Model):
     from_register_JUJUY = fields.Boolean('From JUJUY Register')
 
     @api.model
-    def _get_retention_from_arba(self, province):
-        ret = self.search([('from_register_ARBA', '=', True), ('state_id', '=', province)])
+    def _get_retention_from_arba(self):
+        ret = self.search([('from_register_ARBA', '=', True)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
@@ -29,8 +29,8 @@ class RetentionRetention(models.Model):
             return ret
 
     @api.model
-    def _get_retention_from_agip(self, province):
-        ret = self.search([('from_register_AGIP', '=', True), ('state_id', '=', province)])
+    def _get_retention_from_agip(self):
+        ret = self.search([('from_register_AGIP', '=', True)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
@@ -42,8 +42,8 @@ class RetentionRetention(models.Model):
             return ret
 
     @api.model
-    def _get_retention_from_jujuy(self, province):
-        ret = self.search([('from_register_JUJUY', '=', True), ('state_id', '=', province)])
+    def _get_retention_from_jujuy(self):
+        ret = self.search([('from_register_JUJUY', '=', True)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
@@ -55,8 +55,8 @@ class RetentionRetention(models.Model):
             return ret
 
     @api.model
-    def _get_retention_from_santa_fe(self, province):
-        ret = self.search([('from_register_SANTA_FE', '=', True), ('state_id', '=', province)])
+    def _get_retention_from_santa_fe(self):
+        ret = self.search([('from_register_SANTA_FE', '=', True)])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
