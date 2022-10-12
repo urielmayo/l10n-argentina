@@ -1,16 +1,10 @@
 import logging
 import os
 import shlex
-import tempfile
-import re
-from base64 import b64decode
-from io import BytesIO
-from zipfile import ZipFile, is_zipfile
-from tempfile import mkdtemp
 from subprocess import call, STDOUT
 from shutil import rmtree
 from odoo import registry
-from odoo import _, api, fields, models
+from odoo import _, api, models
 from odoo.exceptions import ValidationError, Warning
 from odoo.tools import config
 

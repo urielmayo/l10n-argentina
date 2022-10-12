@@ -5,7 +5,7 @@ from subprocess import call, STDOUT
 from shutil import rmtree
 from odoo import registry
 from odoo import _, api, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, Warning
 from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
@@ -43,11 +43,11 @@ class PadronImport(models.Model):
 
     @api.model
     def import_914_file(self, out_path, files, province):
-        _logger.info('[JUJUY] Inicio de importacion')
+        _logger.info('[SANTA_FE] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
 
-        _logger.info('[JUJUY] Files extracted: ' + str(len(files)))
+        _logger.info('[SANTA_FE] Files extracted: ' + str(len(files)))
         if len(files) != 1:
             raise ValidationError(
                 _("Expected only one file compressed, got: %d") %
@@ -59,13 +59,11 @@ class PadronImport(models.Model):
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
         try:
-            _logger.info('[JUJUY] Creando tabla temporal')
+            _logger.info('[SANTA_FE] Creando tabla temporal')
             create_q = """
             CREATE TABLE temp_import(
             vat varchar(32),
-            period varchar(6),
-            percentage_perception varchar(10),
-            percentage_retention varchar(10)
+            alicuota varchar(1)
             )
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
@@ -77,10 +75,10 @@ class PadronImport(models.Model):
         else:
             cursor.commit()
 
-        _logger.info('[JUJUY] Copiando del csv a tabla temporal')
+        _logger.info('[AGIP] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat,period,percentage_perception,percentage_retention) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat,alicuota) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -89,20 +87,16 @@ class PadronImport(models.Model):
 
         try:
             # TODO: Creacion de los grupos de retenciones y percepciones
-            _logger.info('[JUJUY] Verificando grupos')
+            _logger.info('[SANTA_FE] Verificando grupos')
 
-            _logger.info('[JUJUY] Copiando de tabla temporal a definitiva')
+            _logger.info('[SANTA_FE] Copiando de tabla temporal a definitiva')
             query = """
             INSERT INTO padron_jujuy_percentages
             (create_uid, write_date, write_uid,
-            period, percentage_perception, percentage_retention,
-            vat)
+            alicuota,vat)
             SELECT 1 as create_uid,
-            current_date,
             1,
-            period(period, 'YYYYMM'),
-            to_number(percentage_perception, '999.99')/100,
-            to_number(percentage_retention, '999.99')/100,
+            alicuota,
             vat
             """
             cursor.execute("DELETE FROM padron_jujuy_percentages")
@@ -110,21 +104,21 @@ class PadronImport(models.Model):
             cursor.execute("DROP TABLE IF EXISTS temp_import")
         except Exception:
             cursor.rollback()
-            _logger.warning('[JUJUY] ERROR: Rollback')
+            _logger.warning('[SANTA_FE] ERROR: Rollback')
         else:
             # Mass Update
             mass_wiz_obj = self.env['padron.mass.update']
             wiz = mass_wiz_obj.create({
                 'arba': False,
                 'agip': False,
-                'jujuy': True,
-                'santa_fe':False,
+                'jujuy': False,
+                'santa_fe': True,
             })
             # TODO
             wiz.action_update(province)
 
             cursor.commit()
-            _logger.info('[JUJUY] SUCCESS: Fin de carga de padron de jujuy')
+            _logger.info('[SANTA_FE] SUCCESS: Fin de carga de padron de jujuy')
 
         finally:
             rmtree(out_path)  # Delete temp folder

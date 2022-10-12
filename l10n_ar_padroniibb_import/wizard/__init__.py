@@ -8,3 +8,4 @@ from . import padron_mass_update  # noqa
 from . import padron_agip # noqa
 from . import padron_arba #  noqa
 from . import padron_jujuy #  noqa
+from . import padron_santa_fe #  noqa

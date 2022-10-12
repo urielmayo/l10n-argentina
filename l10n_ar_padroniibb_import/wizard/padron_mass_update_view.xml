@@ -7,7 +7,7 @@
             <field name="name">padron.mass.update.form</field>
             <field name="model">padron.mass.update</field>
             <field name="arch" type="xml">
-                <form string="Padron Mass Update" version="7.0">
+                <form string="Padron Mass Update" version="12.0">
                     <group string="Select Padron">
                         <field name="arba" />
                         <field name="agip" />

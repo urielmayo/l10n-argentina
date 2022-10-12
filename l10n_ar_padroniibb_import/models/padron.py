@@ -73,6 +73,45 @@ class ArbaRetentions(models.Model):
     percentage = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
 
+class JujuyPerceptions(models.Model):
+    """
+    This model represent de Jujuy csv file that
+    defines percentage of perceptions
+    """
+    _name = 'padron.jujuy_perception'
+    _description = 'Definition of arba percentages of perception'
+
+    period = fields.Date('Period')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage = fields.Float('Percentage of perception')
+
+
+
+class JujuyRetentions(models.Model):
+    """
+    This model represent de ARBA csv file that
+    defines percentage of retention
+    """
+    _name = 'padron.jujuy_retention'
+    _description = 'Definition of jujuy percentages of retention'
+
+    period = fields.Date('Period')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage = fields.Float('Percentage of retention')
+
+class JujuyPerceptions(models.Model):
+    """
+    This model represent de Jujuy csv file that
+    defines percentage of perceptions
+    """
+    _name = 'padron.jujuy_perception'
+    _description = 'Definition of arba percentages of perception'
+
+    period = fields.Date('Period')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage = fields.Float('Percentage of perception')
+
+
 class res_country_state(models.Model):
     _name = "res.country.state"
     _inherit = "res.country.state"
