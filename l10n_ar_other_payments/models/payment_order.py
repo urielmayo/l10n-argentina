@@ -15,6 +15,7 @@ class AccountPaymentOrder(models.Model):
         comodel_name='account.payment.order.concept.line',
         inverse_name='payment_order_id', string="Other Concepts")
     other_payment = fields.Boolean(string='Other Payments')
+    employee_id = fields.Many2one('hr.employee', string="Employee")
     employee_payment = fields.Boolean(string='Employee Payments')
 
     @api.depends('debt_line_ids', 'income_line_ids', 'amount',

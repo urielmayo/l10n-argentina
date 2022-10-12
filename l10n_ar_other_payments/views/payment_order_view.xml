@@ -19,13 +19,18 @@
 						<group>
 							<field name="partner_id"
 								context="{'search_default_customer': 1}"
-								attrs="{'readonly': [('state', 'not in', ('draft',))]}"/>
+								attrs="{'readonly': ['&amp;', ('state', 'not in', ('draft',), ('employee_payment','=',False))],
+								'invisible': [('employee_payment','=',True)]}"/>
+							<field name="employee_id"
+								attrs="{'readonly': ['&amp;', ('state', 'not in', ('draft',), ('employee_payment','=',True))],
+								'invisible': [('employee_payment','=',False)]}"/>
 							<field name="currency_id" invisible="1"/>
 							<field name="journal_id"
 								string="Journal"
 								options="{'no_quick_create': True, 'no_create': True, 'no_create_edit': True}"
 								attrs="{'readonly': [('state', 'not in', ('draft',))]}"/>
 							<field name="other_payment" invisible="1"/>
+							<field name="employee_payment" invisible="1"/>
 							<field name="amount" class="oe_inline"
 								string="Paid Amount"
 								widget="monetary" options="{'currency_field': 'currency_id'}"
@@ -214,6 +219,7 @@
 	<record id="other_payment_action_tree" model="ir.actions.act_window.view">
 		<field eval="1" name="sequence"/>
 		<field name="view_mode">tree</field>
+		<field name="view_id" ref="l10n_ar_account_payment_order.account_payment_order_view_tree_receipt"/>
 		<field name="act_window_id" ref="other_payments_action"/>
 	</record>
 	<record id="other_payment_action_form" model="ir.actions.act_window.view">
@@ -243,6 +249,7 @@
 	<record id="other_receipts_action_tree" model="ir.actions.act_window.view">
 		<field eval="1" name="sequence"/>
 		<field name="view_mode">tree</field>
+		<field name="view_id" ref="l10n_ar_account_payment_order.account_payment_order_view_tree_receipt"/>
 		<field name="act_window_id" ref="other_receipts_action"/>
 	</record>
 	<record id="other_receipts_action_form" model="ir.actions.act_window.view">
@@ -252,22 +259,72 @@
 		<field name="act_window_id" ref="other_receipts_action"/>
 	</record>
 
+	<!-- Employee Payment-->
+	<record id="account_payment_order_employee_tree_view" model="ir.ui.view">
+		<field name="name">account.payment.order.employee.tree.view</field>
+		<field name="model">account.payment.order</field>
+		<field name="arch" type="xml">
+			<tree decoration-info="state == 'draft'" decoration-muted="state  == 'cancel'">
+				<field name="date"/>
+				<field name="number"/>
+				<field name="name"/>
+				<field name="employee_id"/>
+				<field name="currency_id"/>
+				<field name="amount"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="employee_payments_action" model="ir.actions.act_window">
+		<field name="name">Employee Payments</field>
+		<field name="res_model">account.payment.order</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[('journal_id.type', '=', 'payment'), ('type', '=', 'payment'),
+			('other_payment', '=', True), ('employee_payment', '=', True)]</field>
+		<field name="context">{'default_type': 'payment', 'type': 'payment',
+			'default_other_payment': True, 'default_employee_payment': True}</field>
+		<field name="view_id" eval="False"/>
+		<field name="search_view_id" ref="l10n_ar_account_payment_order.account_payment_order_view_filter_vendor_pay"/>
+		<field name="target">current</field>
+	</record>
+	<record id="employee_payments_action_tree" model="ir.actions.act_window.view">
+		<field name="view_mode">tree</field>
+		<field name="view_id" ref="account_payment_order_employee_tree_view"/>
+		<field name="act_window_id" ref="employee_payments_action"/>
+	</record>
+	<record id="employee_payments_action_form" model="ir.actions.act_window.view">
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="other_payment_view_form"/>
+		<field name="act_window_id" ref="employee_payments_action"/>
+	</record>
+
 	<record id="l10n_ar_account_payment_order.account_payment_order_action_vendor" model="ir.actions.act_window">
-		<field name="domain">[('journal_id.type', '=', 'payment'), ('type','=','payment'), ('other_payment', '=', False)]</field>
+		<field name="domain">[('journal_id.type', '=', 'payment'), ('type','=','payment'),
+			('other_payment', '=', False), ('employee_payment', '=', False)]</field>
 	</record>
 
 	<record id="l10n_ar_account_payment_order.account_payment_order_action_receipt" model="ir.actions.act_window">
-		<field name="domain">[('journal_id.type', '=', 'receipt'), ('type','=','receipt'), ('other_payment', '=', False)]</field>
+		<field name="domain">[('journal_id.type', '=', 'receipt'), ('type','=','receipt'),
+			('other_payment', '=', False), ('employee_payment', '=', False)]</field>
 	</record>
 
+	<!-- Employee Payments -->
+	<menuitem id="employee_payments_menu"
+			  action="employee_payments_action"
+			  parent="account.menu_finance_payables"
+			  name="Employee Payments"
+			  sequence="14"/>
 
+	<!-- Other Payments/Receipts -->
 	<menuitem id="action_other_payments_menu"
-		action="other_payments_action"
-		parent="account.menu_finance_payables"
-		sequence="15"/>
+			  action="other_payments_action"
+			  parent="account.menu_finance_payables"
+			  sequence="15"/>
 
 	<menuitem id="action_other_receipts_menu"
-		action="other_receipts_action"
-		parent="account.menu_finance_receivables"
-		sequence="15"/>
+			  action="other_receipts_action"
+			  parent="account.menu_finance_receivables"
+			  sequence="15"/>
+
 </odoo>

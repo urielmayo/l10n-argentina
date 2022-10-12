@@ -57,7 +57,6 @@
             </field>
         </record>
 
-
         <record id="account_payment_order_view_form_receipt" model="ir.ui.view">
             <field name="name">account.payment.order.receipt.form</field>
             <field name="model">account.payment.order</field>
@@ -341,6 +340,7 @@
         <record id="account_payment_order_action_receipt_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_payment_order_view_tree_receipt"/>
             <field name="act_window_id" ref="account_payment_order_action_receipt"/>
         </record>
         <record id="account_payment_order_action_receipt_form" model="ir.actions.act_window.view">
@@ -674,6 +674,7 @@
         <record id="account_payment_order_action_vendor_tree" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_payment_order_view_tree_receipt"/>
             <field name="act_window_id" ref="account_payment_order_action_vendor"/>
         </record>
 

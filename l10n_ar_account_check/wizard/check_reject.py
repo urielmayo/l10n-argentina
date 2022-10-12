@@ -257,7 +257,7 @@ class CheckRejectIssuedCheck(models.Model):
 
     def create_rejected_journal_entry(self, check):
         # TODO: Improve Methods
-        account_obj = self.env['account.account']        
+        account_obj = self.env['account.account']
         move_obj = self.env['account.move']
         move_line_obj = self.env['account.move.line']
         payment = check.payment_order_id
@@ -267,7 +267,7 @@ class CheckRejectIssuedCheck(models.Model):
         ctx = {
             'date': self.reject_date,
             'check_move_validity': False,
-        }        
+        }
         for payment_line in payment.move_line_ids:
             if payment_line.issued_check_id == check:
             # Create the account move record.
