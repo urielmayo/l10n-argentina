@@ -124,81 +124,6 @@ class res_partner(models.Model):
                 'sit_iibb': sit_iibb,
             }
         return res
-
-    @api.model
-    def _check_padron_retention_jujuy(self, vat):
-        padron_jujuy_obj = self.env['padron.jujuy_percentages']
-        retention_obj = self.env['retention.retention']
-        ret_ids = padron_jujuy_obj.search([('vat', '=', vat)])
-        res = {}
-        if ret_ids:
-            retent_ids = retention_obj._get_retention_from_jujuy()
-            if not retent_ids:
-                return res
-            padron_retent = ret_ids[0]
-            res = {
-                'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage_retention,
-                'from_padron': True,
-            }
-        return res
-
-    @api.model
-    def _check_padron_perception_jujuy(self, vat):
-        padron_jujuy_obj = self.env['padron.jujuy_percentages']
-        perception_obj = self.env['perception.perception']
-        per_ids = padron_jujuy_obj.search([('vat', '=', vat)])
-        res = {}
-        # TODO: Chequear vigencia
-        if per_ids:
-            percep_ids = perception_obj._get_perception_from_jujuy()
-            if not percep_ids:
-                return res
-            padron_percep = per_ids[0]
-            res = {
-                'perception_id': percep_ids[0].id,
-                'percent': padron_percep.percentage_perception,
-                'from_padron': True,
-            }
-        return res
-
-    @api.model
-    def _check_padron_retention_santa_fe(self, vat):
-        padron_santa_fe_obj = self.env['padron.santa_fe_percentages']
-        retention_obj = self.env['retention.retention']
-        ret_ids = padron_santa_fe_obj.search([('vat', '=', vat)])
-        res = {}
-        if ret_ids:
-            retent_ids = retention_obj._get_retention_from_santa_fe()
-            if not retent_ids:
-                return res
-            padron_retent = ret_ids[0]
-            res = {
-                'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage_retention,
-                'from_padron': True,
-            }
-        return res
-
-    @api.model
-    def _check_padron_perception_santa_fe(self, vat):
-        padron_santa_fe_obj = self.env['padron.jujuy_percentages']
-        perception_obj = self.env['perception.perception']
-        per_ids = padron_santa_fe_obj.search([('vat', '=', vat)])
-        res = {}
-        # TODO: Chequear vigencia
-        if per_ids:
-            percep_ids = perception_obj._get_perception_from_santa_fe()
-            if not percep_ids:
-                return res
-            padron_percep = per_ids[0]
-            res = {
-                'perception_id': percep_ids[0].id,
-                'percent': padron_percep.percentage_perception,
-                'from_padron': True,
-            }
-        return res
-
     @api.model
     def create(self, vals):
         # Percepciones
@@ -214,10 +139,6 @@ class res_partner(models.Model):
                 if perc_agip:
                     perceptions_list.append((0, 0, perc_agip))
 
-                perc_jujuy = self._check_padron_perception_jujuy(vat)
-                if perc_jujuy:
-                    perceptions_list.append((0, 0, perc_jujuy))
-
                 vals['perception_ids'] = perceptions_list
 
         # Retenciones
@@ -232,10 +153,6 @@ class res_partner(models.Model):
                 ret_agip = self._check_padron_retention_agip(vat)
                 if ret_agip:
                     retentions_list.append((0, 0, ret_agip))
-
-                ret_jujuy = self._check_padron_retention_jujuy(vat)
-                if ret_agip:
-                    retentions_list.append((0, 0, ret_jujuy))
 
                 vals['retention_ids'] = retentions_list
 
@@ -337,13 +254,6 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_agip['perception_ids'][0])
 
-                    perc_jujuy = partner._check_padron_perception_jujuy(vat)
-                    if perc_jujuy:
-                        res_jujuy = partner._update_perception_partner(
-                            perc_jujuy)
-                        perception_ids_lst.append(
-                            res_jujuy['perception_ids'][0])
-
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
                             vals['perception_ids'], perception_ids_lst)
@@ -375,11 +285,6 @@ class res_partner(models.Model):
                     if ret_agip:
                         res_agip = partner._update_retention_partner(ret_agip)
                         retention_ids_lst.append(res_agip['retention_ids'][0])
-
-                    ret_jujuy = partner._check_padron_retention_agip(vat)
-                    if ret_jujuy:
-                        res_jujuy = partner._update_retention_partner(ret_jujuy)
-                        retention_ids_lst.append(res_jujuy['retention_ids'][0])
 
                     if 'retention_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
