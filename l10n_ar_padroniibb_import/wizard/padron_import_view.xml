@@ -12,7 +12,7 @@
                     <group>
                         <group>
                             <!--<label for="province_id" string="Province" />-->
-                            <field name="province_id" on_change="onchange_province(province_id)" />
+                            <field name="province_id" domain="[('country_id', '=', 'Argentina')]" on_change="onchange_province(province_id)" />
                         </group>
                         <group>
                             <!--<label for="type_file" string="Type of File" />-->
