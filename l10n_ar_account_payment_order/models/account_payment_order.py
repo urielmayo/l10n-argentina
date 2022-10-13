@@ -89,7 +89,7 @@ class AccountPaymentOrder(models.Model):
         comodel_name='res.currency', string='Currency',
         compute='_get_journal_currency')
     amount = fields.Float(
-        string='Tax Amount', digits=dp.get_precision('Account'),
+        string='Amount', digits=dp.get_precision('Account'),
         default=lambda s: s._get_amount(), states={
             'cancel': [('readonly', True)],
             'posted': [('readonly', True)],
