@@ -579,6 +579,7 @@ class AccountThirdCheck(models.Model):
             current_currency and sign * self.amount_currency or 0.0,
             'date': voucher.date,
             'date_maturity': self.payment_date or self.issue_date,
+            'third_check_id': self.id,
         }
 
         return move_line

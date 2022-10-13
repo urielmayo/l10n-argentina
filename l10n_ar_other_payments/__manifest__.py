@@ -26,6 +26,7 @@
     "description": "Extension of payment module, to be able to register cash outflow for other concepts with payment orders.",  # noqa
     "depends": [
         "base",
+        "hr",
         "l10n_ar_account_payment_order",
         "l10n_ar_account_check",
     ],
