@@ -11,7 +11,7 @@
                     <group string="Select Padron">
                         <field name="arba" />
                         <field name="agip" />
-                        <field name="santa_fe" />
+                        <!--<field name="santa_fe" />-->
                     </group>
                     <footer>
                         <button name="action_update" type="object" string="Update" class="oe_highlight" />

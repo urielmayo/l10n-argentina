@@ -16,7 +16,7 @@ class PadronMassUpdate(models.TransientModel):
 
     arba = fields.Boolean('Update ARBA')
     agip = fields.Boolean('Update AGIP')
-    santa_fe = fields.Boolean('Update Santa Fe')
+    #santa_fe = fields.Boolean('Update Santa Fe')
 
     # Rentencion ARBA
     @api.model
@@ -419,104 +419,104 @@ class PadronMassUpdate(models.TransientModel):
                 raise ValidationError(e_title + e_msg)
 
     # Percepcion Santa Fe
-    @api.model
-    def _update_perception_santa_fe(self, perception):
-        cr = self.env.cr
-        query = """
-        WITH padron AS (
-            SELECT
-                rp.id p_partner_id,
-                par.percentage_perception p_percentage,
-            FROM res_partner rp
-                JOIN padron_santa_fe_percentages par ON par.vat=rp.vat
-            WHERE
-                rp.parent_id IS NULL
-                AND rp.customer
-        ),
-        perceptions AS (
-            SELECT
-                rpr.id r_id,
-                rpr.partner_id r_partner_id,
-                rpr.percent r_percentage
-            FROM res_partner_perception rpr
-            WHERE rpr.perception_id=%s
-        )
-        SELECT * FROM (SELECT padron.*, perceptions.*,
-            CASE
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    AND (p_percentage <> r_percentage)
-                    THEN 'UPDATE'  -- In padron and sys
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    AND (p_percentage = r_percentage)
-                    THEN 'NONE'  -- In padron and sys but same percent
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NULL)
-                    THEN 'CREATE'  -- In padron not in sys
-                WHEN (p_partner_id IS NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    THEN 'DELETE'  -- Not in padron but in sys
-                ELSE 'ERROR' -- Never should enter here
-            END umode
-            FROM padron
-                FULL JOIN perceptions
-                ON perceptions.r_partner_id=padron.p_partner_id) z
-        WHERE umode != 'NONE';
-        """
+#    @api.model
+#    def _update_perception_santa_fe(self, perception):
+#        cr = self.env.cr
+#        query = """
+#        WITH padron AS (
+#            SELECT
+#                rp.id p_partner_id,
+#                par.percentage_perception p_percentage,
+#            FROM res_partner rp
+#                JOIN padron_santa_fe_percentages par ON par.vat=rp.vat
+#            WHERE
+#                rp.parent_id IS NULL
+#                AND rp.customer
+#        ),
+#        perceptions AS (
+#            SELECT
+#                rpr.id r_id,
+#                rpr.partner_id r_partner_id,
+#                rpr.percent r_percentage
+#            FROM res_partner_perception rpr
+#            WHERE rpr.perception_id=%s
+#        )
+#        SELECT * FROM (SELECT padron.*, perceptions.*,
+#            CASE
+#                WHEN (p_partner_id IS NOT NULL)
+#                    AND (r_partner_id IS NOT NULL)
+#                    AND (p_percentage <> r_percentage)
+#                    THEN 'UPDATE'  -- In padron and sys
+#                WHEN (p_partner_id IS NOT NULL)
+#                    AND (r_partner_id IS NOT NULL)
+#                    AND (p_percentage = r_percentage)
+#                    THEN 'NONE'  -- In padron and sys but same percent
+#                WHEN (p_partner_id IS NOT NULL)
+#                    AND (r_partner_id IS NULL)
+#                    THEN 'CREATE'  -- In padron not in sys
+#                WHEN (p_partner_id IS NULL)
+#                    AND (r_partner_id IS NOT NULL)
+#                    THEN 'DELETE'  -- Not in padron but in sys
+#                ELSE 'ERROR' -- Never should enter here
+#            END umode
+#            FROM padron
+#                FULL JOIN perceptions
+#                ON perceptions.r_partner_id=padron.p_partner_id) z
+#        WHERE umode != 'NONE';
+#        """
 
-        params = (perception.id, )
-        cr.execute(query, params)
+#        params = (perception.id, )
+#        cr.execute(query, params)
 
-        for res in cr.fetchall():
-            if res[6] == 'UPDATE':  # Change the amount of percentage
-                q = """
-                UPDATE res_partner_perception SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': res[1],
-                    'id': res[3],
-                }
-                self._cr.execute(q, q_params)
-            elif res[6] == 'DELETE':   # Set the percentage to -1
-                q = """
-                UPDATE res_partner_perception SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': -1,
-                    'id': res[3],
-                }
-                self._cr.execute(q, q_params)
-            elif res[6] == 'CREATE':  # Create the res.partner.perception
-                q = """
-                INSERT INTO res_partner_perception (
-                    partner_id,
-                    percent,
-                    perception_id,
-                    from_padron
-                ) VALUES (
-                    %(partner_id)s,
-                    %(percent)s,
-                    %(perception_id)s,
-                    True
-                )"""
-                q_params = {
-                    'percent': res[1],
-                    'partner_id': res[0],
-                    'perception_id': perception.id,
+#        for res in cr.fetchall():
+#            if res[6] == 'UPDATE':  # Change the amount of percentage
+#                q = """
+#                UPDATE res_partner_perception SET
+#                    percent=%(percent)s,
+#                    from_padron = True
+#                WHERE id=%(id)s
+#                """
+#                q_params = {
+#                    'percent': res[1],
+#                    'id': res[3],
+#                }
+#                self._cr.execute(q, q_params)
+#            elif res[6] == 'DELETE':   # Set the percentage to -1
+#                q = """
+#                UPDATE res_partner_perception SET
+#                    percent=%(percent)s,
+#                    from_padron = True
+#                WHERE id=%(id)s
+#                """
+#                q_params = {
+#                    'percent': -1,
+#                    'id': res[3],
+#                }
+#                self._cr.execute(q, q_params)
+#            elif res[6] == 'CREATE':  # Create the res.partner.perception
+#                q = """
+#                INSERT INTO res_partner_perception (
+#                    partner_id,
+#                    percent,
+#                    perception_id,
+#                    from_padron
+#                ) VALUES (3
+#                    %(partner_id)s,
+#                    %(percent)s,
+#                    %(perception_id)s,
+#                    True
+#                )"""
+#                q_params = {
+#                    'percent': res[1],
+#                    'partner_id': res[0],
+#                    'perception_id': perception.id,
 
-                }
-                self._cr.execute(q, q_params)
-            else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
+#                }
+#                self._cr.execute(q, q_params)
+#            else:
+#                e_title = _('Query Error\n')
+#                e_msg = _('Unexpected result: %s' % str(res))
+#               raise ValidationError(e_title + e_msg)
 
     @api.multi
     def action_update(self):
@@ -559,13 +559,14 @@ class PadronMassUpdate(models.TransientModel):
                       "from Padron AGIP"))
             self._update_retention_agip(retent_agip[0])
 
-        if self.santa_fe:
-            # Actualizamos Percepciones
-            percep_santa_fe = perception_obj._get_perception_from_santa_fe()
-            if not percep_santa_fe:
-                raise ValidationError(
-                    _("Perception Error!\n") +
-                    _("There is no perception configured to update " +
-                      "from Padron SANTA FE"))
-            self._update_perception_santa_fe(percep_santa_fe[0])
-        return True
+#        if self.santa_fe:
+#            # Actualizamos Percepciones
+#            percep_santa_fe = perception_obj._get_perception_from_santa_fe()
+#            if not percep_santa_fe:
+#                raise ValidationError(
+#                    _("Perception Error!\n") +
+#                    _("There is no perception configured to update " +
+#                      "from Padron SANTA FE"))
+#            self._update_perception_santa_fe(percep_santa_fe[0])
+#        return True
+
