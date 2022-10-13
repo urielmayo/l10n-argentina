@@ -161,7 +161,7 @@ class PadronImport(models.Model):
             z = ZipFile(file_like)
             for name in z.namelist():
                 z.extract(name, out_path)
-                files_extracted.append(out_path + "/" + name)
+            files_extracted.append(out_path + "/" + name)
             _logger.info("Zipfile type")
         else:
             # TODO: Deberiamos hacer un raise de otro tipo de excepcion
