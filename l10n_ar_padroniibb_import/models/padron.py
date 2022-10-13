@@ -73,6 +73,17 @@ class ArbaRetentions(models.Model):
     percentage = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
 
+class SantaFeRetentions(models.Model):
+    """
+    This model represent the santa fe csv file that defines percentage
+    of retentions and perceptions
+    """
+    _name = 'padron.santa_fe_percentages'
+    _description = 'Definition of percentages of taxes by customer'
+
+    vat = fields.Char('Santa Fe code', size=15, index=1)
+    percentage_perception = fields.Float('Percentage of perception')
+
 class res_country_state(models.Model):
     _name = "res.country.state"
     _inherit = "res.country.state"

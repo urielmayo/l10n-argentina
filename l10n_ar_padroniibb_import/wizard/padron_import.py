@@ -3,7 +3,6 @@
 #   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 ##############################################################################
 
-from ast import Interactive
 import logging
 import os
 import shlex
@@ -20,8 +19,6 @@ from odoo.exceptions import ValidationError
 from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
-
-
 
 def get_dsn_pg(cr):
     """
@@ -129,8 +126,6 @@ class PadronImport(models.Model):
         else:
             cursor.commit()
         return True
-
-
 
     def correct_padron_file(self, filename):
         exp_reg = "^((\d+;){4}(\w;){3}([\d,]+;){4})(.*)$"

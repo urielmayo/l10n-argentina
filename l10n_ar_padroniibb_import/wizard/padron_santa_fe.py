@@ -42,7 +42,7 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_914_file(self, out_path, files, province):
+    def import_921_file(self, out_path, files, province):
         _logger.info('[SANTA_FE] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
@@ -63,7 +63,7 @@ class PadronImport(models.Model):
             create_q = """
             CREATE TABLE temp_import(
             vat varchar(32),
-            alicuota varchar(1)
+            percentage_perception varchar(10)
             )
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
@@ -75,10 +75,10 @@ class PadronImport(models.Model):
         else:
             cursor.commit()
 
-        _logger.info('[AGIP] Copiando del csv a tabla temporal')
+        _logger.info('[SANTA FE] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat,alicuota) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat, percentage_perception) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -91,15 +91,15 @@ class PadronImport(models.Model):
 
             _logger.info('[SANTA_FE] Copiando de tabla temporal a definitiva')
             query = """
-            INSERT INTO padron_jujuy_percentages
-            (create_uid, write_date, write_uid,
-            alicuota,vat)
+            INSERT INTO padron_santa_fe_percentages
+            (create_uid, vat, write_date, write_uid,
+            percentage_perception)
             SELECT 1 as create_uid,
             1,
-            alicuota,
-            vat
+            vat,
+            to_number(percentage_perception, '999.99')/100
             """
-            cursor.execute("DELETE FROM padron_jujuy_percentages")
+            cursor.execute("DELETE FROM padron_santa_fe_percentages")
             cursor.execute(query)
             cursor.execute("DROP TABLE IF EXISTS temp_import")
         except Exception:
@@ -115,10 +115,10 @@ class PadronImport(models.Model):
                 'santa_fe': True,
             })
             # TODO
-            wiz.action_update(province)
+            wiz.action_update()
 
             cursor.commit()
-            _logger.info('[SANTA_FE] SUCCESS: Fin de carga de padron de jujuy')
+            _logger.info('[SANTA_FE] SUCCESS: Fin de carga de padron de santa fe')
 
         finally:
             rmtree(out_path)  # Delete temp folder

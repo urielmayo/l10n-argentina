@@ -124,6 +124,28 @@ class res_partner(models.Model):
                 'sit_iibb': sit_iibb,
             }
         return res
+
+    @api.model
+    def _check_padron_perception_santa_fe(self, vat):
+        padron_santa_fe_obj = self.env['padron.santa_fe_percentages']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_santa_fe_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_santa_fe()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
     @api.model
     def create(self, vals):
         # Percepciones
@@ -139,7 +161,12 @@ class res_partner(models.Model):
                 if perc_agip:
                     perceptions_list.append((0, 0, perc_agip))
 
+                perc_santa_fe = self._check_padron_perception_santa_fe(vat)
+                if perc_santa_fe:
+                    perceptions_list.append((0, 0, perc_santa_fe))
+
                 vals['perception_ids'] = perceptions_list
+
 
         # Retenciones
         if 'supplier' in vals and vals['supplier']:
@@ -253,6 +280,12 @@ class res_partner(models.Model):
                             perc_agip)
                         perception_ids_lst.append(
                             res_agip['perception_ids'][0])
+                    perc_santa_fe = partner._check_padron_perception_santa_fe(vat)
+                    if perc_santa_fe:
+                        res_santa_fe = partner._update_perception_partner(
+                            perc_santa_fe)
+                        perception_ids_lst.append(
+                            res_santa_fe['perception_ids'][0])
 
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
