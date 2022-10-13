@@ -150,6 +150,7 @@ class PadronImport(models.Model):
 
         if is_rarfile(file_like):
             z = RarFile(file_like)
+            is_rar = True
             os.system("mkdir -p " + out_path)
             with open(out_path + "f.rar", "wb") as f:
                 f.write(decoded)
@@ -159,9 +160,7 @@ class PadronImport(models.Model):
             _logger.info("Rarfile type")
         elif is_zipfile(file_like):
             z = ZipFile(file_like)
-            for name in z.namelist():
-                z.extract(name, out_path)
-            files_extracted.append(out_path + "/" + name)
+            is_rar = False
             _logger.info("Zipfile type")
         else:
             # TODO: Deberiamos hacer un raise de otro tipo de excepcion
@@ -172,6 +171,10 @@ class PadronImport(models.Model):
                   please check if it is the correct file."
                 ),
             )
+        for name in z.namelist():
+            if not is_rar:
+                z.extract(name, out_path)
+            files_extracted.append(out_path + "/" + name)
 
         return files_extracted
 
