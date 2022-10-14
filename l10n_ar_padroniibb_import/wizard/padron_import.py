@@ -136,7 +136,7 @@ class PadronImport(models.Model):
                 for line in old_file.readlines():
                     reg = regex.match(line)
                     if not reg:
-                        _logger.info("[AGIP] Linea de archivo ignorada: %s" % line)
+                        _logger.info("Linea de archivo ignorada: %s" % line)
                         continue
                     newline = reg.groups()[0]
                     new_file.write(newline)
@@ -147,7 +147,6 @@ class PadronImport(models.Model):
         decoded = b64decode(data_compressed)
         file_like = BytesIO(decoded)
         files_extracted = []
-
         if is_rarfile(file_like):
             z = RarFile(file_like)
             is_rar = True
@@ -162,6 +161,10 @@ class PadronImport(models.Model):
             z = ZipFile(file_like)
             is_rar = False
             _logger.info("Zipfile type")
+            for name in z.namelist():
+                if not is_rar:
+                    z.extract(name, out_path)
+                files_extracted.append(out_path + "/" + name)
         else:
             # TODO: Deberiamos hacer un raise de otro tipo de excepcion
             raise TypeError(
@@ -171,11 +174,6 @@ class PadronImport(models.Model):
                   please check if it is the correct file."
                 ),
             )
-        for name in z.namelist():
-            if not is_rar:
-                z.extract(name, out_path)
-            files_extracted.append(out_path + "/" + name)
-
         return files_extracted
 
     @api.model
