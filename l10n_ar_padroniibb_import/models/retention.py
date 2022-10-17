@@ -13,6 +13,7 @@ class RetentionRetention(models.Model):
 
     from_register_ARBA = fields.Boolean('From ARBA Register')
     from_register_AGIP = fields.Boolean('From AGIP Register')
+    from_register_JUJUY = fields.Boolean('From JUJUY Register')
 
     @api.model
     def _get_retention_from_arba(self):
@@ -35,6 +36,19 @@ class RetentionRetention(models.Model):
                 _('Retentions Improperly Configured\n') +
                 _('You can not have more than one retention to update ' +
                   'from AGIP. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_retention_from_jujuy(self):
+        ret = self.search([('from_register_JUJUY', '=', True)])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Retentions Improperly Configured\n') +
+                _('You can not have more than one retention to update ' +
+                  'from JUJUY. Please review configuration'))
         elif len(ret) == 0:
             return False
         else:

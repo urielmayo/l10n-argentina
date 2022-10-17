@@ -4,7 +4,7 @@
 
         <menuitem id="padrones_root_menu" name="Padrones" parent="account.menu_finance" sequence="10" />
 
-        <menuitem id="padron_arba_root_menu" name="Padron ARBA IIBB" parent="padrones_root_menu" sequence="5" />
+        <menuitem id="padron_arba_root_menu" name="Padron ARBA IIBB" parent="padrones_root_menu" sequence="10" />
 
         <!-- Padron ARBA -->
         <record model="ir.ui.view" id="view_arba_perceptions_tree">

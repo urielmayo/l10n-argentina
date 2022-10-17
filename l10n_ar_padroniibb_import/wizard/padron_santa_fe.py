@@ -7,7 +7,7 @@ from subprocess import call, STDOUT
 from shutil import rmtree
 from odoo import registry
 from odoo import _, api, models
-from odoo.exceptions import ValidationError, Warning
+from odoo.exceptions import ValidationError
 from odoo.tools import config
 
 _logger = logging.getLogger(__name__)

@@ -114,15 +114,15 @@ class PadronImport(models.Model):
             _logger.warning('[JUJUY] ERROR: Rollback')
         else:
             # Mass Update
-            #mass_wiz_obj = self.env['padron.mass.update']
-            #wiz = mass_wiz_obj.create({
+            mass_wiz_obj = self.env['padron.mass.update.jujuy']
+            wiz = mass_wiz_obj.create({
             #    'arba': False,
             #    'agip': False,
-            #    'jujuy': True,
+                'jujuy': True,
             #    'santa_fe':False,
-            #})
+            })
             # TODO
-            #wiz.action_update(province)
+            wiz.action_update_jujuy()
 
             cursor.commit()
             _logger.info('[JUJUY] SUCCESS: Fin de carga de padron de jujuy')

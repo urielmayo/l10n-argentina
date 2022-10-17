@@ -24,7 +24,7 @@ class PadronMassUpdateSantaFe(models.TransientModel):
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage_perception p_percentage,
+                par.percentage p_percentage
             FROM res_partner rp
                 JOIN padron_santa_fe_percentages par ON par.vat=rp.vat
             WHERE
@@ -112,9 +112,11 @@ class PadronMassUpdateSantaFe(models.TransientModel):
                 e_title = _('Query Error\n')
                 e_msg = _('Unexpected result: %s' % str(res))
                 raise ValidationError(e_title + e_msg)
+
     @api.multi
     def action_update_santa_fe(self):
         perception_obj = self.env['perception.perception']
+
         if self.santa_fe:
             # Actualizamos Percepciones
             percep_santa_fe = perception_obj._get_perception_from_santa_fe()
@@ -124,122 +126,5 @@ class PadronMassUpdateSantaFe(models.TransientModel):
                     _("There is no perception configured to update " +
                       "from Padron SANTA FE"))
             self._update_perception_santa_fe(percep_santa_fe[0])
-        return True
-
-class res_partner(models.Model):
-    _inherit = 'res.partner'
-
-    @api.model
-    def _compute_sit_iibb_santa_fe(self, padron_tax):
-        # TODO Is this the correct thing to do?
-        if padron_tax.multilateral:
-            multilateral_record = self.env.ref(
-                'l10n_ar_point_of_sale.iibb_situation_multilateral')
-            sit_iibb = multilateral_record
-        else:
-            local_record = self.env.ref(
-                'l10n_ar_point_of_sale.iibb_situation_local')
-            sit_iibb = local_record
-        return sit_iibb.id
-
-    @api.model
-    def _compute_allowed_padron_tax_commands_santa_fe(self, old_commands, new_commands):
-        allowed_to_keep_comms = []
-        to_remove_new_comm = []
-        padron_tax_ids = [x[1] for x in new_commands]
-        for command in old_commands:
-            if command[1] not in padron_tax_ids:
-                allowed_to_keep_comms.append(command)
-            if command[0] == 1 and command[1] in padron_tax_ids:
-                vals = command[2].copy()
-                vals.pop('percent', False)
-                vals.pop('perception_id', False)
-                allowed_to_keep_comms.append((1, command[1], vals))
-                to_remove_new_comm.append(command[1])
-        for command in new_commands:
-            if command[1] not in to_remove_new_comm:
-                allowed_to_keep_comms.append(command)
-        return allowed_to_keep_comms
-
-    @api.model
-    def create_santa_fe(self, vals):
-        # Percepciones
-        if 'customer' in vals and vals['customer']:
-            if 'vat' in vals and vals['vat']:
-                vat = vals['vat']
-                perceptions_list = []
-                perc_santa_fe = self._check_padron_perception_santa_fe(vat)
-                if perc_santa_fe:
-                    perceptions_list.append((0, 0, perc_santa_fe))
-
-                vals['perception_ids'] = perceptions_list
-
-    @api.multi
-    def write_santa_fe(self, vals):
-        for partner in self:
-            vat_changed = False
-            if 'vat' in vals and vals['vat']:
-                vat = vals['vat']
-                old_vat = partner.read(['vat'])[0]['vat']
-                if vat != old_vat:
-                    vat_changed = True
-            else:
-                vat = partner.read(['vat'])[0]['vat']
-
-            if 'customer' in vals and vals['customer']:
-                customer = vals['customer']
-            else:
-                customer = partner.read(['customer'])[0]['customer']
-            # TODO: Hay como un problema entre este metodo
-            # y la actualizacion masiva
-            # Tenemos que corregirlo de alguna manera,
-            # por ahora el workaround es que si se escribe las perception_ids
-            # no se hace el chequeo en el padron
-            # porque suponemos que viene de la actualizacion masiva
-            if vat:
-                if customer:
-                    # Obtenemos la percepcion desde el
-                    # padron de percepciones de ARBA
-                    perception_ids_lst = []
-
-                    perc_santa_fe = partner._check_padron_perception_santa_fe(vat)
-                    if perc_santa_fe:
-                        res_santa_fe = partner._update_perception_partner(
-                            perc_santa_fe)
-                        perception_ids_lst.append(
-                            res_santa_fe['perception_ids'][0])
-
-                    if 'perception_ids' in vals:
-                        real_comms = self._compute_allowed_padron_tax_commands_santa_fe(
-                            vals['perception_ids'], perception_ids_lst)
-                    else:
-                        real_comms = perception_ids_lst
-                    if vat_changed:
-                        old_perceps = partner.read(
-                            ['perception_ids'])[0]['perception_ids']
-                        old_comms = [(2, x, False) for x in old_perceps]
-                        keep_percep_comms = []
-                        for comm in perception_ids_lst:
-                            if comm[1] not in old_perceps:
-                                keep_percep_comms.append(comm)
-                        real_comms = keep_percep_comms + old_comms
-                    vals.update({
-                        'perception_ids': real_comms,
-                    })
 
 
-        return super(res_partner, self).write(vals)
-
-
-class res_partner_perception(models.Model):
-    _name = "res.partner.perception"
-    _inherit = "res.partner.perception"
-
-    from_padron = fields.Boolean(string="From Padron")
-
-
-class res_partner_retention(models.Model):
-    _name = "res.partner.retention"
-    _inherit = "res.partner.retention"
-
-    from_padron = fields.Boolean(string="From Padron")

@@ -10,3 +10,4 @@ from . import padron_arba #  noqa
 from . import padron_jujuy #  noqa
 from . import padron_santa_fe #  noqa
 from . import padron_mass_update_santa_fe # noqa
+from . import padron_mass_update_jujuy # noqa

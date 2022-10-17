@@ -48,7 +48,7 @@
             </field>
         </record>
         <act_window name="Import file/s" res_model="padron.import" src_model="padron.import" view_mode="form" target="new" id="action_load_padron_files" />
-        <menuitem id="load_padron_menu" name="Import Padron" action="action_load_padron_files" groups="account.group_account_manager" parent="padrones_root_menu" sequence="10" />
+        <menuitem id="load_padron_menu" name="Import Padron" action="action_load_padron_files" groups="account.group_account_manager" parent="padrones_root_menu" sequence="1" />
 
     </data>
 </odoo>
