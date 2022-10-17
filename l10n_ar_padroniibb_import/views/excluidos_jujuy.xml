@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <!-- Padron Excluidos Jujuy -->
+        <menuitem id="padron_excluidos_jujuy_root_menu" name="Padron Excluidos jujuy" parent="padrones_root_menu" sequence="10" />
+
+        <!-- Padron AGIP -->
+        <record model="ir.ui.view" id="view_excluidos_jujuy_tree">
+            <field name="name">excluidos.jujuy.tree</field>
+            <field name="model">padron.jujuy_percentages</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Padron Excluidos Jujuy">
+                    <field name="vat" />
+                    <field name="from_date" />
+                    <field name="percentage_perception" />
+                    <field name="percentage_retention" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_excluidos_jujuy_search" model="ir.ui.view">
+            <field name="name">excluidos.jujuy.search</field>
+            <field name="model">padron.jujuy_percentages</field>
+            <field name="arch" type="xml">
+                <search string="Padron Excluidos Jujuy">
+                    <field name="vat" filter_domain="['|', ('vat', 'like', self), ('name_partner', 'ilike', self)]" />
+                </search>
+            </field>
+        </record>
+
+        <record id="action_excluidos_jujuy" model="ir.actions.act_window">
+            <field name="name">Excluidos Jujuy</field>
+            <field name="res_model">padron.jujuy_percentages</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_excluidos_jujuy_tree" />
+            <field name="search_view_id" ref="view_excluidos_jujuy_search" />
+        </record>
+
+        <menuitem id="padron_excluidos_jujuy_menu" action="action_excluidos_jujuy" parent="padron_excluidos_jujuy_root_menu" sequence="10" />
+
+
+    </data>
+
+
+</odoo>

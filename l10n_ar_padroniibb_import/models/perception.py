@@ -13,6 +13,7 @@ class PerceptionPerception(models.Model):
 
     from_register_ARBA = fields.Boolean('From ARBA Register')
     from_register_AGIP = fields.Boolean('From AGIP Register')
+    from_register_SANTA_FE = fields.Boolean('From SANTA FE Register')
 
     @api.model
     def _get_perception_from_arba(self):
@@ -40,16 +41,16 @@ class PerceptionPerception(models.Model):
         else:
             return ret
 
-#    @api.model
-#    def _get_perception_from_santa_fe(self):
-#        ret = self.search([('from_register_SANTA_FE', '=', True)])
-#        if len(ret) > 1:
-#            raise ValidationError(
-#                _('Perceptions Improperly Configured\n') +
-#                _('You can not have more than one perception to update ' +
-#                  'from SANTA_FE. Please review configuration'))
-#        elif len(ret) == 0:
-#            return False
-#        else:
-#            return ret
+    @api.model
+    def _get_perception_from_santa_fe(self):
+        ret = self.search([('from_register_SANTA_FE', '=', True)])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from SANTA_FE. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
 

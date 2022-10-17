@@ -1,5 +1,7 @@
 import logging
 import os
+import tempfile
+import re
 import shlex
 from subprocess import call, STDOUT
 from shutil import rmtree
@@ -50,24 +52,24 @@ class PadronImport(models.Model):
         _logger.info('[SANTA_FE] Files extracted: ' + str(len(files)))
         if len(files) != 1:
             raise ValidationError(
-                _("Expected only one file compressed, got: %d") %
+                _('Expected one file compressed, got: %d') %
                 len(files))
-
-        # Corregimos porque los craneos de AGIP hacen mal el arhivo,
-        # metiendo ; donde no deberian ir
-        txt_path = self.correct_padron_file(files[0])
+        txt_path = self.correct_padron_santa_fe(files[0])
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
+        self.create_temporary_table()
         try:
             _logger.info('[SANTA_FE] Creando tabla temporal')
             create_q = """
             CREATE TABLE temp_import(
+            create_date varchar(8),
             vat varchar(32),
-            percentage_perception varchar(10)
+            percentage float
             )
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
             cursor.execute(create_q)
+
         except Exception:
             cursor.rollback()
             raise ValidationError(
@@ -75,16 +77,15 @@ class PadronImport(models.Model):
         else:
             cursor.commit()
 
-        _logger.info('[SANTA FE] Copiando del csv a tabla temporal')
+        _logger.info('[SANTA_FE] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat, percentage_perception) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat, percentage) FROM " + txt_path + " WITH DELIMITER ',' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
         assert retcode == 0, \
             "Call to psql subprocess copy command returned: " + str(retcode)
-
         try:
             # TODO: Creacion de los grupos de retenciones y percepciones
             _logger.info('[SANTA_FE] Verificando grupos')
@@ -92,12 +93,13 @@ class PadronImport(models.Model):
             _logger.info('[SANTA_FE] Copiando de tabla temporal a definitiva')
             query = """
             INSERT INTO padron_santa_fe_percentages
-            (create_uid, vat, write_date, write_uid,
-            percentage_perception)
+            (create_uid, write_uid,
+            vat, percentage)
             SELECT 1 as create_uid,
             1,
             vat,
-            to_number(percentage_perception, '999.99')/100
+            percentage
+            FROM temp_import
             """
             cursor.execute("DELETE FROM padron_santa_fe_percentages")
             cursor.execute(query)
@@ -107,15 +109,15 @@ class PadronImport(models.Model):
             _logger.warning('[SANTA_FE] ERROR: Rollback')
         else:
             # Mass Update
-            mass_wiz_obj = self.env['padron.mass.update']
+            mass_wiz_obj = self.env['padron.mass.update.santafe']
             wiz = mass_wiz_obj.create({
-                'arba': False,
-                'agip': False,
-                'jujuy': False,
+            #    'arba': False,
+            #    'agip': True,
+#                'jujuy': False,
                 'santa_fe': True,
             })
             # TODO
-            wiz.action_update()
+            wiz.action_update_santa_fe()
 
             cursor.commit()
             _logger.info('[SANTA_FE] SUCCESS: Fin de carga de padron de santa fe')
@@ -124,3 +126,20 @@ class PadronImport(models.Model):
             rmtree(out_path)  # Delete temp folder
             cursor.close()
         return True
+
+    def correct_padron_santa_fe(self, filename):
+        exp_reg = "(([\d,]+))(.*)"
+        regex = re.compile(exp_reg)
+        new_file_path = tempfile.mkstemp()[1]
+        with open(filename, "r", encoding='latin1') as old_file:
+            with open(new_file_path, "w", encoding='latin1') as new_file:
+                for line in old_file.readlines():
+                    reg = regex.match(line)
+                    if not reg:
+                        _logger.info("Linea de archivo ignorada: %s" % line)
+                        continue
+                    newline = reg.groups()[0]
+                    new_file.write(newline)
+                    new_file.write("\n")
+        return new_file_path
+

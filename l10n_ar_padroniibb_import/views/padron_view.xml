@@ -133,5 +133,6 @@
 
         <menuitem id="padron_agip_perceptions_retentions_menu" action="action_agip_perceptions_retentions" parent="padron_agip_root_menu" sequence="10" />
 
+
     </data>
 </odoo>

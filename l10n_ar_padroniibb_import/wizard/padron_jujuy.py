@@ -1,5 +1,7 @@
 import logging
 import os
+import tempfile
+import re
 import shlex
 from subprocess import call, STDOUT
 from shutil import rmtree
@@ -42,11 +44,9 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_914_file(self, out_path, files, province):
+    def import_910_file(self, out_path, files, province):
         _logger.info('[JUJUY] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
-
-
         _logger.info('[JUJUY] Files extracted: ' + str(len(files)))
         if len(files) != 1:
             raise ValidationError(
@@ -55,15 +55,16 @@ class PadronImport(models.Model):
 
         # Corregimos porque los craneos de AGIP hacen mal el arhivo,
         # metiendo ; donde no deberian ir
-        txt_path = self.correct_padron_file(files[0])
+        txt_path = self.correct_padron_jujuy(files[0])
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
         try:
             _logger.info('[JUJUY] Creando tabla temporal')
             create_q = """
             CREATE TABLE temp_import(
+            create_date varchar(8),
             vat varchar(32),
-            period varchar(6),
+            from_date varchar(6),
             percentage_perception varchar(10),
             percentage_retention varchar(10)
             )
@@ -80,7 +81,7 @@ class PadronImport(models.Model):
         _logger.info('[JUJUY] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat,period,percentage_perception,percentage_retention) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat,from_date,percentage_perception,percentage_retention) FROM " + txt_path + " WITH DELIMITER ',' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -94,16 +95,16 @@ class PadronImport(models.Model):
             _logger.info('[JUJUY] Copiando de tabla temporal a definitiva')
             query = """
             INSERT INTO padron_jujuy_percentages
-            (create_uid, write_date, write_uid,
-            period, percentage_perception, percentage_retention,
-            vat)
+            (create_uid, write_uid,
+            vat,from_date,
+            percentage_perception, percentage_retention)
             SELECT 1 as create_uid,
-            current_date,
             1,
-            period(period, 'YYYYMM'),
-            to_number(percentage_perception, '999.99')/100,
-            to_number(percentage_retention, '999.99')/100,
-            vat
+            vat,
+            TO_DATE(from_date, 'YYYYMM'),
+            TO_NUMBER(percentage_perception, '999.99')/100,
+            TO_NUMBER(percentage_retention, '999.99')/100
+            FROM temp_import
             """
             cursor.execute("DELETE FROM padron_jujuy_percentages")
             cursor.execute(query)
@@ -113,15 +114,15 @@ class PadronImport(models.Model):
             _logger.warning('[JUJUY] ERROR: Rollback')
         else:
             # Mass Update
-            mass_wiz_obj = self.env['padron.mass.update']
-            wiz = mass_wiz_obj.create({
-                'arba': False,
-                'agip': False,
-                'jujuy': True,
-                'santa_fe':False,
-            })
+            #mass_wiz_obj = self.env['padron.mass.update']
+            #wiz = mass_wiz_obj.create({
+            #    'arba': False,
+            #    'agip': False,
+            #    'jujuy': True,
+            #    'santa_fe':False,
+            #})
             # TODO
-            wiz.action_update(province)
+            #wiz.action_update(province)
 
             cursor.commit()
             _logger.info('[JUJUY] SUCCESS: Fin de carga de padron de jujuy')
@@ -130,3 +131,19 @@ class PadronImport(models.Model):
             rmtree(out_path)  # Delete temp folder
             cursor.close()
         return True
+
+    def correct_padron_jujuy(self, filename):
+        exp_reg = "(([\d]+,)([\d]+,)([\d.]+,)([\d.]+))(.*)"
+        regex = re.compile(exp_reg)
+        new_file_path = tempfile.mkstemp()[1]
+        with open(filename, "r", encoding='latin1') as old_file:
+            with open(new_file_path, "w", encoding='latin1') as new_file:
+                for line in old_file.readlines():
+                    reg = regex.match(line)
+                    if not reg:
+                        _logger.info("Linea de archivo ignorada: %s" % line)
+                        continue
+                    newline = reg.groups()[0]
+                    new_file.write(newline)
+                    new_file.write("\n")
+        return new_file_path

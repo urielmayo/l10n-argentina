@@ -73,16 +73,30 @@ class ArbaRetentions(models.Model):
     percentage = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
 
-#class SantaFeRetentions(models.Model):
-#    """
-#    This model represent the santa fe csv file that defines percentage
-#    of retentions and perceptions
-#    """
-#    _name = 'padron.santa_fe_percentages'
-#    _description = 'Definition of percentages of taxes by customer'
+class SantaFePerceptions(models.Model):
+    """
+    This model represent the santa fe csv file that defines percentage
+    of retentions and perceptions
+    """
+    _name = 'padron.santa_fe_percentages'
+    _description = 'Definition of percentages of taxes by customer'
 
-#    vat = fields.Char('Santa Fe code', size=15, index=1)
-#    percentage_perception = fields.Float('Percentage of perception')
+    vat = fields.Char('Santa Fe code', size=15, index=1)
+    percentage = fields.Float('Alicuota')
+
+
+class JujuyRetentions(models.Model):
+    """
+    This model represent the agip csv file that defines percentage
+    of retentions and perceptions
+    """
+    _name = 'padron.jujuy_percentages'
+    _description = 'Definition of percentages of taxes by customer'
+
+    vat = fields.Char('Jujuy code', size=15, index=1)
+    from_date = fields.Date('From date')
+    percentage_perception = fields.Float('Percentage of perception')
+    percentage_retention = fields.Float('Percentage of retention')
 
 class res_country_state(models.Model):
     _name = "res.country.state"

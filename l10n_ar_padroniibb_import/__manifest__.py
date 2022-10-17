@@ -35,6 +35,8 @@
         "views/padron_view.xml",
         "views/perception_view.xml",
         "views/retention_view.xml",
+        "views/excluidos_santa_fe.xml",
+        "views/excluidos_jujuy.xml",
         "wizard/padron_import_view.xml",
         "wizard/padron_mass_update_view.xml",
 
