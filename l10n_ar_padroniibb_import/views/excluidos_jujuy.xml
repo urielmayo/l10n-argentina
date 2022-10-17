@@ -17,6 +17,7 @@
                     <field name="from_date" />
                     <field name="percentage_perception" />
                     <field name="percentage_retention" />
+                    <field name="multilateral" />
                 </tree>
             </field>
         </record>

@@ -15,6 +15,7 @@
                 <tree string="Padron Excluidos Santa Fe">
                     <field name="vat" />
                     <field name="percentage" />
+                    <field name="multilateral" />
                 </tree>
             </field>
         </record>
