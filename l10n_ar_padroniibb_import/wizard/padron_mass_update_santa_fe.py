@@ -24,7 +24,8 @@ class PadronMassUpdateSantaFe(models.TransientModel):
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage p_percentage
+                par.percentage p_percentage,
+                par.multilateral p_multilateral
             FROM res_partner rp
                 JOIN padron_santa_fe_percentages par ON par.vat=rp.vat
             WHERE

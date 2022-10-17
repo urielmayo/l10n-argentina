@@ -83,6 +83,7 @@ class SantaFePerceptions(models.Model):
 
     vat = fields.Char('Santa Fe code', size=15, index=1)
     percentage = fields.Float('Alicuota')
+    multilateral = fields.Boolean('Is multilateral?')
 
 
 class JujuyRetentions(models.Model):
@@ -97,6 +98,7 @@ class JujuyRetentions(models.Model):
     from_date = fields.Date('From date')
     percentage_perception = fields.Float('Percentage of perception')
     percentage_retention = fields.Float('Percentage of retention')
+    multilateral = fields.Boolean('Is multilateral?')
 
 class res_country_state(models.Model):
     _name = "res.country.state"
