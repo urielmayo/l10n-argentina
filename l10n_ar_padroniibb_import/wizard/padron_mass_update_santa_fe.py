@@ -125,7 +125,7 @@ class PadronMassUpdateSantaFe(models.TransientModel):
                 par.percentage p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
-                JOIN padron_santa_fe_retention par ON par.vat=rp.vat
+                JOIN padron_santa_fe_percentages par ON par.vat=rp.vat
             WHERE
                 rp.parent_id IS NULL
                 AND rp.supplier
