@@ -170,6 +170,27 @@ class res_partner(models.Model):
         return res
 
     @api.model
+    def _check_padron_retention_santa_fe(self, vat):
+        padron_santa_fe_ret_obj = self.env['padron.santa_fe_retention']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_santa_fe_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_santa_fe()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
     def _check_padron_retention_jujuy(self, vat):
         padron_jujuy_ret_obj = self.env['padron.jujuy_retention']
         retention_obj = self.env['retention.retention']

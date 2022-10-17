@@ -140,8 +140,8 @@ class PadronImport(models.Model):
                     wiz = mass_wiz_obj.create({
                         'arba': True,
                         'agip': False,
-#                        'jujuy': False,
-#                        'santa_fe': False,
+                        'jujuy': False,
+                        'santa_fe': False,
                     })
                     # TODO
                     wiz.action_update()

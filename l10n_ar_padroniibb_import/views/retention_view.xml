@@ -10,6 +10,7 @@
                 <field name="applicable_state" position="after">
                     <field name="from_register_ARBA" />
                     <field name="from_register_AGIP" />
+                    <field name="from_register_SANTA_FE" />
                     <field name="from_register_JUJUY" />
                 </field>
             </field>
