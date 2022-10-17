@@ -171,7 +171,7 @@ class res_partner(models.Model):
 
     @api.model
     def _check_padron_retention_santa_fe(self, vat):
-        padron_santa_fe_ret_obj = self.env['padron.santa_fe_retention']
+        padron_santa_fe_ret_obj = self.env['padron.santa_fe_percentages']
         retention_obj = self.env['retention.retention']
         ret_ids = padron_santa_fe_ret_obj.search([('vat', '=', vat)])
         res = {}
@@ -192,7 +192,7 @@ class res_partner(models.Model):
 
     @api.model
     def _check_padron_retention_jujuy(self, vat):
-        padron_jujuy_ret_obj = self.env['padron.jujuy_retention']
+        padron_jujuy_ret_obj = self.env['padron.jujuy_percentages']
         retention_obj = self.env['retention.retention']
         ret_ids = padron_jujuy_ret_obj.search([('vat', '=', vat)])
         res = {}
@@ -250,6 +250,10 @@ class res_partner(models.Model):
                 ret_agip = self._check_padron_retention_agip(vat)
                 if ret_agip:
                     retentions_list.append((0, 0, ret_agip))
+
+                ret_santa_fe = self._check_padron_retention_santa_fe(vat)
+                if ret_santa_fe:
+                    retentions_list.append((0, 0, ret_santa_fe))
 
                 ret_jujuy = self._check_padron_retention_jujuy(vat)
                 if ret_jujuy:
@@ -338,8 +342,7 @@ class res_partner(models.Model):
             # porque suponemos que viene de la actualizacion masiva
             if vat:
                 if customer:
-                    # Obtenemos la percepcion desde el
-                    # padron de percepciones de ARBA
+
                     perception_ids_lst = []
                     perc_arba = partner._check_padron_perception_arba(vat)
                     if perc_arba:
@@ -388,8 +391,7 @@ class res_partner(models.Model):
                     })
 
                 if supplier:
-                    # Obtenemos la percepcion desde el padron
-                    # de percepciones de ARBA
+
                     retention_ids_lst = []
                     ret_arba = partner._check_padron_retention_arba(vat)
                     if ret_arba:
@@ -401,7 +403,11 @@ class res_partner(models.Model):
                         res_agip = partner._update_retention_partner(ret_agip)
                         retention_ids_lst.append(res_agip['retention_ids'][0])
 
-                    retention_ids_lst = []
+                    ret_santa_fe = partner._check_padron_retention_santa_fe(vat)
+                    if ret_santa_fe:
+                        res_santa_fe = partner._update_retention_partner(ret_santa_fe)
+                        retention_ids_lst.append(res_santa_fe['retention_ids'][0])
+
                     ret_jujuy = partner._check_padron_retention_jujuy(vat)
                     if ret_jujuy:
                         res_jujuy = partner._update_retention_partner(ret_jujuy)
