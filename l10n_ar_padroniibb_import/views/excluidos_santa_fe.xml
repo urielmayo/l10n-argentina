@@ -25,7 +25,7 @@
             <field name="model">padron.santa_fe_percentages</field>
             <field name="arch" type="xml">
                 <search string="Padron Excluidos Santa Fe">
-                    <field name="vat" filter_domain="['|', ('vat', 'like', self), ('name_partner', 'ilike', self)]" />
+                    <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
                 </search>
             </field>
         </record>
