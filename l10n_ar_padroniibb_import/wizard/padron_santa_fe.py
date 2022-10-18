@@ -80,7 +80,7 @@ class PadronImport(models.Model):
         _logger.info('[SANTA_FE] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat, percentage) FROM " + txt_path + " WITH DELIMITER ',' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat, percentage) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -128,7 +128,7 @@ class PadronImport(models.Model):
         return True
 
     def correct_padron_santa_fe(self, filename):
-        exp_reg = "(([\d,]+))(.*)"
+        exp_reg = "(([\d;]+))(.*)"
         regex = re.compile(exp_reg)
         new_file_path = tempfile.mkstemp()[1]
         with open(filename, "r", encoding='latin1') as old_file:
