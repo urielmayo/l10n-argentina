@@ -101,7 +101,7 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_percep)
             res = {
                 'perception_id': percep_ids[0].id,
-                'percent': padron_percep.percentage_perception,
+                'percent': padron_percep.percentage,
                 'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
