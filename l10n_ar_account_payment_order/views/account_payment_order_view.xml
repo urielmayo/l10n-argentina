@@ -379,6 +379,7 @@
                             ]"
                     />
                     <filter name="checks" string="Checks" domain="[('payment_type', '=', 'check')]"/>
+                    <filter name="transfer" string="Transfers" domain="[('payment_type', '=', 'transfer')]"/>
                     <field name="partner_id" string="Supplier" filter_domain="[('partner_id','child_of',self)]"/>
                     <field name="journal_id" widget="selection"
                         context="{'journal_id': self, 'set_visible':False}"
