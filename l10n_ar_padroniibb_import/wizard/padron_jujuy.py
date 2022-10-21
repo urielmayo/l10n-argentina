@@ -120,6 +120,7 @@ class PadronImport(models.Model):
                 'agip': False,
                 'santa_fe':False,
                 'jujuy': True,
+                'tucuman':False,
             })
             # TODO
             wiz.action_update_jujuy()

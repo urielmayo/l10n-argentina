@@ -66,6 +66,27 @@ class res_partner(models.Model):
         return res
 
     @api.model
+    def _check_padron_perception_agip_rp(self, vat):
+        padron_agip_obj = self.env['padron.agip_percentages.rp']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_agip_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_agip_rp()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
     def _check_padron_perception_arba(self, vat):
         padron_arba_per_obj = self.env['padron.arba_perception']
         perception_obj = self.env['perception.perception']
@@ -136,6 +157,26 @@ class res_partner(models.Model):
         res = {}
         if ret_ids:
             retent_ids = retention_obj._get_retention_from_agip()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_agip_rp(self, vat):
+        padron_agip_obj = self.env['padron.agip_percentages.rp']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_agip_obj.search([('vat', '=', vat)])
+        res = {}
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_agip_rp()
             if not retent_ids:
                 return res
             padron_retent = ret_ids[0]
@@ -227,6 +268,10 @@ class res_partner(models.Model):
                 if perc_agip:
                     perceptions_list.append((0, 0, perc_agip))
 
+                perc_agip_rp = self._check_padron_perception_agip_rp(vat)
+                if perc_agip_rp:
+                    perceptions_list.append((0, 0, perc_agip_rp))
+
                 perc_santa_fe = self._check_padron_perception_santa_fe(vat)
                 if perc_santa_fe:
                     perceptions_list.append((0, 0, perc_santa_fe))
@@ -250,6 +295,10 @@ class res_partner(models.Model):
                 ret_agip = self._check_padron_retention_agip(vat)
                 if ret_agip:
                     retentions_list.append((0, 0, ret_agip))
+
+                ret_agip_rp = self._check_padron_retention_agip_rp(vat)
+                if ret_agip_rp:
+                    retentions_list.append((0, 0, ret_agip_rp))
 
                 ret_santa_fe = self._check_padron_retention_santa_fe(vat)
                 if ret_santa_fe:
@@ -358,6 +407,13 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_agip['perception_ids'][0])
 
+                    perc_agip_rp = partner._check_padron_perception_agip_rp(vat)
+                    if perc_agip_rp:
+                        res_agip_rp = partner._update_perception_partner(
+                            perc_agip_rp)
+                        perception_ids_lst.append(
+                            res_agip_rp['perception_ids'][0])
+
                     perc_santa_fe = partner._check_padron_perception_santa_fe(vat)
                     if perc_santa_fe:
                         res_santa_fe = partner._update_perception_partner(
@@ -402,6 +458,12 @@ class res_partner(models.Model):
                     if ret_agip:
                         res_agip = partner._update_retention_partner(ret_agip)
                         retention_ids_lst.append(res_agip['retention_ids'][0])
+
+                    ret_agip_rp = partner._check_padron_retention_agip_rp(vat)
+                    if ret_agip_rp:
+                        res_agip_rp = partner._update_retention_partner(ret_agip_rp)
+                        retention_ids_lst.append(res_agip_rp['retention_ids'][0])
+
 
                     ret_santa_fe = partner._check_padron_retention_santa_fe(vat)
                     if ret_santa_fe:

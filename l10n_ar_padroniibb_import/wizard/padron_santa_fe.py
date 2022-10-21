@@ -45,6 +45,7 @@ class PadronImport(models.Model):
 
     @api.model
     def import_921_file(self, out_path, files, province):
+
         _logger.info('[SANTA_FE] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
@@ -54,6 +55,7 @@ class PadronImport(models.Model):
             raise ValidationError(
                 _('Expected one file compressed, got: %d') %
                 len(files))
+
         txt_path = self.correct_padron_santa_fe(files[0])
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
@@ -115,6 +117,7 @@ class PadronImport(models.Model):
                 'agip': False,
                 'santa_fe': True,
                 'jujuy': False,
+                'tucuman':False,
             })
             # TODO
             wiz.action_update_santa_fe()

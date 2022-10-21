@@ -55,12 +55,15 @@ class PadronImport(models.Model):
 
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
+
         for file_name in files:
             txt_path = "'" + file_name + "'"
+
             if 'Ret' in file_name:
                 _logger.info('[ARBA] Ret - Inicio de carga ')
                 # copiar a postgresql padron_arba_retention
                 self.create_temporary_table()
+
                 _logger.info('[ARBA] Ret - Copiando a tabla temporal')
                 psql_args_list = [
                     "psql",
@@ -142,6 +145,7 @@ class PadronImport(models.Model):
                         'agip': False,
                         'jujuy': False,
                         'santa_fe': False,
+                        'tucuman':False,
                     })
                     # TODO
                     wiz.action_update()

@@ -43,105 +43,173 @@ class PadronImport(models.Model):
 
     @api.model
     def import_agip_file(self, out_path, files, province):
+        print("Files: ",files)
         _logger.info('[AGIP] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
-
         _logger.info('[AGIP] Files extracted: ' + str(len(files)))
+
         if len(files) != 1:
             raise ValidationError(
                 _("Expected only one file compressed, got: %d") %
                 len(files))
 
-        # Corregimos porque los craneos de AGIP hacen mal el arhivo,
-        # metiendo ; donde no deberian ir
-        txt_path = self.correct_padron_file(files[0])
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
+
+        # Corregimos porque los craneos de AGIP hacen mal el arhivo,
+        # metiendo ; donde no deberian ir
+        for file_name in files:
+            if "ARDJU0" in file_name:
+                print("hello")
+                txt_path = self.correct_padron_file(files[0])
+                self.create_temp_table(cursor)
+
+                _logger.info('[AGIP] Copiando del csv a tabla temporal')
+                psql_args_list = [
+                    "psql",
+                    "--command=\copy temp_import(create_date,from_date,to_date,vat,multilateral,u1,u2,percentage_perception,percentage_retention,group_per,group_ret,name_partner) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+                ]
+                psql_args_list[1:1] = dsn_pg_splitted
+                retcode = call(psql_args_list, stderr=STDOUT)
+                assert retcode == 0, \
+                    "Call to psql subprocess copy command returned: " + str(retcode)
+                try:
+                    # TODO: Creacion de los grupos de retenciones y percepciones
+                    _logger.info('[AGIP] Verificando grupos')
+                    _logger.info('[AGIP] Copiando de tabla temporal a definitiva')
+                    query = """
+                        INSERT INTO padron_agip_percentages
+                        (create_uid, create_date, write_date, write_uid,
+                        from_date, to_date, percentage_perception, percentage_retention,
+                        vat, multilateral, name_partner)
+                        SELECT 1 as create_uid,
+                        to_date(create_date, 'DDMMYYYY'),
+                        current_date,
+                        1,
+                        to_date(from_date, 'DDMMYYYY'),
+                        to_date(to_date, 'DDMMYYYY'),
+                        to_number(percentage_perception, '999.99')/100,
+                        to_number(percentage_retention, '999.99')/100,
+                        vat,
+                        (CASE
+                            WHEN multilateral = 'C' THEN True
+                            ELSE False
+                        END) as multilateral,
+                        name_partner FROM temp_import
+                        """
+                    cursor.execute("DELETE FROM padron_agip_percentages")
+                    cursor.execute(query)
+                    cursor.execute("DROP TABLE IF EXISTS temp_import")
+                except Exception:
+                    cursor.rollback()
+                    _logger.warning('[AGIP] ERROR: Rollback')
+                else:
+                    # Mass Update
+                    mass_wiz_obj = self.env['padron.mass.update']
+                    wiz = mass_wiz_obj.create({
+                        'arba': False,
+                        'agip': True,
+                        'agip_rp': False,
+                        'jujuy': False,
+                        'santa_fe': False,
+                        'tucuman':False,
+                    })
+                    # TODO
+                    wiz.action_update()
+
+                    cursor.commit()
+                    _logger.info('[AGIP] SUCCESS: Fin de carga de padron de agip')
+
+            if "REG" in file_name:
+                txt_path = self.correct_padron_file(files[0])
+                self.create_temp_table(cursor)
+
+                _logger.info('[AGIP] Copiando del csv a tabla temporal')
+                psql_args_list = [
+                    "psql",
+                    "--command=\copy temp_import(create_date,from_date,to_date,vat,multilateral,u1,u2,percentage_perception,percentage_retention,group_per,group_ret,name_partner) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+                ]
+                psql_args_list[1:1] = dsn_pg_splitted
+                retcode = call(psql_args_list, stderr=STDOUT)
+                assert retcode == 0, \
+                    "Call to psql subprocess copy command returned: " + str(retcode)
+                try:
+                    # TODO: Creacion de los grupos de retenciones y percepciones
+                    _logger.info('[AGIP] Verificando grupos')
+                    _logger.info('[AGIP] Copiando de tabla temporal a definitiva')
+                    query = """
+                        INSERT INTO padron_agip_percentages_rp
+                        (create_uid, create_date, write_date, write_uid,
+                        from_date, to_date, percentage_perception, percentage_retention,
+                        vat, multilateral, name_partner)
+                        SELECT 1 as create_uid,
+                        to_date(create_date, 'DDMMYYYY'),
+                        current_date,
+                        1,
+                        to_date(from_date, 'DDMMYYYY'),
+                        to_date(to_date, 'DDMMYYYY'),
+                        to_number(percentage_perception, '999.99')/100,
+                        to_number(percentage_retention, '999.99')/100,
+                        vat,
+                        (CASE
+                            WHEN multilateral = 'C' THEN True
+                            ELSE False
+                        END) as multilateral,
+                        name_partner FROM temp_import
+                        """
+                    cursor.execute("DELETE FROM padron_agip_percentages_rp")
+                    cursor.execute(query)
+                    cursor.execute("DROP TABLE IF EXISTS temp_import")
+                except Exception:
+                    cursor.rollback()
+                    _logger.warning('[AGIP] ERROR: Rollback')
+                else:
+                    # Mass Update
+                    mass_wiz_obj = self.env['padron.mass.update']
+                    wiz = mass_wiz_obj.create({
+                        'arba': False,
+                        'agip': False,
+                        'agip_rp': True,
+                        'jujuy': False,
+                        'santa_fe': False,
+                        'tucuman':False,
+                    })
+                    # TODO
+                    wiz.action_update()
+
+                    cursor.commit()
+                    _logger.info('[AGIP] SUCCESS: Fin de carga de padron de agip rp')
+
+                finally:
+                    rmtree(out_path)  # Delete temp folder
+            cursor.close()
+        return True
+
+    def create_temp_table(self, cursor):
         try:
             _logger.info('[AGIP] Creando tabla temporal')
             create_q = """
-            CREATE TABLE temp_import(
-            create_date varchar(8),
-            from_date varchar(8),
-            to_date varchar(8),
-            vat varchar(32),
-            multilateral varchar(2),
-            u1 varchar,
-            u2 varchar,
-            percentage_perception varchar(10),
-            percentage_retention varchar(10),
-            group_per varchar,
-            group_ret varchar,
-            name_partner varchar
-            )
-            """
+                    CREATE TABLE temp_import(
+                    create_date varchar(8),
+                    from_date varchar(8),
+                    to_date varchar(8),
+                    vat varchar(32),
+                    multilateral varchar(2),
+                    u1 varchar,
+                    u2 varchar,
+                    percentage_perception varchar(10),
+                    percentage_retention varchar(10),
+                    group_per varchar,
+                    group_ret varchar,
+                    name_partner varchar
+                    )
+                """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
             cursor.execute(create_q)
         except Exception:
             cursor.rollback()
-            raise ValidationError(
-                _("Could not create the temporary table with the file data"))
+            raise ValidationError(_("Could not create the temporary table with the file data"))
         else:
             cursor.commit()
-
-        _logger.info('[AGIP] Copiando del csv a tabla temporal')
-        psql_args_list = [
-            "psql",
-            "--command=\copy temp_import(create_date,from_date,to_date,vat,multilateral,u1,u2,percentage_perception,percentage_retention,group_per,group_ret,name_partner) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
-        ]
-        psql_args_list[1:1] = dsn_pg_splitted
-        retcode = call(psql_args_list, stderr=STDOUT)
-        assert retcode == 0, \
-            "Call to psql subprocess copy command returned: " + str(retcode)
-
-        try:
-            # TODO: Creacion de los grupos de retenciones y percepciones
-            _logger.info('[AGIP] Verificando grupos')
-
-            _logger.info('[AGIP] Copiando de tabla temporal a definitiva')
-            query = """
-            INSERT INTO padron_agip_percentages
-            (create_uid, create_date, write_date, write_uid,
-            from_date, to_date, percentage_perception, percentage_retention,
-            vat, multilateral, name_partner)
-            SELECT 1 as create_uid,
-            to_date(create_date, 'DDMMYYYY'),
-            current_date,
-            1,
-            to_date(from_date, 'DDMMYYYY'),
-            to_date(to_date, 'DDMMYYYY'),
-            to_number(percentage_perception, '999.99')/100,
-            to_number(percentage_retention, '999.99')/100,
-            vat,
-            (CASE
-                WHEN multilateral = 'C' THEN True
-                ELSE False
-            END) as multilateral,
-            name_partner FROM temp_import
-            """
-            cursor.execute("DELETE FROM padron_agip_percentages")
-            cursor.execute(query)
-            cursor.execute("DROP TABLE IF EXISTS temp_import")
-        except Exception:
-            cursor.rollback()
-            _logger.warning('[AGIP] ERROR: Rollback')
-        else:
-            # Mass Update
-            mass_wiz_obj = self.env['padron.mass.update']
-            wiz = mass_wiz_obj.create({
-                'arba': False,
-                'agip': True,
-#                'jujuy': False,
-#                'santa_fe': False,
-            })
-            # TODO
-            wiz.action_update()
-
-            cursor.commit()
-            _logger.info('[AGIP] SUCCESS: Fin de carga de padron de agip')
-
-        finally:
-            rmtree(out_path)  # Delete temp folder
-            cursor.close()
         return True
