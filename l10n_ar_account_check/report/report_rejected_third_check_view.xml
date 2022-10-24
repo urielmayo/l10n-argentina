@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_rejected_report_xls" model="ir.actions.report">
+            <field name="name">Report rejected checks</field>
+            <field name="model">account.third.check</field>
+            <field name="type">ir.actions.report</field>
+            <field name="report_name">report_xlsx.report_rejected_third_check</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_file">rejected_third_checks</field>
+        </record>
+    </data>
+</odoo>

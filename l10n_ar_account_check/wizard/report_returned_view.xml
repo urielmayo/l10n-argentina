@@ -47,5 +47,45 @@
                   parent="menu_treasury_issued_check_menu"
         />
 
+        <record id="third_check_report_wizard_form" model="ir.ui.view">
+            <field name="name">rejected.third.check.report.wizard.form</field>
+            <field name="model">rejected.third.check.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="date_since" class="oe_inline"/>
+                            <field name="date_to" class="oe_inline"/>
+                        </group>
+                        <group>
+                            <field name="reason_id" class="oe_inline"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="check_qty" class="oe_inline"/>
+                    </group>
+                    <footer>
+                        <button type="object" name="print_report" string="Print report" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="report_rejected_third_check_wizard_action" model="ir.actions.act_window">
+            <field name="name">Report Rejected Check</field>
+            <field name="res_model">rejected.third.check.report</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="third_check_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_rejected_third_check_wizard"
+                  action="report_rejected_third_check_wizard_action"
+                  name="Report Rejected Check"
+                  parent="menu_treasury_third_check_menu"
+        />
+
     </data>
 </odoo>
