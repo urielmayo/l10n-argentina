@@ -355,6 +355,7 @@
                                 <field name="source_payment_order_id"/>
                                 <field name="debit_note_id"/>
                                 <field name="reject_date" states="rejected"/>
+                                <field name="reason_id" states="rejected" default_focus="1"/>
                             </group>
                         </group>
                         <group string="Additional Information">
