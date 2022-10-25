@@ -24,7 +24,7 @@ class PadronMassUpdateCordoba(models.TransientModel):
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage p_percentage,
+                par.percentage_perception p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
                 JOIN padron_cordoba_perception par ON par.vat=rp.vat
