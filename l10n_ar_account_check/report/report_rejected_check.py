@@ -9,8 +9,8 @@ def write_header(workbook):
     header_format.set_bg_color('#FFCCCC')
 
     sheet = workbook.add_worksheet('report')
-    header = ['Número de cheque', 'Proveedor', 'Monto', 'Orden de pago', 'Motivo de devolución',
-              'Reemplazado', 'Observaciones']
+    header = ['Fecha de rechazo', 'Número de cheque', 'Cliente', 'Monto', 'Documento de origen', 'Motivo de rechazo',
+              'Observaciones']
     sheet.write_row(0, 0, header, header_format)
     return sheet
 
@@ -20,22 +20,27 @@ def write_lines(workbook, lines):
     sheet = workbook.worksheets()[0]
 
     for i, check in enumerate(lines):
-        sheet.write(i+1, 0, check.number, font_format)
-        sheet.write(i+1, 1, check.receiving_partner_id.name, font_format)
-        sheet.write(i+1, 2, check.amount, money_format)
-        sheet.write(i+1, 3, check.payment_order_id.number, font_format)
-        sheet.write(i+1, 4, check.reason_id.code + ' - ' + check.reason_id.name if check.reason_id else '-', font_format)
-        sheet.write(i+1, 5, check.replacement_payment_order_id.number if check.replaced else 'No', font_format)
+        reason_name = '-'
+        if check.reason_id:
+            reason_name = check.reason_id.code or ''
+            reason_name += ' - ' + check.reason_id.name
+
+        sheet.write(i+1, 0, check.reject_date, font_format)
+        sheet.write(i+1, 1, check.number, font_format)
+        sheet.write(i+1, 2, check.source_partner_id.name, font_format)
+        sheet.write(i+1, 3, check.amount, money_format)
+        sheet.write(i+1, 4, check.source_payment_order_id.number, font_format)
+        sheet.write(i+1, 5, reason_name, font_format),
         sheet.write(i+1, 6, check.note if check.note else '-', font_format)
 
 
-class ReturnedReportXlsx(models.AbstractModel):
-    _name = 'report.report_xlsx.report_returned_check'
+class RejectedReportXlsx(models.AbstractModel):
+    _name = 'report.report_xlsx.report_rejected_third_check'
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, record):
         # data
-        returned_checks = self.env['account.issued.check'].browse(data['ids'])
+        rejected_checks = self.env['account.third.check'].browse(data['ids'])
 
         # header
         sheet = write_header(workbook)
@@ -47,4 +52,4 @@ class ReturnedReportXlsx(models.AbstractModel):
         sheet.set_column(6, 6, 22)
 
         # lines
-        write_lines(workbook, returned_checks)
+        write_lines(workbook, rejected_checks)

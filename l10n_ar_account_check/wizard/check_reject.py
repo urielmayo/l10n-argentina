@@ -24,7 +24,7 @@ class AccountCheckReject(models.Model):
         res = journal_obj.search(domain, limit=1)
         return res and res.id or False
 
-    reject_date = fields.Date(string='Reject Date', required=True)
+    reject_date = fields.Date(string='Reject Date', default=fields.Date.context_today, required=True)
     reason_id = fields.Many2one(
         comodel_name='reason.rejected.check', string='Reason',
         domain="[('type', '=', 'rejected')]")
