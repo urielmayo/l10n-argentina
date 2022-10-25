@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <!-- Padron Excluidos cordoba -->
+        <menuitem id="padron_excluidos_cordoba_root_menu" name="Padron Cordoba" parent="padrones_root_menu" sequence="10" />
+
+        <!-- Padron AGIP -->
+        <record model="ir.ui.view" id="view_excluidos_cordoba_tree">
+            <field name="name">excluidos.cordoba.tree</field>
+            <field name="model">padron.cordoba_perception</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Padron Cordoba">
+                    <field name="vat" />
+                    <field name="from_date" />
+                    <field name="to_date" />
+                    <field name="percentage_perception" />
+                    <field name="multilateral" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_excluidos_cordoba_search" model="ir.ui.view">
+            <field name="name">excluidos.cordoba.search</field>
+            <field name="model">padron.cordoba_perception</field>
+            <field name="arch" type="xml">
+                <search string="Padron Cordoba">
+                    <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
+                </search>
+            </field>
+        </record>
+
+        <record id="action_excluidos_cordoba" model="ir.actions.act_window">
+            <field name="name">Cordoba</field>
+            <field name="res_model">padron.cordoba_perception</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_excluidos_cordoba_tree" />
+            <field name="search_view_id" ref="view_excluidos_cordoba_search" />
+        </record>
+
+        <menuitem id="padron_excluidos_cordoba_menu" action="action_excluidos_cordoba" parent="padron_excluidos_cordoba_root_menu" sequence="10" />
+
+
+    </data>
+
+
+</odoo>

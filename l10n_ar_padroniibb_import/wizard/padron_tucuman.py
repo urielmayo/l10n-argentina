@@ -45,7 +45,7 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_924_file(self, out_path, files, province):
+    def import_924_file(self, out_path, files):
 
         _logger.info("[TUCUMAN] Inicio de importacion")
         dsn_pg_splitted = get_dsn_pg(self.env.cr)  # Configuracion base de datos

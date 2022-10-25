@@ -37,6 +37,7 @@
         "views/retention_view.xml",
         "views/excluidos_santa_fe.xml",
         "views/excluidos_jujuy.xml",
+        "views/excluidos_cordoba.xml",
         "wizard/padron_import_view.xml",
         "wizard/padron_mass_update_view.xml",
 

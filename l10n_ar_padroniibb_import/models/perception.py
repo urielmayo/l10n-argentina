@@ -16,6 +16,7 @@ class PerceptionPerception(models.Model):
     from_register_AGIP_RP = fields.Boolean('From AGIP Register')
     from_register_SANTA_FE = fields.Boolean('From SANTA FE Register')
     from_register_JUJUY = fields.Boolean('From JUJUY Register')
+    from_register_CORDOBA = fields.Boolean('From CORDOBA Register')
     from_register_TUCUMAN = fields.Boolean('From TUCUMAN Register')
 
     @api.model
@@ -76,7 +77,20 @@ class PerceptionPerception(models.Model):
             raise ValidationError(
                 _('Perceptions Improperly Configured\n') +
                 _('You can not have more than one perception to update ' +
-                  'from SANTA_FE. Please review configuration'))
+                  'from JUJUY. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_perception_from_cordoba(self):
+        ret = self.search([('from_register_CORDOBA', '=', True)])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from CORDOBA. Please review configuration'))
         elif len(ret) == 0:
             return False
         else:

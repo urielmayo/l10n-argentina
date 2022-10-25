@@ -150,6 +150,27 @@ class res_partner(models.Model):
         return res
 
     @api.model
+    def _check_padron_perception_cordoba(self, vat):
+        padron_cordoba_obj = self.env['padron.cordoba_perception']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_cordoba_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_cordoba()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
     def _check_padron_retention_agip(self, vat):
         padron_agip_obj = self.env['padron.agip_percentages']
         retention_obj = self.env['retention.retention']
@@ -279,6 +300,10 @@ class res_partner(models.Model):
                 perc_jujuy = self._check_padron_perception_jujuy(vat)
                 if perc_jujuy:
                     perceptions_list.append((0, 0, perc_jujuy))
+
+                perc_cordoba = self._check_padron_perception_cordoba(vat)
+                if perc_cordoba:
+                    perceptions_list.append((0, 0, perc_cordoba))
 
                 vals['perception_ids'] = perceptions_list
 
@@ -428,6 +453,13 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_jujuy['perception_ids'][0])
 
+                    perc_cordoba = partner._check_padron_perception_cordoba(vat)
+                    if perc_cordoba:
+                        res_cordoba = partner._update_perception_partner(
+                            perc_cordoba)
+                        perception_ids_lst.append(
+                            res_cordoba['perception_ids'][0])
+
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
                             vals['perception_ids'], perception_ids_lst)
@@ -463,7 +495,6 @@ class res_partner(models.Model):
                     if ret_agip_rp:
                         res_agip_rp = partner._update_retention_partner(ret_agip_rp)
                         retention_ids_lst.append(res_agip_rp['retention_ids'][0])
-
 
                     ret_santa_fe = partner._check_padron_retention_santa_fe(vat)
                     if ret_santa_fe:

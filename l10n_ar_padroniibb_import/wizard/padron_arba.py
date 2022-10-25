@@ -42,7 +42,7 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_arba_file(self, out_path, files, province):
+    def import_arba_file(self, out_path, files):
         _logger.info('[ARBA] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
@@ -143,9 +143,11 @@ class PadronImport(models.Model):
                     wiz = mass_wiz_obj.create({
                         'arba': True,
                         'agip': False,
+                        'agip_rp': False,
                         'jujuy': False,
                         'santa_fe': False,
-                        'tucuman':False,
+                        'tucuman': False,
+                        'cordoba' : False,
                     })
                     # TODO
                     wiz.action_update()

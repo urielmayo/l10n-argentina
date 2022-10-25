@@ -42,8 +42,7 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_agip_file(self, out_path, files, province):
-        print("Files: ",files)
+    def import_agip_file(self, out_path, files):
         _logger.info('[AGIP] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
 
@@ -61,7 +60,6 @@ class PadronImport(models.Model):
         # metiendo ; donde no deberian ir
         for file_name in files:
             if "ARDJU0" in file_name:
-                print("hello")
                 txt_path = self.correct_padron_file(files[0])
                 self.create_temp_table(cursor)
 
@@ -174,6 +172,7 @@ class PadronImport(models.Model):
                         'jujuy': False,
                         'santa_fe': False,
                         'tucuman':False,
+                        'cordoba' : False,
                     })
                     # TODO
                     wiz.action_update()

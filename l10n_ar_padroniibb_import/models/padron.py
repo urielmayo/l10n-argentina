@@ -148,6 +148,20 @@ class TucumanCoefiecient(models.Model):
     sit_iibb = fields.Boolean('Is multilateral?')
     coeficiente = fields.Float("Coeficiente")
 
+class CordobaPerceptions(models.Model):
+    """
+    This model represent de ARBA csv file that
+    defines percentage of perceptions
+    """
+    _name = 'padron.cordoba_perception'
+    _description = 'Definition of arba percentages of perception'
+
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage_perception = fields.Float('Percentage of perception')
+    multilateral = fields.Boolean('Is multilateral?')
+
 
 class res_country_state(models.Model):
     _name = "res.country.state"

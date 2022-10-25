@@ -13,7 +13,7 @@
                     <field name="from_register_AGIP_RP" string="AGIP RP" />
                     <field name="from_register_SANTA_FE" string="SANTA FE" />
                     <field name="from_register_JUJUY" string="JUJUY" />
-                    <field name="from_register_TUCUMAN" string="TUCUMAN" />
+                    <!--<field name="from_register_TUCUMAN" string="TUCUMAN" />-->
                 </field>
             </field>
         </record>

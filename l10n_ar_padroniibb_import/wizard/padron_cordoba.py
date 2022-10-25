@@ -44,10 +44,10 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_910_file(self, out_path, files):
-        _logger.info('[JUJUY] Inicio de importacion')
+    def import_904_file(self, out_path, files):
+        _logger.info('[CORDOBA] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
-        _logger.info('[JUJUY] Files extracted: ' + str(len(files)))
+        _logger.info('[CORDOBA] Files extracted: ' + str(len(files)))
         if len(files) != 1:
             raise ValidationError(
                 _("Expected only one file compressed, got: %d") %
@@ -55,19 +55,22 @@ class PadronImport(models.Model):
 
         # Corregimos porque los craneos de AGIP hacen mal el arhivo,
         # metiendo ; donde no deberian ir
-        txt_path = self.correct_padron_jujuy(files[0])
+        txt_path = self.correct_padron_cordoba(files[0])
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
         try:
-            _logger.info('[JUJUY] Creando tabla temporal')
+            _logger.info('[CORDOBA] Creando tabla temporal')
             create_q = """
             CREATE TABLE temp_import(
-            create_date varchar(8),
-            vat varchar(32),
-            from_date varchar(6),
-            percentage_perception varchar(10),
-            percentage_retention varchar(10)
-            )
+                regimen varchar(1),
+                create_date varchar(8),
+                from_date varchar(8),
+                to_date varchar(8),
+                vat varchar(32),
+                multilateral varchar(2),
+                u1 varchar,
+                u2 varchar,
+                percentage_perception varchar(10))
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
             cursor.execute(create_q)
@@ -78,10 +81,10 @@ class PadronImport(models.Model):
         else:
             cursor.commit()
 
-        _logger.info('[JUJUY] Copiando del csv a tabla temporal')
+        _logger.info('[CORDOBA] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat,from_date,percentage_perception,percentage_retention) FROM " + txt_path + " WITH DELIMITER ',' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(regimen,create_date,from_date,to_date,vat,multilateral,u1,u2,percentage_perception) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -90,53 +93,58 @@ class PadronImport(models.Model):
 
         try:
             # TODO: Creacion de los grupos de retenciones y percepciones
-            _logger.info('[JUJUY] Verificando grupos')
+            _logger.info('[CORDOBA] Verificando grupos')
 
-            _logger.info('[JUJUY] Copiando de tabla temporal a definitiva')
+            _logger.info('[CORDOBA] Copiando de tabla temporal a definitiva')
             query = """
-            INSERT INTO padron_jujuy_percentages
-            (create_uid, write_uid,
-            vat,from_date,
-            percentage_perception, percentage_retention)
+            INSERT INTO padron_cordoba_perception
+            (create_uid, create_date, write_date, write_uid,
+            vat, percentage_perception, from_date, to_date, multilateral)
             SELECT 1 as create_uid,
-            1,
-            vat,
-            TO_DATE(from_date, 'YYYYMM'),
-            TO_NUMBER(percentage_perception, '999.99')/100,
-            TO_NUMBER(percentage_retention, '999.99')/100
-            FROM temp_import
+                    to_date(create_date,'DDMMYYYY'),
+                    current_date,
+                    1,
+                    vat,
+                    to_number(percentage_perception, '999.99')/100,
+                    to_date(from_date,'DDMMYYYY'),
+                    to_date(to_date,'DDMMYYYY'),
+                    (CASE
+                        WHEN multilateral = 'C'
+                        THEN True ELSE False
+                    END) as multilateral
+                    FROM temp_import
             """
-            cursor.execute("DELETE FROM padron_jujuy_percentages")
+            cursor.execute("DELETE FROM padron_cordoba_perception")
             cursor.execute(query)
             cursor.execute("DROP TABLE IF EXISTS temp_import")
         except Exception:
             cursor.rollback()
-            _logger.warning('[JUJUY] ERROR: Rollback')
+            _logger.warning('[CORDOBA] ERROR: Rollback')
         else:
             # Mass Update
-            mass_wiz_obj = self.env['padron.mass.update.jujuy']
+            mass_wiz_obj = self.env['padron.mass.update.cordoba']
             wiz = mass_wiz_obj.create({
                 'arba': False,
                 'agip': False,
-                'agip_rp': False,
-                'santa_fe': False,
-                'jujuy': True,
-                'tucuman': False,
-                'cordoba': False,
+                'agip_rp':False,
+                'santa_fe':False,
+                'jujuy': False,
+                'tucuman':False,
+                'cordoba' : True,
             })
             # TODO
-            wiz.action_update_jujuy()
+            wiz.action_update_cordoba()
 
             cursor.commit()
-            _logger.info('[JUJUY] SUCCESS: Fin de carga de padron de jujuy')
+            _logger.info('[CORDOBA] SUCCESS: Fin de carga de padron de cordoba')
 
         finally:
             rmtree(out_path)  # Delete temp folder
-            cursor.close()
+        cursor.close()
         return True
 
-    def correct_padron_jujuy(self, filename):
-        exp_reg = "(([\d]+,)([\d]+,)([\d.]+,)([\d.]+))(.*)"
+    def correct_padron_cordoba(self, filename):
+        exp_reg = "(.*)"
         regex = re.compile(exp_reg)
         new_file_path = tempfile.mkstemp()[1]
         with open(filename, "r", encoding='latin1') as old_file:
