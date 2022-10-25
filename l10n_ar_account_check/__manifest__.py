@@ -51,6 +51,7 @@
         'views/account_invoice_view.xml',
         'wizard/report_returned_view.xml',
         'report/report_returned_check_view.xml',
+        'report/report_rejected_third_check_view.xml',
     ],
     'qweb': [
         'static/src/xml/reverse_payment.xml',

@@ -20,3 +20,4 @@
 "access_account_returned_check","account.returned.check manager","model_account_returned_check","treasury_manager",1,1,1,1
 "access_account_returned_check_report","account.returned.check.report manager","model_account_returned_check_report","treasury_manager",1,1,1,1
 "access_account_checkbook_limit","account.checkbook.limit manager","model_account_checkbook_limit","treasury_manager",1,1,1,1
+"access_rejected_third_check_report","rejected.third.check.report manager","model_rejected_third_check_report","treasury_manager",1,1,1,1
