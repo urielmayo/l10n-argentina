@@ -119,7 +119,6 @@ class PadronMassUpdateCordoba(models.TransientModel):
     @api.multi
     def action_update_cordoba(self):
         perception_obj = self.env['perception.perception']
-        retention_obj = self.env['retention.retention']
 
         if self.cordoba:
             # Actualizamos Percepciones
@@ -131,11 +130,4 @@ class PadronMassUpdateCordoba(models.TransientModel):
                       "from Padron CORDOBA"))
             self._update_perception_cordoba(percep_cordoba[0])
 
-            retent_cordoba = retention_obj._get_retention_from_cordoba()
-            if not retent_cordoba:
-                raise ValidationError(
-                    _("Retention Error!\n") +
-                    _("There is no retention configured to update " +
-                      "from Padron CORDOBA"))
-            self._update_retention_cordoba(retent_cordoba[0])
 
