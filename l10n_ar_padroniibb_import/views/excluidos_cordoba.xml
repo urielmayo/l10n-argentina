@@ -4,7 +4,7 @@
     <data>
 
         <!-- Padron Excluidos cordoba -->
-        <menuitem id="padron_excluidos_cordoba_root_menu" name="Padron Cordoba" parent="padrones_root_menu" sequence="10" />
+        <menuitem id="padron_excluidos_cordoba_root_menu" name="Padrón Cordoba" parent="padrones_root_menu" sequence="10" />
 
         <!-- Padron AGIP -->
         <record model="ir.ui.view" id="view_excluidos_cordoba_tree">
@@ -12,12 +12,14 @@
             <field name="model">padron.cordoba_perception</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Padron Cordoba">
-                    <field name="vat" />
+                <tree string="Padrón Cordoba">
                     <field name="from_date" />
                     <field name="to_date" />
+                    <field name="name_partner" invisible="1" />
+                    <field name="vat" />
                     <field name="percentage_perception" />
                     <field name="multilateral" />
+                    <field name="name_partner" />
                 </tree>
             </field>
         </record>
@@ -43,8 +45,5 @@
 
         <menuitem id="padron_excluidos_cordoba_menu" action="action_excluidos_cordoba" parent="padron_excluidos_cordoba_root_menu" sequence="10" />
 
-
     </data>
-
-
 </odoo>

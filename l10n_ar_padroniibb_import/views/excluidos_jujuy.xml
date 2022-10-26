@@ -4,7 +4,7 @@
     <data>
 
         <!-- Padron Excluidos Jujuy -->
-        <menuitem id="padron_excluidos_jujuy_root_menu" name="Padron Excluidos jujuy" parent="padrones_root_menu" sequence="10" />
+        <menuitem id="padron_excluidos_jujuy_root_menu" name="Padrón jujuy" parent="padrones_root_menu" sequence="10" />
 
         <!-- Padron AGIP -->
         <record model="ir.ui.view" id="view_excluidos_jujuy_tree">
@@ -12,12 +12,15 @@
             <field name="model">padron.jujuy_percentages</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Padron Excluidos Jujuy">
-                    <field name="vat" />
+                <tree string="Padrón Jujuy">
                     <field name="from_date" />
-                    <field name="percentage_perception" />
+                    <field name="to_date" />
+                    <field name="name_partner" invisible="1" />
+                    <field name="vat" />
                     <field name="percentage_retention" />
+                    <field name="percentage_perception" />
                     <field name="multilateral" />
+                    <field name="name_partner" />
                 </tree>
             </field>
         </record>
@@ -26,14 +29,14 @@
             <field name="name">excluidos.jujuy.search</field>
             <field name="model">padron.jujuy_percentages</field>
             <field name="arch" type="xml">
-                <search string="Padron Excluidos Jujuy">
+                <search string="Padrón Jujuy">
                     <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
                 </search>
             </field>
         </record>
 
         <record id="action_excluidos_jujuy" model="ir.actions.act_window">
-            <field name="name">Excluidos Jujuy</field>
+            <field name="name">Jujuy</field>
             <field name="res_model">padron.jujuy_percentages</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

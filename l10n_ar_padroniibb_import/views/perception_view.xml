@@ -8,12 +8,13 @@
             <field name="inherit_id" ref="l10n_ar_perceptions.view_perception_perception_form" />
             <field name="arch" type="xml">
                 <field name="code" position="after">
-                    <field name="from_register_ARBA" string="ARBA" />
+                    <field name="from_register" />
+                    <!--<field name="from_register_ARBA" string="ARBA" />
                     <field name="from_register_AGIP" string="AGIP" />
                     <field name="from_register_AGIP_RP" string="AGIP RP" />
                     <field name="from_register_SANTA_FE" string="SANTA FE" />
                     <field name="from_register_JUJUY" string="JUJUY" />
-                    <field name="from_register_CORDOBA" string="CORDOBA" />
+                    <field name="from_register_CORDOBA" string="CORDOBA" />-->
                 </field>
             </field>
         </record>

@@ -66,7 +66,7 @@ class PadronImport(models.Model):
             CREATE TABLE temp_import(
             create_date varchar(8),
             vat varchar(32),
-            percentage float
+            percentage_perception float
             )
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
@@ -82,7 +82,7 @@ class PadronImport(models.Model):
         _logger.info('[SANTA_FE] Copiando del csv a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat, percentage) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat, percentage_perception) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -100,7 +100,7 @@ class PadronImport(models.Model):
             SELECT 1 as create_uid,
             1,
             vat,
-            percentage
+            percentage_perception
             FROM temp_import
             """
             cursor.execute("DELETE FROM padron_santa_fe_percentages")
@@ -113,13 +113,7 @@ class PadronImport(models.Model):
             # Mass Update
             mass_wiz_obj = self.env['padron.mass.update.santafe']
             wiz = mass_wiz_obj.create({
-                'arba': False,
-                'agip': False,
-                'agip_rp': False,
-                'jujuy': False,
                 'santa_fe': True,
-                'tucuman': False,
-                'cordoba': False,
             })
             # TODO
             wiz.action_update_santa_fe()

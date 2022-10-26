@@ -16,7 +16,7 @@
                     <field name="from_date" />
                     <field name="to_date" />
                     <field name="vat" />
-                    <field name="percentage" />
+                    <field name="percentage_perception" />
                     <field name="multilateral" />
                 </tree>
             </field>
@@ -41,7 +41,7 @@
                     <field name="from_date" />
                     <field name="to_date" />
                     <field name="vat" />
-                    <field name="percentage" />
+                    <field name="percentage_retention" />
                     <field name="multilateral" />
                 </tree>
             </field>

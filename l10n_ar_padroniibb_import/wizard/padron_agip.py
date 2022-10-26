@@ -109,9 +109,6 @@ class PadronImport(models.Model):
                         'arba': False,
                         'agip': True,
                         'agip_rp': False,
-                        'jujuy': False,
-                        'santa_fe': False,
-                        'tucuman':False,
                     })
                     # TODO
                     wiz.action_update()
@@ -169,10 +166,6 @@ class PadronImport(models.Model):
                         'arba': False,
                         'agip': False,
                         'agip_rp': True,
-                        'jujuy': False,
-                        'santa_fe': False,
-                        'tucuman':False,
-                        'cordoba' : False,
                     })
                     # TODO
                     wiz.action_update()

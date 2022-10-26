@@ -116,13 +116,7 @@ class PadronImport(models.Model):
             # Mass Update
             mass_wiz_obj = self.env['padron.mass.update.jujuy']
             wiz = mass_wiz_obj.create({
-                'arba': False,
-                'agip': False,
-                'agip_rp': False,
-                'santa_fe': False,
                 'jujuy': True,
-                'tucuman': False,
-                'cordoba': False,
             })
             # TODO
             wiz.action_update_jujuy()

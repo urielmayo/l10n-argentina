@@ -5,8 +5,6 @@
 
 from odoo import models, fields
 
-
-
 class AgipRetentionGroup(models.Model):
     _name = 'agip.retention.group'
     _description = 'Group number of Retention'
@@ -77,7 +75,7 @@ class ArbaPerceptions(models.Model):
     from_date = fields.Date('From date')
     to_date = fields.Date('To date')
     vat = fields.Char('Afip code', size=15, index=1)
-    percentage = fields.Float('Percentage of perception')
+    percentage_perception = fields.Float('Percentage of perception')
     multilateral = fields.Boolean('Is multilateral?')
 
 
@@ -92,7 +90,7 @@ class ArbaRetentions(models.Model):
     from_date = fields.Date('From date')
     to_date = fields.Date('To date')
     vat = fields.Char('Afip code', size=15, index=1)
-    percentage = fields.Float('Percentage of retention')
+    percentage_retention = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
 
 class SantaFePerceptions(models.Model):
@@ -103,9 +101,13 @@ class SantaFePerceptions(models.Model):
     _name = 'padron.santa_fe_percentages'
     _description = 'Definition of percentages of taxes by customer'
 
-    vat = fields.Char('Santa Fe code', size=15, index=1)
-    percentage = fields.Float('Alicuota')
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage_perception = fields.Float('Percentage of perception')
+    percentage_retention = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
+    name_partner = fields.Text('Company name')
 
 
 class JujuyRetentions(models.Model):
@@ -116,11 +118,13 @@ class JujuyRetentions(models.Model):
     _name = 'padron.jujuy_percentages'
     _description = 'Definition of percentages of taxes by customer'
 
-    vat = fields.Char('Jujuy code', size=15, index=1)
     from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
     percentage_perception = fields.Float('Percentage of perception')
     percentage_retention = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
+    name_partner = fields.Text('Company name')
 
 class TucumanPercentages(models.Model):
 
@@ -132,7 +136,7 @@ class TucumanPercentages(models.Model):
     vat = fields.Char('Afip code', size=15, index=1)
     u1 = fields.Char('E')
     percentage_perception = fields.Float('Percentage of perception')
-    sit_iibb = fields.Boolean('Is multilateral?')
+    multilateral = fields.Boolean('Is multilateral?')
     coeficiente = fields.Float("Coeficiente")
 
 class TucumanCoefiecient(models.Model):
@@ -145,7 +149,7 @@ class TucumanCoefiecient(models.Model):
     vat = fields.Char('Afip code', size=15, index=1)
     u1 = fields.Char('E')
     percentage_perception = fields.Float('Percentage of perception')
-    sit_iibb = fields.Boolean('Is multilateral?')
+    multilateral = fields.Boolean('Is multilateral?')
     coeficiente = fields.Float("Coeficiente")
 
 class CordobaPerceptions(models.Model):
@@ -160,7 +164,9 @@ class CordobaPerceptions(models.Model):
     to_date = fields.Date('To date')
     vat = fields.Char('Afip code', size=15, index=1)
     percentage_perception = fields.Float('Percentage of perception')
+    percentage_retention = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
+    name_partner = fields.Text('Company name')
 
 
 class res_country_state(models.Model):
