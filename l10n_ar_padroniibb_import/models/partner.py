@@ -101,7 +101,7 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_percep)
             res = {
                 'perception_id': percep_ids[0].id,
-                'percent': padron_percep.percentage,
+                'percent': padron_percep.percentage_perception,
                 'from_padron': True,
                 'sit_iibb': sit_iibb,
             }
@@ -122,7 +122,7 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_percep)
             res = {
                 'perception_id': percep_ids[0].id,
-                'percent': padron_percep.percentage,
+                'percent': padron_percep.percentage_perception,
                 'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
@@ -225,7 +225,7 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_retent)
             res = {
                 'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage,
+                'percent': padron_retent.percentage_retention,
                 'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
@@ -383,7 +383,6 @@ class res_partner(models.Model):
         else:
             per_id = partner_perception_ids[0]
             res['perception_ids'] = [(1, per_id.id, perception)]
-
         return res
 
     @api.multi
@@ -523,7 +522,7 @@ class res_partner(models.Model):
                     vals.update({
                         'retention_ids': real_comms,
                     })
-
+        print("write: ", super(res_partner, self).write(vals))
         return super(res_partner, self).write(vals)
 
 
