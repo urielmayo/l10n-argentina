@@ -168,11 +168,6 @@ class CordobaPerceptions(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
     name_partner = fields.Text('Company name')
 
-class Cm05(models.Model):
-    _name = "cm05"
-
-    province_id = fields.Many2one("res.country.state", string="Provincia")
-    inscrito = fields.Boolean("inscrito")
 
 class res_country_state(models.Model):
     _name = "res.country.state"

@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_partner_perception_form" model="ir.ui.view">
-        <field name="name">res.partner.perception.form.inherit</field>
+
+    <record id="cm05_view_inherit" model="ir.ui.view">
+        <field name="name">cm05.view.tree</field>
         <field name="model">res.partner</field>
-        <field name="type">form</field>
-        <field name="priority">2</field>
-        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='state_id']" position="after">
-                <field name="nro_insc_iibb" />
-            </xpath>
-            <page name="accounting_disabled" position="after">
+            <xpath expr="//page[@name='accounting_disabled']" position="after">
                 <page string="CM05">
-                    <group colspan="4" col="4">
-                        <group colspan="4">
-                            <field colspan="2" name="state_id" nolabel="1">
-                                <tree string="Perceptions to Apply" editable="bottom"></tree>
-                            </field>
-                        </group>
-                    </group>
+                    <field name="cm05">
+                        <tree editable="bottom" string="CM=%">
+                            <field name="province_id" domain="[('country_id', '=', 'Argentina')]" />
+                            <field name="inscrito" />
+                        </tree>
+                    </field>
                 </page>
-            </page>
+            </xpath>
         </field>
     </record>
-
 
 </odoo>

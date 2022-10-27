@@ -13,3 +13,4 @@
 "access_agip_perception_group_rp","access_agip_perception_group_rp","model_agip_perception_group_rp","base.group_user",1,0,0,0
 "access_padron_tucuman_acreditan","access_padron_tucuman_acreditan","model_padron_tucuman_acreditan","base.group_user",1,0,0,0
 "access_padron_tucuman_coeficiente","access_padron_tucuman_coeficiente","model_padron_tucuman_coeficiente","base.group_user",1,0,0,0
+"access_cm05","access_cm05","model_cm05","base.group_user",1,1,1,1
