@@ -15,9 +15,7 @@
                     <group colspan="4" col="4">
                         <group colspan="4">
                             <field colspan="2" name="state_id" nolabel="1">
-                                <tree string="Perceptions to Apply" editable="bottom">
-                                    <field name="state_id" />
-                                </tree>
+                                <tree string="Perceptions to Apply" editable="bottom"></tree>
                             </field>
                         </group>
                     </group>
