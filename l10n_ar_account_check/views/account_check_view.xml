@@ -275,6 +275,7 @@
                     <field name="amount" sum="Total Amount"/>
                     <field name="deposit_bank_id"/>
                     <field name="deposit_slip"/>
+                    <field name="check_issuing_type"/>
                     <field name="type"/>
                     <field name="state"/>
                 </tree>
@@ -332,6 +333,7 @@
                                 <field name="origin"/>
                                 <field name="crossed"/>
                                 <field name="not_order"/>
+                                <field name="check_issuing_type" readonly="1"/>
                                 <field name="dest" attrs="{'invisible': [('state','!=','delivered')]}"/>
                             </group>
                             <group>
@@ -424,6 +426,11 @@
                         <filter string="State" name="state"
                                 domain="[]"
                                 context="{'group_by':'state'}"
+                        />
+                        <separator orientation="vertical"/>
+                        <filter string="Owner" name="owner"
+                                domain="[]"
+                                context="{'group_by':'check_issuing_type'}"
                         />
                     </group>
                 </search>

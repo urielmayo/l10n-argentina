@@ -334,13 +334,13 @@ msgid "Check Deposit"
 msgstr "Depósito de Cheque"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:593
+#: code:addons/l10n_ar_account_check/models/account_check.py:594
 #, python-format
 msgid "Check Error! Check has to                     be associated with a voucher"
 msgstr "Error! El cheque tiene que estar asociado a un pago"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:646
+#: code:addons/l10n_ar_account_check/models/account_check.py:647
 #, python-format
 msgid "Check Error! You cannot delete a third                     check that is not in Draft state [See %s]."
 msgstr "Error! No puede borrar un cheque de terceros que no esté en estado Borrador [Ver %s]."
@@ -393,6 +393,11 @@ msgstr "Tipo de cheque"
 msgid "Check number %s is postdated and has                         already been accredited!\n"
 "Please break the                         conciliation of that check first."
 msgstr ""
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__check_issuing_type
+msgid "Check owner"
+msgstr "Propietario"
 
 #. module: l10n_ar_account_check
 #: model:ir.model,name:l10n_ar_account_check.model_account_checkbook
@@ -606,6 +611,11 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_reason_rejected_check__is_critical
+msgid "Critical"
+msgstr "Crítico"
+
+#. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__crossed
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__crossed
 msgid "Crossed"
@@ -798,7 +808,7 @@ msgid "ERROR! There is no check                     configuration for this Compa
 msgstr "ERROR! No hay configuración de cheques para esta empresa!"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:543
+#: code:addons/l10n_ar_account_check/models/account_check.py:544
 #, python-format
 msgid "ERROR! There is no check configuration for this Company!"
 msgstr "ERROR! No hay configuración de cheques para esta empresa!"
@@ -1170,6 +1180,16 @@ msgid "Other Information"
 msgstr "Otra información"
 
 #. module: l10n_ar_account_check
+#: selection:account.third.check,check_issuing_type:0
+msgid "Own"
+msgstr "Propio"
+
+#. module: l10n_ar_account_check
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
+msgid "Owner"
+msgstr "Propietario"
+
+#. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__partner_id
 msgid "Partner"
 msgstr "Cliente"
@@ -1211,7 +1231,7 @@ msgid "Physical"
 msgstr "Normal"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/wizard/check_reject.py:115
+#: code:addons/l10n_ar_account_check/wizard/check_reject.py:192
 #, python-format
 msgid "Please, fill the expense account in the product."
 msgstr "Por favor, llene la cuenta de gastos en el producto."
@@ -1511,7 +1531,7 @@ msgid "The specific rate that will be used, in         this voucher, between the
 msgstr ""
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:672
+#: code:addons/l10n_ar_account_check/models/account_check.py:673
 #, python-format
 msgid "There are more than one voucher referenced to check %s."
 msgstr "Existen más de una orden de pago referenciada al cheque %s."
@@ -1523,10 +1543,15 @@ msgid "There is no check configuration for this Company!"
 msgstr "No hay configuraciones de cheque para esta compañía!"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:622
+#: code:addons/l10n_ar_account_check/models/account_check.py:623
 #, python-format
 msgid "There is no reference for account move. Imposible to go back to wallet."
 msgstr "No existe la referencia del asiento contable. Imposible devolver a cartera."
+
+#. module: l10n_ar_account_check
+#: selection:account.third.check,check_issuing_type:0
+msgid "Third"
+msgstr "Terceros"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_move_line__third_check_id
@@ -1535,19 +1560,19 @@ msgid "Third Check"
 msgstr "Cheque de Tercero"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:569
+#: code:addons/l10n_ar_account_check/models/account_check.py:570
 #, python-format
 msgid "Third Check "
 msgstr "Cheque de Tercero "
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:656
+#: code:addons/l10n_ar_account_check/models/account_check.py:657
 #, python-format
 msgid "Third Check Error! You cannot cancel                     check if it is not in Draft or in Wallet"
 msgstr "Error! No puede cancelar el cheque si no es está en Borrador o en Cartera"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:630
+#: code:addons/l10n_ar_account_check/models/account_check.py:631
 #, python-format
 msgid "Third Check Error! You cannot return to                     wallet a check if it is not in Delivered state"
 msgstr "Error! No puede devolver a la cartera un cheque si no está en estado Entregado"
