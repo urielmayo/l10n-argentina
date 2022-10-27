@@ -516,6 +516,7 @@ class AccountThirdCheck(models.Model):
         compute='_compute_amount_currency',
         string='Amount Currency',
     )
+    check_issuing_type = fields.Selection(selection=[('own', 'Own'), ('third', 'Third')], string="Check owner")
 
     @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
