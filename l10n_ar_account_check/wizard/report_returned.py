@@ -64,8 +64,9 @@ class RejectedThirdCheckReport(models.Model):
     date_since = fields.Date(string='Since')
     date_to = fields.Date(string='To')
     check_qty = fields.Integer(string='Found Checks', compute='_compute_rejected_check_qty')
+    owner_type = fields.Selection([('own', 'Own'), ('third', 'Third'), ('all', 'All')], string='Owner', default='all')
 
-    @api.onchange('date_since', 'date_to', 'reason_id')
+    @api.onchange('date_since', 'date_to', 'reason_id', 'owner_type')
     def _compute_rejected_check_qty(self):
         for rec in self:
             rejected_checks = rec._compute_rejected_check_ids()
@@ -80,6 +81,8 @@ class RejectedThirdCheckReport(models.Model):
             domain.append(('reject_date', '<=', self.date_to))
         if self.reason_id:
             domain.append(('reason_id', '=', self.reason_id.id))
+        if self.owner_type != 'all':
+            domain.append(('check_issuing_type', '=', self.owner_type))
 
         rejected_checks = self.env['account.third.check'].search(domain)
         return rejected_checks
