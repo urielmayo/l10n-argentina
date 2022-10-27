@@ -16,6 +16,9 @@
                         <group>
                             <field name="type"/>
                             <field name="code"/>
+                            <field name="is_critical" attrs="{'invisible': [('type', '!=', 'rejected')]}"/>
+                        </group>
+                        <group>
                             <field name="description"/>
                         </group>
                     </sheet>
