@@ -121,6 +121,7 @@ msgstr "Información Adicional..."
 
 #. module: l10n_ar_account_check
 #: selection:account.returned.check.report,replaced:0
+#: selection:rejected.third.check.report,owner_type:0
 msgid "All"
 msgstr "Todos"
 
@@ -1181,10 +1182,12 @@ msgstr "Otra información"
 
 #. module: l10n_ar_account_check
 #: selection:account.third.check,check_issuing_type:0
+#: selection:rejected.third.check.report,owner_type:0
 msgid "Own"
 msgstr "Propio"
 
 #. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_rejected_third_check_report__owner_type
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
 msgid "Owner"
 msgstr "Propietario"
@@ -1550,6 +1553,7 @@ msgstr "No existe la referencia del asiento contable. Imposible devolver a carte
 
 #. module: l10n_ar_account_check
 #: selection:account.third.check,check_issuing_type:0
+#: selection:rejected.third.check.report,owner_type:0
 msgid "Third"
 msgstr "Terceros"
 
