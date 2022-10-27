@@ -32,6 +32,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/res_country_state.xml",
+        "views/cm05_view.xml",
         "views/padron_view.xml",
         "views/perception_view.xml",
         "views/retention_view.xml",

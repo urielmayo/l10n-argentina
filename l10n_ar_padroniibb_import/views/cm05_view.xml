@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cm05_view_tree" model="ir.ui.view">
+        <field name="name">cm05.view.tree</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <notebook>
+                <page name="cm05" string="CM05">
+                    <group>
+                        <label for="state_id" string="Province" />
+                        <field name="state_id" string="Province" />
+                    </group>
+                    <group>
+                        <label for="customer" string="Inscrito" />
+                        <field name="customer" string="Inscrito" />
+                    </group>
+
+                </page>
+            </notebook>
+
+        </field>
+    </record>
+
+</odoo>

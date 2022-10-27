@@ -522,7 +522,6 @@ class res_partner(models.Model):
                     vals.update({
                         'retention_ids': real_comms,
                     })
-        print("write: ", super(res_partner, self).write(vals))
         return super(res_partner, self).write(vals)
 
 
