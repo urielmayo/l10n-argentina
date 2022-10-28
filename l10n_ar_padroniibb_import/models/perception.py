@@ -6,7 +6,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-PROVINCE = [
+PADRON = [
     ('arba', 'ARBA'),
     ('agip', 'AGIP'),
     ('agip_rp', 'AGIP_RP'),
@@ -19,14 +19,7 @@ class PerceptionPerception(models.Model):
     _name = "perception.perception"
     _inherit = "perception.perception"
 
-    from_register = fields.Selection(PROVINCE, default=PROVINCE[0][0])
-#    from_register_ARBA = fields.Boolean('From ARBA Register')
-#    from_register_AGIP = fields.Boolean('From AGIP Register')
-#    from_register_AGIP_RP = fields.Boolean('From AGIP Register')
-#    from_register_SANTA_FE = fields.Boolean('From SANTA FE Register')
-#    from_register_JUJUY = fields.Boolean('From JUJUY Register')
-#    from_register_CORDOBA = fields.Boolean('From CORDOBA Register')
-#    from_register_TUCUMAN = fields.Boolean('From TUCUMAN Register')
+    from_register = fields.Selection(PADRON, default=PADRON[0][0])
 
     @api.model
     def _get_perception_from_arba(self):
@@ -100,6 +93,18 @@ class PerceptionPerception(models.Model):
                 _('Perceptions Improperly Configured\n') +
                 _('You can not have more than one perception to update ' +
                   'from CORDOBA. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+    @api.model
+    def _get_perception(self, ):
+        ret = self.search([('from_register', '=', 'agip')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from AGIP. Please review configuration'))
         elif len(ret) == 0:
             return False
         else:

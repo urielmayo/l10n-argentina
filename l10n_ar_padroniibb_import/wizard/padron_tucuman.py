@@ -76,7 +76,7 @@ class PadronImport(models.Model):
                 _logger.info('[TUCUMAN] ACREDITAN - Copiando a tabla temporal')
                 psql_args_list = [
                     "psql",
-                    "--command=\copy temp_import(vat,u1,sit_iibb,from_date,to_date,percentage_perception) FROM " + txt_path + " WITH DELIMITER ';'  NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+                    "--command=\copy temp_import(vat,u1,multilateral,from_date,to_date,percentage_perception) FROM " + txt_path + " WITH DELIMITER ';'  NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
                 ]
                 psql_args_list[1:1] = dsn_pg_splitted
                 retcode = call(psql_args_list, stderr=STDOUT)
@@ -85,7 +85,7 @@ class PadronImport(models.Model):
                 try:
                     query = """ INSERT INTO padron_tucuman_acreditan
                         (create_uid, create_date, write_date, write_uid,
-                        from_date, to_date, percentage_perception, vat, sit_iibb)
+                        from_date, to_date, percentage_perception, vat, multilateral)
                     SELECT  1 as create_uid,
                         to_date(create_date, 'DDMMYYYY'),
                         current_date,
@@ -94,9 +94,9 @@ class PadronImport(models.Model):
                         to_date(to_date, 'YYYYMMDD'),
                         to_number(percentage_perception, '999.9999'),
                         vat,
-                        CASE WHEN sit_iibb = 'CM' THEN True
+                        CASE WHEN multilateral = 'CM' THEN True
                              ELSE False
-                        END AS sit_iibb
+                        END AS multilateral
                     FROM temp_import
             """
 
@@ -119,7 +119,7 @@ class PadronImport(models.Model):
                 _logger.info('[TUCUMAN] COEFICIENTE - Copiando a tabla temporal')
                 psql_args_list = [
                     "psql",
-                    "--command=\copy temp_import(vat,u1,coeficiente,from_date,to_date,percentage_perception) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+                    "--command=\copy temp_import(vat,u1,coeficiente,from_date, to_date, percentage_perception) FROM " + txt_path + " WITH DELIMITER ';' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
                 ]
                 psql_args_list[1:1] = dsn_pg_splitted
                 retcode = call(psql_args_list, stderr=STDOUT)
@@ -128,13 +128,12 @@ class PadronImport(models.Model):
                 try:
                     query = """ INSERT INTO padron_tucuman_coeficiente
                     (create_uid, create_date, write_date, write_uid,
-                    from_date, to_date, coeficiente, percentage_perception, vat)
+                    from_date, coeficiente, percentage_perception, vat)
                     SELECT  1 as create_uid,
-                        current_date,
+                        to_date(create_date, 'DDMMYYYY'),
                         current_date,
                         1,
                         to_date(from_date, 'YYYYMMDD'),
-                        to_date(to_date, 'YYYYMMDD'),
                         to_number(coeficiente, '999.9999'),
                         to_number(percentage_perception, '999.9999'),
                         vat
@@ -150,6 +149,9 @@ class PadronImport(models.Model):
                     cursor.commit()
                     _logger.info('[TUCUMAN]SUCCESS: Fin de carga de Coeficiente')
 
+                finally:
+                    rmtree(out_path)  # Delete temp folder
+            cursor.close()
         return True
 
     def create_temp_table_acreditan(self, cursor):
@@ -161,7 +163,7 @@ class PadronImport(models.Model):
                 create_date varchar(8),
                 vat varchar(32),
                 u1 varchar(8),
-                sit_iibb varchar(2),
+                multilateral varchar(2),
                 from_date varchar(8),
                 to_date varchar(8),
                 percentage_perception varchar(10)
