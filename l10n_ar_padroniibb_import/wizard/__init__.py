@@ -14,3 +14,4 @@ from . import padron_mass_update_santa_fe # noqa
 from . import padron_mass_update_jujuy # noqa
 from . import padron_cordoba # noqa
 from . import padron_mass_update_cordoba # noqa
+from . import padron_mass_update_tucuman # noqa

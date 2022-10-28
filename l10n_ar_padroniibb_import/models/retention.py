@@ -6,7 +6,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-PROVINCE = [
+PADRON = [
     ('arba', 'ARBA'),
     ('agip', 'AGIP'),
     ('agip_rp', 'AGIP_RP'),
@@ -14,13 +14,15 @@ PROVINCE = [
     ('jujuy', 'JUJUY'),
     ('cordoba', 'CORDOBA'),
     ('tucuman', 'TUCUMAN'),
+    ('tucuman_ac', 'TUCUMAN Contribuyente'),
+    ('tucuman_co', 'TUCUMAN Coeficiente'),
 ]
 
 class RetentionRetention(models.Model):
     _name = "retention.retention"
     _inherit = "retention.retention"
 
-    from_register = fields.Selection(PROVINCE, default=PROVINCE[0][0])
+    from_register = fields.Selection(PADRON, default=PADRON[0][0])
 #    from_register_ARBA = fields.Boolean('From ARBA Register')
 #    from_register_AGIP = fields.Boolean('From AGIP Register')
 #    from_register_AGIP_RP = fields.Boolean('From AGIP Register')
@@ -89,6 +91,32 @@ class RetentionRetention(models.Model):
                 _('Retentions Improperly Configured\n') +
                 _('You can not have more than one retention to update ' +
                   'from JUJUY. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_retention_from_tucuman_ac(self):
+        ret = self.search([('from_register', '=', 'tucuman_ac')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Retentions Improperly Configured\n') +
+                _('You can not have more than one retention to update ' +
+                  'from Tucumán. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_retention_from_tucuman_co(self):
+        ret = self.search([('from_register', '=', 'tucuman_co')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Retentions Improperly Configured\n') +
+                _('You can not have more than one retention to update ' +
+                  'from Tucumán. Please review configuration'))
         elif len(ret) == 0:
             return False
         else:

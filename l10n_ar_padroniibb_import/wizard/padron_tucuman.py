@@ -109,6 +109,12 @@ class PadronImport(models.Model):
                     cursor.rollback()
                     _logger.warning('[TUCUMAN]ERROR: Rollback')
                 else:
+                    mass_wiz_obj = self.env['padron.mass.update.tucuman']
+                    wiz = mass_wiz_obj.create({
+                    'tucuman_ac': True,
+                    })
+                    # TODO
+                    wiz.action_update_tucuman_ac()
                     cursor.commit()
                     _logger.info('[TUCUMAN]SUCCESS: Fin de carga de acreditan')
 
@@ -146,6 +152,13 @@ class PadronImport(models.Model):
                     cursor.rollback()
                     _logger.warning('[TUCUMAN]ERROR: Rollback')
                 else:
+                    # Mass Update
+                    mass_wiz_obj = self.env['padron.mass.update.tucuman']
+                    wiz = mass_wiz_obj.create({
+                    'tucuman_co': True,
+                    })
+                    # TODO
+                    wiz.action_update_tucuman_co()
                     cursor.commit()
                     _logger.info('[TUCUMAN]SUCCESS: Fin de carga de Coeficiente')
 

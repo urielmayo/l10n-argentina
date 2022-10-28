@@ -171,6 +171,48 @@ class res_partner(models.Model):
         return res
 
     @api.model
+    def _check_padron_perception_tucuman_acreditan(self, vat):
+        padron_tucuman_obj = self.env['padron.tucuman_acreditan']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_tucuman_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_tucuman_ac()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+    @api.model
+    def _check_padron_perception_tucuman_coeficiente(self, vat):
+        padron_tucuman_obj = self.env['padron.tucuman_coeficiente']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_tucuman_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_tucuman_co()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.coeficiente,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+
+    @api.model
     def _check_padron_retention_agip(self, vat):
         padron_agip_obj = self.env['padron.agip_percentages']
         retention_obj = self.env['retention.retention']
@@ -246,7 +288,7 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_retent)
             res = {
                 'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage,
+                'percent': padron_retent.percentage_retention,
                 'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
@@ -267,7 +309,48 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_retent)
             res = {
                 'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+    @api.model
+    def _check_padron_retention_tucuman_acreditan(self, vat):
+        padron_tucuman_ret_obj = self.env['padron.tucuman_acreditan']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_tucuman_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_tucuman_ac()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_tucuman_coeficiente(self, vat):
+        padron_tucuman_ret_obj = self.env['padron.tucuman_coeficiente']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_tucuman_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_tucuman_co()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.coeficiente,
                 'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
@@ -305,6 +388,14 @@ class res_partner(models.Model):
                 if perc_cordoba:
                     perceptions_list.append((0, 0, perc_cordoba))
 
+                perc_tucuman_ac = self._check_padron_perception_tucuman_acreditan(vat)
+                if perc_tucuman_ac:
+                    perceptions_list.append((0, 0, perc_tucuman_ac))
+
+                perc_tucuman_co = self._check_padron_perception_tucuman_coeficiente(vat)
+                if perc_tucuman_co:
+                    perceptions_list.append((0, 0, perc_tucuman_co))
+
                 vals['perception_ids'] = perceptions_list
 
 
@@ -332,6 +423,14 @@ class res_partner(models.Model):
                 ret_jujuy = self._check_padron_retention_jujuy(vat)
                 if ret_jujuy:
                     retentions_list.append((0, 0, ret_jujuy))
+
+                ret_tucuman_ac = self._check_padron_retention_tucuman_acreditan(vat)
+                if ret_tucuman_ac:
+                    retentions_list.append((0, 0, ret_tucuman_ac))
+
+                ret_tucuman_co = self._check_padron_retention_tucuman_coeficiente(vat)
+                if ret_tucuman_co:
+                    retentions_list.append((0, 0, ret_tucuman_co))
 
                 vals['retention_ids'] = retentions_list
 
@@ -459,6 +558,20 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_cordoba['perception_ids'][0])
 
+                    perc_tucuman_ac = partner._check_padron_perception_tucuman_acreditan(vat)
+                    if perc_tucuman_ac:
+                        res_tucuman_ac = partner._update_perception_partner(
+                            perc_tucuman_ac)
+                        perception_ids_lst.append(
+                            res_tucuman_ac['perception_ids'][0])
+
+                    perc_tucuman_co = partner._check_padron_perception_tucuman_coeficiente(vat)
+                    if perc_tucuman_co:
+                        res_tucuman_co = partner._update_perception_partner(
+                            perc_tucuman_co)
+                        perception_ids_lst.append(
+                            res_tucuman_co['perception_ids'][0])
+
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
                             vals['perception_ids'], perception_ids_lst)
@@ -504,6 +617,16 @@ class res_partner(models.Model):
                     if ret_jujuy:
                         res_jujuy = partner._update_retention_partner(ret_jujuy)
                         retention_ids_lst.append(res_jujuy['retention_ids'][0])
+
+                    ret_tucuman_ac = partner._check_padron_retention_tucuman_acreditan(vat)
+                    if ret_tucuman_ac:
+                        res_tucuman_ac = partner._update_retention_partner(ret_tucuman_ac)
+                        retention_ids_lst.append(res_tucuman_ac['retention_ids'][0])
+
+                    ret_tucuman_co = partner._check_padron_retention_tucuman_coeficiente(vat)
+                    if ret_tucuman_co:
+                        res_tucuman_co = partner._update_retention_partner(ret_tucuman_co)
+                        retention_ids_lst.append(res_tucuman_co['retention_ids'][0])
 
                     if 'retention_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
