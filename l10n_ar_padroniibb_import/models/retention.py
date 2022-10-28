@@ -13,7 +13,6 @@ PADRON = [
     ('santa_fe', 'SANTA_FE'),
     ('jujuy', 'JUJUY'),
     ('cordoba', 'CORDOBA'),
-    ('tucuman', 'TUCUMAN'),
     ('tucuman_ac', 'TUCUMAN Contribuyente'),
     ('tucuman_co', 'TUCUMAN Coeficiente'),
 ]
@@ -23,13 +22,6 @@ class RetentionRetention(models.Model):
     _inherit = "retention.retention"
 
     from_register = fields.Selection(PADRON, default=PADRON[0][0])
-#    from_register_ARBA = fields.Boolean('From ARBA Register')
-#    from_register_AGIP = fields.Boolean('From AGIP Register')
-#    from_register_AGIP_RP = fields.Boolean('From AGIP Register')
-#    from_register_SANTA_FE = fields.Boolean('From SANTA FE Register')
-#    from_register_JUJUY = fields.Boolean('From JUJUY Register')
-#    from_register_CORDOBA = fields.Boolean('From CORDOBA Register')
-#    from_register_TUCUMAN = fields.Boolean('From TUCUMAN Register')
 
     @api.model
     def _get_retention_from_arba(self):
