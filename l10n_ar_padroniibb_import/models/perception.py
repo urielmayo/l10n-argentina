@@ -6,17 +6,25 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-
+PADRON = [
+    ('arba', 'ARBA'),
+    ('agip', 'AGIP'),
+    ('agip_rp', 'AGIP_RP'),
+    ('santa_fe', 'SANTA_FE'),
+    ('jujuy', 'JUJUY'),
+    ('cordoba', 'CORDOBA'),
+    ('tucuman_ac', 'TUCUMAN Contribuyente'),
+    ('tucuman_co', 'TUCUMAN Coeficiente'),
+]
 class PerceptionPerception(models.Model):
     _name = "perception.perception"
     _inherit = "perception.perception"
 
-    from_register_ARBA = fields.Boolean('From ARBA Register')
-    from_register_AGIP = fields.Boolean('From AGIP Register')
+    from_register = fields.Selection(PADRON, default=PADRON[0][0])
 
     @api.model
     def _get_perception_from_arba(self):
-        ret = self.search([('from_register_ARBA', '=', True), ('company_id', '=', self.env.user.company_id.id)])
+        ret = self.search([('from_register', '=', 'arba')])
         if len(ret) > 1:
             raise ValidationError(
                 _('Perceptions Improperly Configured\n') +
@@ -29,12 +37,89 @@ class PerceptionPerception(models.Model):
 
     @api.model
     def _get_perception_from_agip(self):
-        ret = self.search([('from_register_AGIP', '=', True), ('company_id', '=', self.env.user.company_id.id)])
+        ret = self.search([('from_register', '=', 'agip')])
         if len(ret) > 1:
             raise ValidationError(
                 _('Perceptions Improperly Configured\n') +
                 _('You can not have more than one perception to update ' +
                   'from AGIP. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+    @api.model
+    def _get_perception_from_agip_rp(self):
+        ret = self.search([('from_register', '=', 'agip_rp')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from AGIP. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_perception_from_santa_fe(self):
+        ret = self.search([('from_register', '=', 'santa_fe')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from SANTA_FE. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_perception_from_jujuy(self):
+        ret = self.search([('from_register', '=', 'jujuy')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from JUJUY. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_perception_from_cordoba(self):
+        ret = self.search([('from_register', '=', 'cordoba')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from CORDOBA. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+        _
+    @api.model
+    def _get_perception_from_tucuman_ac(self, ):
+        ret = self.search([('from_register', '=', 'tucuman_ac')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from Tucumán. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_perception_from_tucuman_co(self, ):
+        ret = self.search([('from_register', '=', 'tucuman_co')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Perceptions Improperly Configured\n') +
+                _('You can not have more than one perception to update ' +
+                  'from Tucumán. Please review configuration'))
         elif len(ret) == 0:
             return False
         else:

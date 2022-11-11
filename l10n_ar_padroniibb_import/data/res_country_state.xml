@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record model="res.country.state" id="base.state_ar_c">
+        <field name="jurisdiction_code">901</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_a">
+        <field name="jurisdiction_code">917</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_b">
+        <field name="jurisdiction_code">902</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_d">
+        <field name="jurisdiction_code">919</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_e">
+        <field name="jurisdiction_code">908</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_f">
+        <field name="jurisdiction_code">912</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_g">
+        <field name="jurisdiction_code">922</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_h">
+        <field name="jurisdiction_code">906</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_j">
+        <field name="jurisdiction_code">918</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_k">
+        <field name="jurisdiction_code">903</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_l">
+        <field name="jurisdiction_code">911</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_m">
+        <field name="jurisdiction_code">913</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_n">
+        <field name="jurisdiction_code">914</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_p">
+        <field name="jurisdiction_code">909</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_q">
+        <field name="jurisdiction_code">915</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_r">
+        <field name="jurisdiction_code">916</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_s">
+        <field name="jurisdiction_code">921</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_t">
+        <field name="jurisdiction_code">924</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_u">
+        <field name="jurisdiction_code">907</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_v">
+        <field name="jurisdiction_code">923</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_w">
+        <field name="jurisdiction_code">905</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_x">
+        <field name="jurisdiction_code">904</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_y">
+        <field name="jurisdiction_code">910</field>
+    </record>
+
+    <record model="res.country.state" id="base.state_ar_z">
+        <field name="jurisdiction_code">920</field>
+    </record>
+
+</odoo>

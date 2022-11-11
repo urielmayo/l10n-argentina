@@ -5,7 +5,6 @@
 
 from odoo import models, fields
 
-
 class AgipRetentionGroup(models.Model):
     _name = 'agip.retention.group'
     _description = 'Group number of Retention'
@@ -13,6 +12,10 @@ class AgipRetentionGroup(models.Model):
     name = fields.Char('Group Number', size=2, index=1)
     aliquot = fields.Float("Aliquot", digits=(3, 2))
 
+class AgipRetentionGroupRP(models.Model):
+    _name = 'agip.perception.group.rp'
+    _inherit = 'agip.retention.group'
+    _description = 'Group number of Perception'
 
 class AgipPerceptionGroup(models.Model):
     _name = 'agip.perception.group'
@@ -21,6 +24,10 @@ class AgipPerceptionGroup(models.Model):
     name = fields.Char('Group Number', size=2, index=1)
     aliquot = fields.Float("Aliquot", digits=(3, 2))
 
+class AgipPerceptionGroupRP(models.Model):
+    _name = 'agip.perception.group.rp'
+    _inherit = 'agip.perception.group'
+    _description = 'Group number of Perception'
 
 class AgipRetentions(models.Model):
     """
@@ -42,6 +49,20 @@ class AgipRetentions(models.Model):
     group_perception_id = fields.Many2one(
         'agip.perception.group', 'Perception Group')
 
+class AgipRetentionsRP(models.Model):
+    """
+    This model represent the agip csv file that defines percentage
+    of retentions and perceptions
+    """
+    _name = 'padron.agip_percentages.rp'
+    _inherit = 'padron.agip_percentages'
+    _description = 'Definition of percentages of taxes by customer'
+
+    group_retention_id = fields.Many2one(
+        'agip.retention.group.rp', 'Retention Group')
+    group_perception_id = fields.Many2one(
+        'agip.perception.group.rp', 'Perception Group')
+
 
 class ArbaPerceptions(models.Model):
     """
@@ -54,7 +75,7 @@ class ArbaPerceptions(models.Model):
     from_date = fields.Date('From date')
     to_date = fields.Date('To date')
     vat = fields.Char('Afip code', size=15, index=1)
-    percentage = fields.Float('Percentage of perception')
+    percentage_perception = fields.Float('Percentage of perception')
     multilateral = fields.Boolean('Is multilateral?')
 
 
@@ -69,5 +90,87 @@ class ArbaRetentions(models.Model):
     from_date = fields.Date('From date')
     to_date = fields.Date('To date')
     vat = fields.Char('Afip code', size=15, index=1)
-    percentage = fields.Float('Percentage of retention')
+    percentage_retention = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
+
+class SantaFePerceptions(models.Model):
+    """
+    This model represent the santa fe csv file that defines percentage
+    of retentions and perceptions
+    """
+    _name = 'padron.santa_fe_percentages'
+    _description = 'Definition of percentages of taxes by customer'
+
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage_perception = fields.Float('Percentage of perception')
+    percentage_retention = fields.Float('Percentage of retention')
+    multilateral = fields.Boolean('Is multilateral?')
+    name_partner = fields.Text('Company name')
+
+
+class JujuyRetentions(models.Model):
+    """
+    This model represent the agip csv file that defines percentage
+    of retentions and perceptions
+    """
+    _name = 'padron.jujuy_percentages'
+    _description = 'Definition of percentages of taxes by customer'
+
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage_perception = fields.Float('Percentage of perception')
+    percentage_retention = fields.Float('Percentage of retention')
+    multilateral = fields.Boolean('Is multilateral?')
+    name_partner = fields.Text('Company name')
+
+class TucumanPercentages(models.Model):
+
+    _name = 'padron.tucuman_acreditan'
+    _description = 'Definition of percentages of taxes by customer'
+
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    u1 = fields.Char('Grupo')
+    percentage_perception = fields.Float('Percentage of perception')
+    multilateral = fields.Boolean('Is multilateral?')
+    coeficiente = fields.Float("Coeficiente")
+
+class TucumanCoefiecient(models.Model):
+
+    _name = 'padron.tucuman_coeficiente'
+    _description = 'Definition of percentages of taxes by customer'
+
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    u1 = fields.Char('Grupo')
+    percentage_perception = fields.Float('Percentage of perception')
+    multilateral = fields.Boolean('Is multilateral?')
+    coeficiente = fields.Float("Coeficiente")
+
+class CordobaPerceptions(models.Model):
+    """
+    This model represent de ARBA csv file that
+    defines percentage of perceptions
+    """
+    _name = 'padron.cordoba_perception'
+    _description = 'Definition of arba percentages of perception'
+
+    from_date = fields.Date('From date')
+    to_date = fields.Date('To date')
+    vat = fields.Char('Afip code', size=15, index=1)
+    percentage_perception = fields.Float('Percentage of perception')
+    percentage_retention = fields.Float('Percentage of retention')
+    multilateral = fields.Boolean('Is multilateral?')
+    name_partner = fields.Text('Company name')
+
+
+class res_country_state(models.Model):
+    _name = "res.country.state"
+    _inherit = "res.country.state"
+
+    jurisdiction_code = fields.Char(string="Jurisdiction Code", size=15)

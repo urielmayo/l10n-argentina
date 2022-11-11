@@ -31,12 +31,18 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/res_country_state.xml",
+        "views/cm05_view.xml",
         "views/padron_view.xml",
         "views/perception_view.xml",
         "views/retention_view.xml",
+        "views/excluidos_santa_fe.xml",
+        "views/excluidos_jujuy.xml",
+        "views/excluidos_cordoba.xml",
+        "views/excluidos_tucuman.xml",
         "wizard/padron_import_view.xml",
         "wizard/padron_mass_update_view.xml",
-        "wizard/padron_import_padron_view.xml",
+
     ],
     # ~ "external_dependencies": {
     # ~ "python": [

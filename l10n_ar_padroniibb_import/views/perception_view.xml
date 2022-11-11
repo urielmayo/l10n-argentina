@@ -5,11 +5,16 @@
         <record model="ir.ui.view" id="view_perception_padron_form">
             <field name="name">perception.padron.form</field>
             <field name="model">perception.perception</field>
-            <field name="inherit_id" ref="l10n_ar_perceptions.view_perception_perception_form"/>
+            <field name="inherit_id" ref="l10n_ar_perceptions.view_perception_perception_form" />
             <field name="arch" type="xml">
                 <field name="code" position="after">
-                    <field name="from_register_ARBA"/>
-                    <field name="from_register_AGIP"/>
+                    <field name="from_register" />
+                    <!--<field name="from_register_ARBA" string="ARBA" />
+                    <field name="from_register_AGIP" string="AGIP" />
+                    <field name="from_register_AGIP_RP" string="AGIP RP" />
+                    <field name="from_register_SANTA_FE" string="SANTA FE" />
+                    <field name="from_register_JUJUY" string="JUJUY" />
+                    <field name="from_register_CORDOBA" string="CORDOBA" />-->
                 </field>
             </field>
         </record>
@@ -19,10 +24,10 @@
             <field name="model">res.partner</field>
             <field name="type">form</field>
             <field name="priority">20</field>
-            <field name="inherit_id" ref="l10n_ar_perceptions.view_partner_perception_form"/>
+            <field name="inherit_id" ref="l10n_ar_perceptions.view_partner_perception_form" />
             <field name="arch" type="xml">
                 <field name="sit_iibb" position="after">
-                    <field name="from_padron" readonly="True"/>
+                    <field name="from_padron" readonly="True" />
                 </field>
             </field>
         </record>
