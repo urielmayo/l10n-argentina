@@ -414,7 +414,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
 
         if self.tucuman_ac:
             # Actualizamos Percepciones
-            percep_tucuman_ac = perception_obj._get_perception_from_tucuman_ac()
+            percep_tucuman_ac = perception_obj._get_perception_from_tucuman()
             if not percep_tucuman_ac:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -422,7 +422,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
                       "from Padron Tucumán"))
             self._update_perception_tucuman_ac(percep_tucuman_ac[0])
             # Actualizamos Retenciones
-            retent_tucuman_ac = retention_obj._get_retention_from_tucuman_ac()
+            retent_tucuman_ac = retention_obj._get_retention_from_tucuman()
             if not retent_tucuman_ac:
                 raise ValidationError(
                     _("Retention Error!\n") +
@@ -436,7 +436,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
         retention_obj = self.env['retention.retention']
         if self.tucuman_co:
             # Actualizamos Percepciones
-            percep_tucuman_co = perception_obj._get_perception_from_tucuman_co()
+            percep_tucuman_co = perception_obj._get_perception_from_tucuman()
             if not percep_tucuman_co:
                 raise ValidationError(
                     _("Perception Error!\n") +
@@ -444,7 +444,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
                       "from Padron Tucumán"))
             self._update_perception_tucuman_co(percep_tucuman_co[0])
             # Actualizamos Retenciones
-            retent_tucuman_co = retention_obj._get_retention_from_tucuman_co()
+            retent_tucuman_co = retention_obj._get_retention_from_tucuman()
             if not retent_tucuman_co:
                 raise ValidationError(
                     _("Retention Error!\n") +

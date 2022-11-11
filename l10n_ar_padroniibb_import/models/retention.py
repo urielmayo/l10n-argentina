@@ -13,8 +13,7 @@ PADRON = [
     ('santa_fe', 'SANTA_FE'),
     ('jujuy', 'JUJUY'),
     ('cordoba', 'CORDOBA'),
-    ('tucuman_ac', 'TUCUMAN Contribuyente'),
-    ('tucuman_co', 'TUCUMAN Coeficiente'),
+    ('tucuman', 'TUCUMAN'),
 ]
 
 class RetentionRetention(models.Model):
@@ -89,8 +88,8 @@ class RetentionRetention(models.Model):
             return ret
 
     @api.model
-    def _get_retention_from_tucuman_ac(self):
-        ret = self.search([('from_register', '=', 'tucuman_ac')])
+    def _get_retention_from_tucuman(self):
+        ret = self.search([('from_register', '=', 'tucuman')])
         if len(ret) > 1:
             raise ValidationError(
                 _('Retentions Improperly Configured\n') +
@@ -100,18 +99,3 @@ class RetentionRetention(models.Model):
             return False
         else:
             return ret
-
-    @api.model
-    def _get_retention_from_tucuman_co(self):
-        ret = self.search([('from_register', '=', 'tucuman_co')])
-        if len(ret) > 1:
-            raise ValidationError(
-                _('Retentions Improperly Configured\n') +
-                _('You can not have more than one retention to update ' +
-                  'from Tucumán. Please review configuration'))
-        elif len(ret) == 0:
-            return False
-        else:
-            return ret
-
-
