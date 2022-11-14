@@ -178,7 +178,7 @@ class res_partner(models.Model):
         res = {}
         # TODO: Chequear vigencia
         if per_ids:
-            percep_ids = perception_obj._get_perception_from_tucuman_ac()
+            percep_ids = perception_obj._get_perception_from_tucuman()
             if not percep_ids:
                 return res
             padron_percep = per_ids[0]
@@ -198,7 +198,7 @@ class res_partner(models.Model):
         res = {}
         # TODO: Chequear vigencia
         if per_ids:
-            percep_ids = perception_obj._get_perception_from_tucuman_co()
+            percep_ids = perception_obj._get_perception_from_tucuman()
             if not percep_ids:
                 return res
             padron_percep = per_ids[0]
@@ -322,7 +322,7 @@ class res_partner(models.Model):
         res = {}
         # TODO: Chequear vigencia
         if ret_ids:
-            retent_ids = retention_obj._get_retention_from_tucuman_ac()
+            retent_ids = retention_obj._get_retention_from_tucuman()
             if not retent_ids:
                 return res
             padron_retent = ret_ids[0]
@@ -343,7 +343,7 @@ class res_partner(models.Model):
         res = {}
         # TODO: Chequear vigencia
         if ret_ids:
-            retent_ids = retention_obj._get_retention_from_tucuman_co()
+            retent_ids = retention_obj._get_retention_from_tucuman()
             if not retent_ids:
                 return res
             padron_retent = ret_ids[0]
