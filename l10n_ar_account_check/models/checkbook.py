@@ -226,13 +226,12 @@ class AccountIssuedCheck(models.Model):
             checkbook_check_obj.browse(a).write({'state': 'done'})
         return super(AccountIssuedCheck, self).create(vals)
 
-    @api.multi
+    @api.one
     def unlink(self):
         if not self:
             return super(AccountIssuedCheck, self).unlink()
-        for rec in self:
-            rec.check_id.write({'state': 'draft'})
-            super(AccountIssuedCheck, rec).unlink()
+        self.check_id.write({'state': 'draft'})
+        return super(AccountIssuedCheck, self).unlink()
 
 class AccountCheckbookLimit(models.Model):
     _name = "account.checkbook.limit"
