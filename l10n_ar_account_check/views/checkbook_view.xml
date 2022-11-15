@@ -67,7 +67,7 @@
             <field name="model">account.checkbook</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Checkbook" version="7.0">
+                <form string="Checkbook" version="7.0" create="0">
                     <header>
                         <button string="Annull Checks" type="action"
                                 name="%(wizard_annull_checks_wizard_action)d" class="oe_highlight"/>

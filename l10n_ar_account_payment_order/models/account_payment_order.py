@@ -249,7 +249,7 @@ class AccountPaymentOrder(models.Model):
         return {
             "warning": {
                 "title": "Invalid Payment Order Date",
-                "message": (_("The date has to be today or not erlier than 2 days from today."))
+                "message": (_("The date has to be today or not earlier than 2 days from today."))
             }
         }
 
@@ -1248,17 +1248,17 @@ class AccountPaymentOrderLine(models.Model):
 
     payment_order_id = fields.Many2one( comodel_name='account.payment.order', string='payment order',
         ondelete='cascade')
-    name = fields.Char(string='description', default='')
+    name = fields.Char(string='Description', default='')
     account_id = fields.Many2one(
-        comodel_name='account.account', string='account')
+        comodel_name='account.account', string='Account')
     partner_id = fields.Many2one(
-        comodel_name='res.partner', string='partner',
+        comodel_name='res.partner', string='Partner',
         related='payment_order_id.partner_id')
     untax_amount = fields.Float(string='untax amount')
-    amount = fields.Float(string='amount', digits=dp.get_precision('account'))
+    amount = fields.Float(string='Amount', digits=dp.get_precision('account'))
     reconcile = fields.Boolean(string='full reconcile')
     type = fields.Selection(
-        string='dr/cr', selection=[
+        string='Db/Cr', selection=[
             ('debt', 'debt'),
             ('income', 'income')])
     move_line_id = fields.Many2one(
