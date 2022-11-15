@@ -184,7 +184,7 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">perception.tax.line</field>
         <field name="view_type">form</field>
-        <field name="view_id" ref="perception_tax_line_action_tree"/>
+        <field name="view_id" ref="perception_tax_line_view_tree"/>
         <field name="context">
             {"search_default_supported":1, "use_internal_number": 1}</field>
         <field name="domain">

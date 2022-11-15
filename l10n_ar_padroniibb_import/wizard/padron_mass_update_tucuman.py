@@ -10,26 +10,26 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class PadronMassUpdate(models.TransientModel):
-    _name = 'padron.mass.update'
+class PadronMassUpdateTucuman(models.TransientModel):
+    _name = 'padron.mass.update.tucuman'
     _description = 'Padron Mass Update'
 
-    arba = fields.Boolean('Update ARBA')
-    agip = fields.Boolean('Update AGIP')
-    agip_rp = fields.Boolean('Update AGIP RP')
+    tucuman_ac = fields.Boolean('Update Tucumán Contribuyentes')
+    tucuman_co = fields.Boolean('Update Tucumán Coeficientes')
 
-    # Rentencion ARBA
+
+    # Rentencion Tucumán
     @api.model
-    def _update_retention_arba(self, retention):
+    def _update_retention_tucuman_ac(self, retention):
         cr = self.env.cr
         query = """
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage p_percentage,
+                par.percentage_perception p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
-                JOIN padron_arba_retention par ON par.vat=rp.vat
+                JOIN padron_tucuman_acreditan par ON par.vat=rp.vat
             WHERE
                 rp.parent_id IS NULL
                 AND rp.supplier
@@ -119,9 +119,9 @@ class PadronMassUpdate(models.TransientModel):
                 e_msg = _('Unexpected result: %s' % str(res))
                 raise ValidationError(e_title + e_msg)
 
-    # Percepcion ARBA
+    # Percepcion Tucumán
     @api.model
-    def _update_perception_arba(self, perception):
+    def _update_perception_tucuman_ac(self, perception):
         multilateral_record = self.env.ref(
             'l10n_ar_point_of_sale.iibb_situation_multilateral')
         local_record = self.env.ref(
@@ -131,10 +131,10 @@ class PadronMassUpdate(models.TransientModel):
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage p_percentage,
+                par.percentage_perception p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
-                JOIN padron_arba_perception par ON par.vat=rp.vat
+                JOIN padron_tucuman_acreditan par ON par.vat=rp.vat
             WHERE
                 rp.parent_id IS NULL
                 AND rp.customer
@@ -215,18 +215,18 @@ class PadronMassUpdate(models.TransientModel):
                 # print('error')
                 # raise ValidationError(e_title + e_msg)
 
-    # Retencion AGIP
+    # Rentencion Tucumán
     @api.model
-    def _update_retention_agip(self, retention):
+    def _update_retention_tucuman_co(self, retention):
         cr = self.env.cr
         query = """
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage_retention p_percentage,
+                par.coeficiente p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
-                JOIN padron_agip_percentages par ON par.vat=rp.vat
+                JOIN padron_tucuman_coeficiente par ON par.vat=rp.vat
             WHERE
                 rp.parent_id IS NULL
                 AND rp.supplier
@@ -249,8 +249,8 @@ class PadronMassUpdate(models.TransientModel):
                     AND (r_partner_id IS NOT NULL)
                     AND (p_percentage = r_percentage)
                     THEN 'NONE'  -- In padron and sys but same percent
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NULL)
+                WHEN (p_partner_id IS NOT NULL) AND
+                    (r_partner_id IS NULL)
                     THEN 'CREATE'  -- In padron not in sys
                 WHEN (p_partner_id IS NULL)
                     AND (r_partner_id IS NOT NULL)
@@ -259,8 +259,8 @@ class PadronMassUpdate(models.TransientModel):
             END umode
             FROM padron
                 FULL JOIN retentions
-                ON retentions.r_partner_id=padron.p_partner_id)
-        z WHERE umode != 'NONE';
+                ON retentions.r_partner_id=padron.p_partner_id) z
+        WHERE umode != 'NONE';
         """
 
         params = (retention.id, )
@@ -312,34 +312,33 @@ class PadronMassUpdate(models.TransientModel):
                 }
                 self._cr.execute(q, q_params)
             else:
-                # e_title = _('Query Error\n')
-                # e_msg = _('Unexpected result: %s' % str(res))
-                # raise ValidationError(e_title + e_msg)
-                _logger.error('ERROR with register %s' % str(res))
+                e_title = _('Query Error\n')
+                e_msg = _('Unexpected result: %s' % str(res))
+                raise ValidationError(e_title + e_msg)
 
-    # Percepcion AGIP
+    # Percepcion Tucumán
     @api.model
-    def _update_perception_agip(self, perception):
+    def _update_perception_tucuman_co(self, perception):
         cr = self.env.cr
         query = """
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage_perception p_percentage,
+                par.coeficiente p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
-                JOIN padron_agip_percentages par ON par.vat=rp.vat
+                JOIN padron_tucuman_coeficiente par ON par.vat=rp.vat
             WHERE
                 rp.parent_id IS NULL
                 AND rp.customer
         ),
         perceptions AS (
             SELECT
-                rpr.id r_id,
-                rpr.partner_id r_partner_id,
-                rpr.percent r_percentage
-            FROM res_partner_perception rpr
-            WHERE rpr.perception_id=%s
+                rpp.id r_id,
+                rpp.partner_id r_partner_id,
+                rpp.percent r_percentage
+            FROM res_partner_perception rpp
+            WHERE rpp.perception_id=%s
         )
         SELECT * FROM (SELECT padron.*, perceptions.*,
             CASE
@@ -370,28 +369,14 @@ class PadronMassUpdate(models.TransientModel):
 
         for res in cr.fetchall():
             if res[6] == 'UPDATE':  # Change the amount of percentage
-                q = """
-                UPDATE res_partner_perception SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': res[1],
-                    'id': res[3],
-                }
+                q = "UPDATE res_partner_perception SET percent=%(percent)s, \
+                    from_padron = True WHERE id=%(id)s"
+                q_params = {'percent': res[1], 'id': res[3]}
                 self._cr.execute(q, q_params)
             elif res[6] == 'DELETE':   # Set the percentage to -1
-                q = """
-                UPDATE res_partner_perception SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': -1,
-                    'id': res[3],
-                }
+                q = "UPDATE res_partner_perception SET percent=%(percent)s, \
+                    from_padron = True WHERE id=%(id)s"
+                q_params = {'percent': -1, 'id': res[3]}
                 self._cr.execute(q, q_params)
             elif res[6] == 'CREATE':  # Create the res.partner.perception
                 q = """
@@ -414,272 +399,55 @@ class PadronMassUpdate(models.TransientModel):
                 }
                 self._cr.execute(q, q_params)
             else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
-
-    # Retencion AGIP RP
-    @api.model
-    def _update_retention_agip_rp(self, retention):
-        cr = self.env.cr
-        query = """
-        WITH padron AS (
-            SELECT
-                rp.id p_partner_id,
-                par.percentage_retention p_percentage,
-                par.multilateral p_multilateral
-            FROM res_partner rp
-                JOIN padron_agip_percentages_rp par ON par.vat=rp.vat
-            WHERE
-                rp.parent_id IS NULL
-                AND rp.supplier
-        ),
-        retentions AS (
-            SELECT
-                rpr.id r_id,
-                rpr.partner_id r_partner_id,
-                rpr.percent r_percentage
-            FROM res_partner_retention rpr
-            WHERE rpr.retention_id=%s
-        )
-        SELECT * FROM (SELECT padron.*, retentions.*,
-            CASE
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    AND (p_percentage <> r_percentage)
-                    THEN 'UPDATE'  -- In padron and sys
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    AND (p_percentage = r_percentage)
-                    THEN 'NONE'  -- In padron and sys but same percent
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NULL)
-                    THEN 'CREATE'  -- In padron not in sys
-                WHEN (p_partner_id IS NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    THEN 'DELETE'  -- Not in padron but in sys
-                ELSE 'ERROR' -- Never should enter here
-            END umode
-            FROM padron
-                FULL JOIN retentions
-                ON retentions.r_partner_id=padron.p_partner_id)
-        z WHERE umode != 'NONE';
-        """
-
-        params = (retention.id, )
-        cr.execute(query, params)
-
-        for res in cr.fetchall():
-            if res[6] == 'UPDATE':  # Change the amount of percentage
-                q = """
-                UPDATE res_partner_retention SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': res[1],
-                    'id': res[3],
-                }
-                self._cr.execute(q, q_params)
-            elif res[6] == 'DELETE':   # Set the percentage to -1
-                q = """
-                UPDATE res_partner_retention SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': -1,
-                    'id': res[3],
-                }
-                self._cr.execute(q, q_params)
-            elif res[6] == 'CREATE':  # Create the res.partner.retention
-                q = """
-                INSERT INTO res_partner_retention (
-                    partner_id,
-                    percent,
-                    retention_id,
-                    from_padron
-                ) VALUES (
-                    %(partner_id)s,
-                    %(percent)s,
-                    %(retention_id)s,
-                    True
-                )"""
-                q_params = {
-                    'percent': res[1],
-                    'partner_id': res[0],
-                    'retention_id': retention.id,
-
-                }
-                self._cr.execute(q, q_params)
-            else:
-                # e_title = _('Query Error\n')
-                # e_msg = _('Unexpected result: %s' % str(res))
-                # raise ValidationError(e_title + e_msg)
+                #e_title = _('Query Error\n')
+                #e_msg = _('Unexpected result: %s' % str(res))
                 _logger.error('ERROR with register %s' % str(res))
-
-    # Percepcion AGIP RP
-    @api.model
-    def _update_perception_agip_rp(self, perception):
-        cr = self.env.cr
-        query = """
-        WITH padron AS (
-            SELECT
-                rp.id p_partner_id,
-                par.percentage_perception p_percentage,
-                par.multilateral p_multilateral
-            FROM res_partner rp
-                JOIN padron_agip_percentages_rp par ON par.vat=rp.vat
-            WHERE
-                rp.parent_id IS NULL
-                AND rp.customer
-        ),
-        perceptions AS (
-            SELECT
-                rpr.id r_id,
-                rpr.partner_id r_partner_id,
-                rpr.percent r_percentage
-            FROM res_partner_perception rpr
-            WHERE rpr.perception_id=%s
-        )
-        SELECT * FROM (SELECT padron.*, perceptions.*,
-            CASE
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    AND (p_percentage <> r_percentage)
-                    THEN 'UPDATE'  -- In padron and sys
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    AND (p_percentage = r_percentage)
-                    THEN 'NONE'  -- In padron and sys but same percent
-                WHEN (p_partner_id IS NOT NULL)
-                    AND (r_partner_id IS NULL)
-                    THEN 'CREATE'  -- In padron not in sys
-                WHEN (p_partner_id IS NULL)
-                    AND (r_partner_id IS NOT NULL)
-                    THEN 'DELETE'  -- Not in padron but in sys
-                ELSE 'ERROR' -- Never should enter here
-            END umode
-            FROM padron
-                FULL JOIN perceptions
-                ON perceptions.r_partner_id=padron.p_partner_id) z
-        WHERE umode != 'NONE';
-        """
-
-        params = (perception.id, )
-        cr.execute(query, params)
-
-        for res in cr.fetchall():
-            if res[6] == 'UPDATE':  # Change the amount of percentage
-                q = """
-                UPDATE res_partner_perception SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': res[1],
-                    'id': res[3],
-                }
-                self._cr.execute(q, q_params)
-            elif res[6] == 'DELETE':   # Set the percentage to -1
-                q = """
-                UPDATE res_partner_perception SET
-                    percent=%(percent)s,
-                    from_padron = True
-                WHERE id=%(id)s
-                """
-                q_params = {
-                    'percent': -1,
-                    'id': res[3],
-                }
-                self._cr.execute(q, q_params)
-            elif res[6] == 'CREATE':  # Create the res.partner.perception
-                q = """
-                INSERT INTO res_partner_perception (
-                    partner_id,
-                    percent,
-                    perception_id,
-                    from_padron
-                ) VALUES (
-                    %(partner_id)s,
-                    %(percent)s,
-                    %(perception_id)s,
-                    True
-                )"""
-                q_params = {
-                    'percent': res[1],
-                    'partner_id': res[0],
-                    'perception_id': perception.id,
-
-                }
-                self._cr.execute(q, q_params)
-            else:
-                e_title = _('Query Error\n')
-                e_msg = _('Unexpected result: %s' % str(res))
-                raise ValidationError(e_title + e_msg)
+                # print('error')
+                # raise ValidationError(e_title + e_msg)
 
 
 
     @api.multi
-    def action_update(self):
+    def action_update_tucuman_ac(self):
         perception_obj = self.env['perception.perception']
         retention_obj = self.env['retention.retention']
 
-        if self.arba:
+        if self.tucuman_ac:
             # Actualizamos Percepciones
-            percep_arba = perception_obj._get_perception_from_arba()
-            if not percep_arba:
+            percep_tucuman_ac = perception_obj._get_perception_from_tucuman()
+            if not percep_tucuman_ac:
                 raise ValidationError(
                     _("Perception Error!\n") +
                     _("There is no perception configured to update " +
-                      "from Padron ARBA"))
-            self._update_perception_arba(percep_arba[0])
+                      "from Padron Tucumán"))
+            self._update_perception_tucuman_ac(percep_tucuman_ac[0])
             # Actualizamos Retenciones
-            retent_arba = retention_obj._get_retention_from_arba()
-            if not retent_arba:
+            retent_tucuman_ac = retention_obj._get_retention_from_tucuman()
+            if not retent_tucuman_ac:
                 raise ValidationError(
                     _("Retention Error!\n") +
                     _("There is no retention configured to update " +
-                      "from Padron ARBA"))
-            self._update_retention_arba(retent_arba[0])
+                      "from Padron Tucumán"))
+            self._update_retention_tucuman_ac(retent_tucuman_ac[0])
 
-        if self.agip:
+    @api.multi
+    def action_update_tucuman_co(self):
+        perception_obj = self.env['perception.perception']
+        retention_obj = self.env['retention.retention']
+        if self.tucuman_co:
             # Actualizamos Percepciones
-            percep_agip = perception_obj._get_perception_from_agip()
-            if not percep_agip:
+            percep_tucuman_co = perception_obj._get_perception_from_tucuman()
+            if not percep_tucuman_co:
                 raise ValidationError(
                     _("Perception Error!\n") +
                     _("There is no perception configured to update " +
-                      "from Padron AGIP"))
-            self._update_perception_agip(percep_agip[0])
+                      "from Padron Tucumán"))
+            self._update_perception_tucuman_co(percep_tucuman_co[0])
             # Actualizamos Retenciones
-            retent_agip = retention_obj._get_retention_from_agip()
-            if not retent_agip:
+            retent_tucuman_co = retention_obj._get_retention_from_tucuman()
+            if not retent_tucuman_co:
                 raise ValidationError(
                     _("Retention Error!\n") +
                     _("There is no retention configured to update " +
-                      "from Padron AGIP"))
-            self._update_retention_agip(retent_agip[0])
-
-        if self.agip_rp:
-            # Actualizamos Percepciones
-            percep_agip = perception_obj._get_perception_from_agip()
-            if not percep_agip:
-                raise ValidationError(
-                    _("Perception Error!\n") +
-                    _("There is no perception configured to update " +
-                      "from Padron AGIP"))
-            self._update_perception_agip_rp(percep_agip[0])
-            # Actualizamos Retenciones
-            retent_agip = retention_obj._get_retention_from_agip()
-            if not retent_agip:
-                raise ValidationError(
-                    _("Retention Error!\n") +
-                    _("There is no retention configured to update " +
-                      "from Padron AGIP"))
-            self._update_retention_agip_rp(retent_agip[0])
-
-
+                      "from Padron Tucuman"))
+            self._update_retention_tucuman_co(retent_tucuman_co[0])

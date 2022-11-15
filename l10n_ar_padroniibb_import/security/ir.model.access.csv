@@ -1,4 +1,16 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "access_padron_agip_percentages_user","padron.agip_percentages user","l10n_ar_padroniibb_import.model_padron_agip_percentages","base.group_user",1,1,1,1
+"access_padron_agip_percentages_rp_user","padron.agip_percentages.rp user","l10n_ar_padroniibb_import.model_padron_agip_percentages_rp","base.group_user",1,1,1,1
 "access_padron_arba_perception_user","padron.arba_perception user","l10n_ar_padroniibb_import.model_padron_arba_perception","base.group_user",1,1,1,1
 "access_padron_arba_retention_user","padron.arba_retention user","l10n_ar_padroniibb_import.model_padron_arba_retention","base.group_user",1,1,1,1
+"access_padron_import","access_padron_import","model_padron_import","base.group_user",1,1,1,1
+"access_padron_import_files","access_padron_import_files","model_padron_import_files","base.group_user",1,1,1,1
+"access_padron_santa_fe_percentages","access_padron_santa_fe_percentages","model_padron_santa_fe_percentages","base.group_user",1,1,1,1
+"access_padron_jujuy_percentages","access_padron_jujuy_percentages","model_padron_jujuy_percentages","base.group_user",1,1,1,1
+"access_padron_cordoba_perception","access_padron_cordoba_perception","model_padron_cordoba_perception","base.group_user",1,1,1,1
+"access_agip_retention_group","access_agip_retention_group","model_agip_retention_group","base.group_user",1,0,0,0
+"access_agip_perception_group","access_agip_perception_group","model_agip_perception_group","base.group_user",1,0,0,0
+"access_agip_perception_group_rp","access_agip_perception_group_rp","model_agip_perception_group_rp","base.group_user",1,0,0,0
+"access_padron_tucuman_acreditan","access_padron_tucuman_acreditan","model_padron_tucuman_acreditan","base.group_user",1,0,0,0
+"access_padron_tucuman_coeficiente","access_padron_tucuman_coeficiente","model_padron_tucuman_coeficiente","base.group_user",1,0,0,0
+"access_cm05","access_cm05","model_cm05","base.group_user",1,1,1,1

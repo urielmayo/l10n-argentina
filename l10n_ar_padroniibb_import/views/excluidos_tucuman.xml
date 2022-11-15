@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Padron tucumán -->
+    <menuitem id="padron_tucuman_root_menu" name="Padron Tucumán IIBB" parent="padrones_root_menu" sequence="10" />
+
+    <!-- Padron tucumán contribuyente-->
+    <record model="ir.ui.view" id="view_tucuman_acreditan_tree">
+        <field name="name">tucuman.acreditan.tree</field>
+        <field name="model">padron.tucuman_acreditan</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Padron Tucumán Contribuyente">
+                <field name="from_date" />
+                <field name="to_date" />
+                <field name="vat" />
+                <field name="percentage_perception" />
+                <field name="coeficiente" />
+                <field name="multilateral" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_tucuman_acreditan_search" model="ir.ui.view">
+        <field name="name">tucuman.acreditan.search</field>
+        <field name="model">padron.tucuman_acreditan</field>
+        <field name="arch" type="xml">
+            <search string="Padron Tucumán Contribuyente">
+                <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_tucuman_acreditan" model="ir.actions.act_window">
+        <field name="name">Padron Tucumán Contribuyente</field>
+        <field name="res_model">padron.tucuman_acreditan</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tucuman_acreditan_tree" />
+        <field name="search_view_id" ref="view_tucuman_acreditan_search" />
+    </record>
+
+    <menuitem id="padron_tucuman_acreditan_menu" action="action_tucuman_acreditan" parent="padron_tucuman_root_menu" sequence="10" />
+
+
+    <!-- Padron tucumán coeficiente -->
+    <record model="ir.ui.view" id="view_tucuman_coeficiente_tree">
+        <field name="name">tucuman.coeficiente.tree</field>
+        <field name="model">padron.tucuman_coeficiente</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Padron Tucumán Coeficiente">
+                <field name="from_date" />
+                <field name="to_date" />
+                <field name="vat" />
+                <field name="percentage_perception" />
+                <field name="coeficiente" />
+                <field name="multilateral" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_tucuman_coeficiente_search" model="ir.ui.view">
+        <field name="name">tucuman.coeficiente.search</field>
+        <field name="model">padron.tucuman_coeficiente</field>
+        <field name="arch" type="xml">
+            <search string="Padron Tucumán Coeficiente">
+                <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_tucuman_coeficiente" model="ir.actions.act_window">
+        <field name="name">Padron Tucumán Coeficiente</field>
+        <field name="res_model">padron.tucuman_coeficiente</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tucuman_coeficiente_tree" />
+        <field name="search_view_id" ref="view_tucuman_coeficiente_search" />
+    </record>
+
+    <menuitem id="padron_tucuman_coeficiente_menu" action="action_tucuman_coeficiente" parent="padron_tucuman_root_menu" sequence="10" />
+
+
+</odoo>

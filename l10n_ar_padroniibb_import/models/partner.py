@@ -42,25 +42,7 @@ class res_partner(models.Model):
                 allowed_to_keep_comms.append(command)
         return allowed_to_keep_comms
 
-    @api.model
-    def _check_padron_retention_agip(self, vat):
-        padron_agip_obj = self.env['padron.agip_percentages']
-        retention_obj = self.env['retention.retention']
-        ret_ids = padron_agip_obj.search([('vat', '=', vat)])
-        res = {}
-        if ret_ids:
-            retent_ids = retention_obj._get_retention_from_agip()
-            if not retent_ids:
-                return res
-            padron_retent = ret_ids[0]
-            sit_iibb = self._compute_sit_iibb(padron_retent)
-            res = {
-                'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage_retention,
-                'sit_iibb': sit_iibb,
-                'from_padron': True,
-            }
-        return res
+
 
     @api.model
     def _check_padron_perception_agip(self, vat):
@@ -84,21 +66,21 @@ class res_partner(models.Model):
         return res
 
     @api.model
-    def _check_padron_retention_arba(self, vat):
-        padron_arba_ret_obj = self.env['padron.arba_retention']
-        retention_obj = self.env['retention.retention']
-        ret_ids = padron_arba_ret_obj.search([('vat', '=', vat)])
+    def _check_padron_perception_agip_rp(self, vat):
+        padron_agip_obj = self.env['padron.agip_percentages.rp']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_agip_obj.search([('vat', '=', vat)])
         res = {}
         # TODO: Chequear vigencia
-        if ret_ids:
-            retent_ids = retention_obj._get_retention_from_arba()
-            if not retent_ids:
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_agip_rp()
+            if not percep_ids:
                 return res
-            padron_retent = ret_ids[0]
-            sit_iibb = self._compute_sit_iibb(padron_retent)
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
             res = {
-                'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage,
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
                 'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
@@ -119,11 +101,261 @@ class res_partner(models.Model):
             sit_iibb = self._compute_sit_iibb(padron_percep)
             res = {
                 'perception_id': percep_ids[0].id,
-                'percent': padron_percep.percentage,
+                'percent': padron_percep.percentage_perception,
                 'from_padron': True,
                 'sit_iibb': sit_iibb,
             }
         return res
+
+    @api.model
+    def _check_padron_perception_santa_fe(self, vat):
+        padron_santa_fe_obj = self.env['padron.santa_fe_percentages']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_santa_fe_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_santa_fe()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_perception_jujuy(self, vat):
+        padron_jujuy_obj = self.env['padron.jujuy_percentages']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_jujuy_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_jujuy()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_perception_cordoba(self, vat):
+        padron_cordoba_obj = self.env['padron.cordoba_perception']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_cordoba_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_cordoba()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_perception_tucuman_acreditan(self, vat):
+        padron_tucuman_obj = self.env['padron.tucuman_acreditan']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_tucuman_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_tucuman()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+    @api.model
+    def _check_padron_perception_tucuman_coeficiente(self, vat):
+        padron_tucuman_obj = self.env['padron.tucuman_coeficiente']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_tucuman_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_tucuman()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.coeficiente,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+
+    @api.model
+    def _check_padron_retention_agip(self, vat):
+        padron_agip_obj = self.env['padron.agip_percentages']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_agip_obj.search([('vat', '=', vat)])
+        res = {}
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_agip()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_agip_rp(self, vat):
+        padron_agip_obj = self.env['padron.agip_percentages.rp']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_agip_obj.search([('vat', '=', vat)])
+        res = {}
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_agip_rp()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_arba(self, vat):
+        padron_arba_ret_obj = self.env['padron.arba_retention']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_arba_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_arba()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_santa_fe(self, vat):
+        padron_santa_fe_ret_obj = self.env['padron.santa_fe_percentages']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_santa_fe_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_santa_fe()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_jujuy(self, vat):
+        padron_jujuy_ret_obj = self.env['padron.jujuy_percentages']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_jujuy_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_jujuy()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+    @api.model
+    def _check_padron_retention_tucuman_acreditan(self, vat):
+        padron_tucuman_ret_obj = self.env['padron.tucuman_acreditan']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_tucuman_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_tucuman()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+    @api.model
+    def _check_padron_retention_tucuman_coeficiente(self, vat):
+        padron_tucuman_ret_obj = self.env['padron.tucuman_coeficiente']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_tucuman_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_tucuman()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.coeficiente,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
 
     @api.model
     def create(self, vals):
@@ -140,7 +372,32 @@ class res_partner(models.Model):
                 if perc_agip:
                     perceptions_list.append((0, 0, perc_agip))
 
+                perc_agip_rp = self._check_padron_perception_agip_rp(vat)
+                if perc_agip_rp:
+                    perceptions_list.append((0, 0, perc_agip_rp))
+
+                perc_santa_fe = self._check_padron_perception_santa_fe(vat)
+                if perc_santa_fe:
+                    perceptions_list.append((0, 0, perc_santa_fe))
+
+                perc_jujuy = self._check_padron_perception_jujuy(vat)
+                if perc_jujuy:
+                    perceptions_list.append((0, 0, perc_jujuy))
+
+                perc_cordoba = self._check_padron_perception_cordoba(vat)
+                if perc_cordoba:
+                    perceptions_list.append((0, 0, perc_cordoba))
+
+                perc_tucuman_ac = self._check_padron_perception_tucuman_acreditan(vat)
+                if perc_tucuman_ac:
+                    perceptions_list.append((0, 0, perc_tucuman_ac))
+
+                perc_tucuman_co = self._check_padron_perception_tucuman_coeficiente(vat)
+                if perc_tucuman_co:
+                    perceptions_list.append((0, 0, perc_tucuman_co))
+
                 vals['perception_ids'] = perceptions_list
+
 
         # Retenciones
         if 'supplier' in vals and vals['supplier']:
@@ -154,6 +411,26 @@ class res_partner(models.Model):
                 ret_agip = self._check_padron_retention_agip(vat)
                 if ret_agip:
                     retentions_list.append((0, 0, ret_agip))
+
+                ret_agip_rp = self._check_padron_retention_agip_rp(vat)
+                if ret_agip_rp:
+                    retentions_list.append((0, 0, ret_agip_rp))
+
+                ret_santa_fe = self._check_padron_retention_santa_fe(vat)
+                if ret_santa_fe:
+                    retentions_list.append((0, 0, ret_santa_fe))
+
+                ret_jujuy = self._check_padron_retention_jujuy(vat)
+                if ret_jujuy:
+                    retentions_list.append((0, 0, ret_jujuy))
+
+                ret_tucuman_ac = self._check_padron_retention_tucuman_acreditan(vat)
+                if ret_tucuman_ac:
+                    retentions_list.append((0, 0, ret_tucuman_ac))
+
+                ret_tucuman_co = self._check_padron_retention_tucuman_coeficiente(vat)
+                if ret_tucuman_co:
+                    retentions_list.append((0, 0, ret_tucuman_co))
 
                 vals['retention_ids'] = retentions_list
 
@@ -205,7 +482,6 @@ class res_partner(models.Model):
         else:
             per_id = partner_perception_ids[0]
             res['perception_ids'] = [(1, per_id.id, perception)]
-
         return res
 
     @api.multi
@@ -238,8 +514,7 @@ class res_partner(models.Model):
             # porque suponemos que viene de la actualizacion masiva
             if vat:
                 if customer:
-                    # Obtenemos la percepcion desde el
-                    # padron de percepciones de ARBA
+
                     perception_ids_lst = []
                     perc_arba = partner._check_padron_perception_arba(vat)
                     if perc_arba:
@@ -254,6 +529,48 @@ class res_partner(models.Model):
                             perc_agip)
                         perception_ids_lst.append(
                             res_agip['perception_ids'][0])
+
+                    perc_agip_rp = partner._check_padron_perception_agip_rp(vat)
+                    if perc_agip_rp:
+                        res_agip_rp = partner._update_perception_partner(
+                            perc_agip_rp)
+                        perception_ids_lst.append(
+                            res_agip_rp['perception_ids'][0])
+
+                    perc_santa_fe = partner._check_padron_perception_santa_fe(vat)
+                    if perc_santa_fe:
+                        res_santa_fe = partner._update_perception_partner(
+                            perc_santa_fe)
+                        perception_ids_lst.append(
+                            res_santa_fe['perception_ids'][0])
+
+                    perc_jujuy = partner._check_padron_perception_jujuy(vat)
+                    if perc_jujuy:
+                        res_jujuy = partner._update_perception_partner(
+                            perc_jujuy)
+                        perception_ids_lst.append(
+                            res_jujuy['perception_ids'][0])
+
+                    perc_cordoba = partner._check_padron_perception_cordoba(vat)
+                    if perc_cordoba:
+                        res_cordoba = partner._update_perception_partner(
+                            perc_cordoba)
+                        perception_ids_lst.append(
+                            res_cordoba['perception_ids'][0])
+
+                    perc_tucuman_ac = partner._check_padron_perception_tucuman_acreditan(vat)
+                    if perc_tucuman_ac:
+                        res_tucuman_ac = partner._update_perception_partner(
+                            perc_tucuman_ac)
+                        perception_ids_lst.append(
+                            res_tucuman_ac['perception_ids'][0])
+
+                    perc_tucuman_co = partner._check_padron_perception_tucuman_coeficiente(vat)
+                    if perc_tucuman_co:
+                        res_tucuman_co = partner._update_perception_partner(
+                            perc_tucuman_co)
+                        perception_ids_lst.append(
+                            res_tucuman_co['perception_ids'][0])
 
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
@@ -274,8 +591,7 @@ class res_partner(models.Model):
                     })
 
                 if supplier:
-                    # Obtenemos la percepcion desde el padron
-                    # de percepciones de ARBA
+
                     retention_ids_lst = []
                     ret_arba = partner._check_padron_retention_arba(vat)
                     if ret_arba:
@@ -286,6 +602,31 @@ class res_partner(models.Model):
                     if ret_agip:
                         res_agip = partner._update_retention_partner(ret_agip)
                         retention_ids_lst.append(res_agip['retention_ids'][0])
+
+                    ret_agip_rp = partner._check_padron_retention_agip_rp(vat)
+                    if ret_agip_rp:
+                        res_agip_rp = partner._update_retention_partner(ret_agip_rp)
+                        retention_ids_lst.append(res_agip_rp['retention_ids'][0])
+
+                    ret_santa_fe = partner._check_padron_retention_santa_fe(vat)
+                    if ret_santa_fe:
+                        res_santa_fe = partner._update_retention_partner(ret_santa_fe)
+                        retention_ids_lst.append(res_santa_fe['retention_ids'][0])
+
+                    ret_jujuy = partner._check_padron_retention_jujuy(vat)
+                    if ret_jujuy:
+                        res_jujuy = partner._update_retention_partner(ret_jujuy)
+                        retention_ids_lst.append(res_jujuy['retention_ids'][0])
+
+                    ret_tucuman_ac = partner._check_padron_retention_tucuman_acreditan(vat)
+                    if ret_tucuman_ac:
+                        res_tucuman_ac = partner._update_retention_partner(ret_tucuman_ac)
+                        retention_ids_lst.append(res_tucuman_ac['retention_ids'][0])
+
+                    ret_tucuman_co = partner._check_padron_retention_tucuman_coeficiente(vat)
+                    if ret_tucuman_co:
+                        res_tucuman_co = partner._update_retention_partner(ret_tucuman_co)
+                        retention_ids_lst.append(res_tucuman_co['retention_ids'][0])
 
                     if 'retention_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
@@ -304,7 +645,6 @@ class res_partner(models.Model):
                     vals.update({
                         'retention_ids': real_comms,
                     })
-
         return super(res_partner, self).write(vals)
 
 

@@ -1,56 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="padron_import_wizard" model="ir.ui.view">
             <field name="name">padron.import.wizard</field>
             <field name="model">padron.import</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Import zip">
-                    <label for="datas_agip" string="This wizard allows you to upload zip files from ARBA / AGIP Agency and process it" colspan="4"/>
-                    <separator string="AGIP Zip File" colspan="4"/>
+                    <label for="file" string="This wizard allows you to upload padron and process it" colspan="4" />
+                    <separator string="Import Padron" colspan="4" />
                     <group>
                         <group>
-                            <field name="datas_agip" filename="filename_agip"/>
+                            <!--<label for="province_id" string="Province" />-->
+                            <field name="province_id" domain="[('country_id', '=', 'Argentina')]" on_change="onchange_province(province_id)" />
                         </group>
                         <group>
-                            <field name="filename_agip"
-                                attrs="{'readonly': True, 'invisible': True}" force_save="True"/>
+                            <!--<label for="type_file" string="Type of File" />-->
+                            <field name="type_file" string="Type of File" />
                         </group>
                     </group>
-                    <br/>
-                    <separator string="ARBA Zip File" colspan="4"/>
-                    <group>
-                        <group>
-                            <field name="datas_arba" filename="filename_arba"/>
-                        </group>
-                        <group>
-                            <field name="filename_arba"
-                                attrs="{'readonly': True, 'invisible': True}" force_save="True"/>
-                        </group>
+
+                    <!-- Segun la provincia los archivos vienen de distintas maneras -->
+
+                    <group name="files" attrs="{'invisible': [('type_file', 'not in', ('text', 'excel'))]}">
+                        <separator string="Files" colspan="4" />
+                        <field name="data_files" nolabel="1">
+                            <tree>
+                                <field name="file" widget="binary" height="64" filename="file_name" max_upload_size="1048576" />
+                                <field name="file_name" invisible="1" />
+                            </tree>
+                            <form>
+                                <field name="file" widget="binary" height="64" filename="file_name" max_upload_size="1048576" />
+                                <field name="file_name" invisible="1" />
+                            </form>
+                        </field>
+                    </group>
+                    <group name="compressed_file" attrs="{'invisible': [('type_file', 'not in', ('zip','rar'))]}">
+                        <separator string="Compressed File" colspan="4" />
+                        <field name="data_compressed" widget='binary' height="64" max_upload_size="1048576" />
                     </group>
                     <footer>
-                        <button name="import_zip_file" string="Import" type="object" class="oe_highlight"/>
+                        <button name="import_file" string="Import" type="object" class="oe_highlight" />
                         or
-                        <button string="Cancel" class="oe_link" special="cancel"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>
                 </form>
             </field>
         </record>
-
-        <act_window name="Import zip file/s"
-            res_model="padron.import"
-            src_model="padron.import"
-            view_mode="form"
-            target="new"
-            id="action_load_padron_zip_file"/>
-
-        <menuitem id="menu_action_menu_agip_load"
-            name="Import ARBA / AGIP"
-            parent="padrones_root_menu"
-            sequence="1"
-            action="action_load_padron_zip_file"/>
+        <act_window name="Import file/s" res_model="padron.import" src_model="padron.import" view_mode="form" target="new" id="action_load_padron_files" />
+        <menuitem id="load_padron_menu" name="Import Padron" action="action_load_padron_files" groups="account.group_account_manager" parent="padrones_root_menu" sequence="1" />
 
     </data>
 </odoo>

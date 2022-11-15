@@ -7,3 +7,4 @@ from . import padron  # noqa
 from . import partner  # noqa
 from . import perception  # noqa
 from . import retention  # noqa
+from . import cm05  # noqa
