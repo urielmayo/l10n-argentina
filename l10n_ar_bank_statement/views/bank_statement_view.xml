@@ -7,11 +7,6 @@
         <field name="inherit_id" ref="account.view_bank_statement_form"/>
         <field name="priority" eval="8"/>
         <field name="arch" type="xml">
-            <button name="check_confirm_bank" position="after">
-                <button string="Add lines" type="action"
-                    attrs="{'invisible': ['|', ('state', '!=', 'open'), ('journal_type', 'not in', ('bank',))]}"
-                    name="%(l10n_ar_bank_statement.action_wizard_add_account_bank_statement_line)d"/>
-            </button>
             <xpath expr="//field[@name='line_ids']//tree" position="inside">
                 <field name="concept_id"/>
                 <field name="statement_state" invisible="1"/>
@@ -20,17 +15,6 @@
                 <button string="Validate" type="object" name="button_confirm"
                     attrs="{'invisible': ['|', ('state', '!=', 'open'), ('line_type', 'in', ('in', 'out'))]}"
                     icon="fa-check"
-                    />
-                <button string="Re-Open" type="object" name="button_open_line"
-                    attrs="{'invisible': [
-                        '|',
-                        ('state', '!=', 'confirm'),
-                        '|',
-                        ('line_type', 'in', ('in', 'out')),
-                        ('statement_state', '=', 'confirm'),
-                    ]
-                    }"
-                    icon="fa-undo"
                     />
             </xpath>
             <xpath expr="//field[@name='line_ids']//tree" position="attributes">

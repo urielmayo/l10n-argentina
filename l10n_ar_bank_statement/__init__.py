@@ -4,4 +4,4 @@
 ##############################################################################
 
 from . import models  # noqa
-from . import wizard  # noqa
+# from . import wizard  # noqa

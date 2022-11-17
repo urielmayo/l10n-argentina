@@ -90,6 +90,7 @@ class AccountBankStatementLine(models.Model):
         help="Type of the associated operation",
         required=True,
     )
+    invoice_id = fields.Many2one('account.invoice')
     state = fields.Selection(
         lambda l: l._get_state_select(), related=False, string='Status',
         readonly=False, default=lambda l: l._get_default_state_value())

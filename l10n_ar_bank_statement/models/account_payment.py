@@ -61,8 +61,7 @@ class AccountPayment(models.Model):
         st_line_values = {
             'ref': invoices_info or self.communication,
             'name': self.name or self.communication,
-            'date': self.payment_date or self.date_due,
-            'invoice_id': self.invoice_id.id or False,
+            'date': self.payment_date,
             'journal_id': journal.id,
             'company_id': self.company_id.id,
             'payment_id': self.id,
@@ -86,7 +85,7 @@ class AccountPayment(models.Model):
         return self.env['account.bank.statement.line'].create(st_line_values)
 
     def create_statement_line(self, data, journal):
-        # 'data' can be an account.issued.check or an account.payment
+        # 'data' can be: 'account.issued.check', 'account.payment.mode.line' or 'account.payment'
         st_line_values = data._prepare_statement_line_data()
 
         if journal.type == "cash":

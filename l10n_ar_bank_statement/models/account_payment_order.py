@@ -117,7 +117,6 @@ class AccountPaymentModeLine(models.Model):
         """
         Show invoices name concatenated.
         """
-
         invoices = self.mapped("payment_order_id").mapped(
             "line_ids").mapped("invoice_id").filtered(lambda x: x.type in ('out_invoice', 'in_invoice'))
         return ', '.join(inv.internal_number or '' for inv in invoices)
@@ -127,8 +126,7 @@ class AccountPaymentModeLine(models.Model):
         line_type = payment_order.type
 
         # Si el voucher no tiene partner, ponemos el de la compania
-        partner = payment_order.partner_id or \
-            payment_order.company_id.partner_id
+        partner = payment_order.partner_id or payment_order.company_id.partner_id
         journal = self.payment_mode_id or payment_order.journal_id
 
         if payment_order.type == 'payment':
@@ -152,6 +150,7 @@ class AccountPaymentModeLine(models.Model):
             'account_id': account.id,
             'line_type': line_type,
             'amount': amount,
+            'invoice_id': self.invoice_id.id,
             'state': 'open',
             'currency_id': journal.currency_id.id or payment_order.journal_id.currency_id.id,
         }
