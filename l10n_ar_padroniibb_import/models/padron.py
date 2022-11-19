@@ -168,6 +168,25 @@ class CordobaPerceptions(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
     name_partner = fields.Text('Company name')
 
+class FormosaPadron(models.Model):
+    _name = 'padron.formosa'
+    _description = 'Definition of percentages of taxes by customer'
+
+    vat = fields.Char('CUIT', size=11)
+    denomination = fields.Text('Denomination')
+    period = fields.Char('Period')
+    category = fields.Char('Category', size=20)
+    category_description = fields.Char('Category description', size=18)
+    ac_ret_28_97 = fields.Float('Alicuota retention rg 28 97', size=6)
+    ac_per_23_14 = fields.Float('Alicuota perception rg 23 14', size=6)
+    date_ret_28_97 = fields.Date('Date retention rg 28 97')
+    date_per_23_14 = fields.Date('Date perception rg 23 14')
+    ac_per_33_99 = fields.Float('Alicuota perception rg 33 99', size=6)
+    ac_per_27_00 = fields.Float('Alicuota perception rg 27 00', size=6)
+    date_per_33_99 = fields.Date('Date perception rg 33 99')
+    date_per_27_00 = fields.Date('Date perception rg 27 00')
+    regime = fields.Text('Regime')
+    exent = fields.Boolean('Exent')
 
 class res_country_state(models.Model):
     _name = "res.country.state"

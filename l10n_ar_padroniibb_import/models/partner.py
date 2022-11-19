@@ -211,6 +211,28 @@ class res_partner(models.Model):
             }
         return res
 
+    @api.model
+    def _check_padron_perception_formosa(self, vat):
+        padron_formosa_obj = self.env['padron.formosa']
+        perception_obj = self.env['perception.perception']
+        per_ids = padron_formosa_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if per_ids:
+            percep_ids = perception_obj._get_perception_from_formosa()
+            if not percep_ids:
+                return res
+            padron_percep = per_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_percep)
+            res = {
+                'perception_id': percep_ids[0].id,
+                'percent': padron_percep.percentage_perception,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
+
+
 
     @api.model
     def _check_padron_retention_agip(self, vat):
@@ -355,6 +377,27 @@ class res_partner(models.Model):
                 'from_padron': True,
             }
         return res
+        
+    @api.model
+    def _check_padron_retention_formosa(self, vat):
+        padron_formosa_ret_obj = self.env['padron.formosa']
+        retention_obj = self.env['retention.retention']
+        ret_ids = padron_formosa_ret_obj.search([('vat', '=', vat)])
+        res = {}
+        # TODO: Chequear vigencia
+        if ret_ids:
+            retent_ids = retention_obj._get_retention_from_formosa()
+            if not retent_ids:
+                return res
+            padron_retent = ret_ids[0]
+            sit_iibb = self._compute_sit_iibb(padron_retent)
+            res = {
+                'retention_id': retent_ids[0].id,
+                'percent': padron_retent.percentage_retention,
+                'sit_iibb': sit_iibb,
+                'from_padron': True,
+            }
+        return res
 
 
     @api.model
@@ -396,6 +439,10 @@ class res_partner(models.Model):
                 if perc_tucuman_co:
                     perceptions_list.append((0, 0, perc_tucuman_co))
 
+                perc_formosa = self._check_padron_perception_formosa(vat)
+                if perc_formosa:
+                    perceptions_list.append((0, 0, perc_formosa))
+
                 vals['perception_ids'] = perceptions_list
 
 
@@ -431,6 +478,10 @@ class res_partner(models.Model):
                 ret_tucuman_co = self._check_padron_retention_tucuman_coeficiente(vat)
                 if ret_tucuman_co:
                     retentions_list.append((0, 0, ret_tucuman_co))
+
+                ret_formosa = self._check_padron_retention_formosa(vat)
+                if ret_formosa:
+                    retentions_list.append((0, 0, ret_formosa))
 
                 vals['retention_ids'] = retentions_list
 
@@ -572,6 +623,13 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_tucuman_co['perception_ids'][0])
 
+                    perc_formosa = partner._check_padron_perception_formosa(vat)
+                    if perc_formosa:
+                        res_formosa = partner._update_perception_partner(
+                            perc_formosa)
+                        perception_ids_lst.append(
+                            res_formosa['perception_ids'][0])
+
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
                             vals['perception_ids'], perception_ids_lst)
@@ -627,6 +685,11 @@ class res_partner(models.Model):
                     if ret_tucuman_co:
                         res_tucuman_co = partner._update_retention_partner(ret_tucuman_co)
                         retention_ids_lst.append(res_tucuman_co['retention_ids'][0])
+
+                    ret_formosa = partner._check_padron_retention_formosa(vat)
+                    if ret_formosa:
+                        res_formosa = partner._update_retention_partner(ret_formosa)
+                        retention_ids_lst.append(res_formosa['retention_ids'][0])
 
                     if 'retention_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <!-- Padron Excluidos Formosa -->
+        <menuitem id="padron_excluidos_formosa_root_menu" name="Padrón Formosa" parent="padrones_root_menu" sequence="10" />
+
+        <!-- Padron AGIP -->
+        <record model="ir.ui.view" id="view_excluidos_formosa_tree">
+            <field name="name">excluidos.formosa.tree</field>
+            <field name="model">padron.formosa</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Padrón Formosa">
+                    <field name="vat" />
+                    <field name="denomination" />
+                    <field name="period" />
+                    <field name="category" />
+                    <field name="category_description" />
+                    <field name="ac_ret_28_97" />
+                    <field name="ac_per_23_14" />
+                    <field name="date_ret_28_97" />
+                    <field name="date_per_23_14" />
+                    <field name="ac_per_33_99" />
+                    <field name="ac_per_27_00" />
+                    <field name="date_per_33_99" />
+                    <field name="date_per_27_00" />
+                    <field name="regime" />
+                    <field name="exent" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_excluidos_formosa_search" model="ir.ui.view">
+            <field name="name">excluidos.formosa.search</field>
+            <field name="model">padron.formosa</field>
+            <field name="arch" type="xml">
+                <search string="Padrón Formosa">
+                    <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
+                </search>
+            </field>
+        </record>
+
+        <record id="action_excluidos_formosa" model="ir.actions.act_window">
+            <field name="name">Padron Formosa</field>
+            <field name="res_model">padron.formosa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_excluidos_formosa_tree" />
+            <field name="search_view_id" ref="view_excluidos_formosa_search" />
+        </record>
+
+        <menuitem id="padron_excluidos_formosa_menu" action="action_excluidos_formosa" parent="padron_excluidos_formosa_root_menu" sequence="10" />
+
+
+    </data>
+
+
+</odoo>
