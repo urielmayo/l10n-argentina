@@ -14,20 +14,11 @@
             <field name="arch" type="xml">
                 <tree string="Padrón Formosa">
                     <field name="vat" />
-                    <field name="denomination" />
-                    <field name="period" />
-                    <field name="category" />
-                    <field name="category_description" />
-                    <field name="ac_ret_28_97" />
-                    <field name="ac_per_23_14" />
-                    <field name="date_ret_28_97" />
-                    <field name="date_per_23_14" />
-                    <field name="ac_per_33_99" />
-                    <field name="ac_per_27_00" />
-                    <field name="date_per_33_99" />
-                    <field name="date_per_27_00" />
-                    <field name="regime" />
-                    <field name="exent" />
+                    <field name="period" string='Periodo'/>
+                    <field name="category" string='Categoria'/>
+                    <field name="ac_ret_28_97" string='Porcentaje Retencion'/>
+                    <field name="date_ret_28_97" string='Fecha Retencion'/>
+                    <field name="exent" string='Exento'/>
                 </tree>
             </field>
         </record>
