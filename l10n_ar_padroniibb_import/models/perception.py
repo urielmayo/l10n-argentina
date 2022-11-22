@@ -111,16 +111,3 @@ class PerceptionPerception(models.Model):
             return False
         else:
             return ret
-
-    @api.model
-    def _get_perception_from_formosa(self):
-        ret = self.search([('from_register', '=', 'formosa')])
-        if len(ret) > 1:
-            raise ValidationError(
-                _('Perceptions Improperly Configured\n') +
-                _('You can not have more than one perception to update ' +
-                  'from FORMOSA. Please review configuration'))
-        elif len(ret) == 0:
-            return False
-        else:
-            return ret
