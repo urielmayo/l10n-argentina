@@ -40,6 +40,7 @@
         "views/excluidos_jujuy.xml",
         "views/excluidos_cordoba.xml",
         "views/excluidos_tucuman.xml",
+        "views/excluidos_formosa.xml",
         "wizard/padron_import_view.xml",
         "wizard/padron_mass_update_view.xml",
 

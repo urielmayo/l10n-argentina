@@ -14,6 +14,7 @@ PADRON = [
     ('jujuy', 'JUJUY'),
     ('cordoba', 'CORDOBA'),
     ('tucuman', 'TUCUMAN'),
+    ('formosa', 'FORMOSA'),
 ]
 class PerceptionPerception(models.Model):
     _name = "perception.perception"

@@ -14,6 +14,7 @@ PADRON = [
     ('jujuy', 'JUJUY'),
     ('cordoba', 'CORDOBA'),
     ('tucuman', 'TUCUMAN'),
+    ('formosa', 'FORMOSA'),
 ]
 
 class RetentionRetention(models.Model):
@@ -95,6 +96,19 @@ class RetentionRetention(models.Model):
                 _('Retentions Improperly Configured\n') +
                 _('You can not have more than one retention to update ' +
                   'from Tucumán. Please review configuration'))
+        elif len(ret) == 0:
+            return False
+        else:
+            return ret
+
+    @api.model
+    def _get_retention_from_formosa(self):
+        ret = self.search([('from_register', '=', 'formosa')])
+        if len(ret) > 1:
+            raise ValidationError(
+                _('Retentions Improperly Configured\n') +
+                _('You can not have more than one retention to update ' +
+                  'from FORMOSA. Please review configuration'))
         elif len(ret) == 0:
             return False
         else:

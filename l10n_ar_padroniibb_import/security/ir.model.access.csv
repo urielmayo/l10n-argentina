@@ -8,6 +8,7 @@
 "access_padron_santa_fe_percentages","access_padron_santa_fe_percentages","model_padron_santa_fe_percentages","base.group_user",1,1,1,1
 "access_padron_jujuy_percentages","access_padron_jujuy_percentages","model_padron_jujuy_percentages","base.group_user",1,1,1,1
 "access_padron_cordoba_perception","access_padron_cordoba_perception","model_padron_cordoba_perception","base.group_user",1,1,1,1
+"access_padron_formosa","access_padron_formosa","model_padron_formosa","base.group_user",1,0,0,0
 "access_agip_retention_group","access_agip_retention_group","model_agip_retention_group","base.group_user",1,0,0,0
 "access_agip_perception_group","access_agip_perception_group","model_agip_perception_group","base.group_user",1,0,0,0
 "access_agip_perception_group_rp","access_agip_perception_group_rp","model_agip_perception_group_rp","base.group_user",1,0,0,0
