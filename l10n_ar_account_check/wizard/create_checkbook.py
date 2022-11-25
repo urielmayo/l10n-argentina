@@ -13,6 +13,7 @@ class WizardCreateCheck(models.Model):
 
     bank_account_id = fields.Many2one(
         comodel_name='res.partner.bank',
+        domain=lambda self: [('partner_id', '=', self.env.user.company_id.partner_id.id)],
         string='Bank', required=True)
     start_num = fields.Char(
         string='Start number of check',
