@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.7\n"
 
 #. module: subjournal_report_xls
-#: model:ir.actions.act_window,name:subjournal_report_xls.action_account_tax_subjournal
+#: model:ir.actions.act_window,name:subjournal_report_xls.account_tax_subjournal_action
 msgid "Account Tax Subjournal"
 msgstr "Subdiario de Impuestos"
 
@@ -29,17 +29,17 @@ msgid "Account tax subjournal report"
 msgstr "Reporte de Subdiario"
 
 #. module: subjournal_report_xls
-#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_base_position
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal__base_position
 msgid "Base Column Position"
 msgstr "Posición de la columna Base"
 
 #. module: subjournal_report_xls
-#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_based_on
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal__based_on
 msgid "Based On"
 msgstr "Basado en"
 
 #. module: subjournal_report_xls
-#: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
+#: model_terms:ir.ui.view,arch_db:subjournal_report_xls.account_tax_subjournal_form
 msgid "Based on"
 msgstr "Basado en"
 
@@ -70,7 +70,7 @@ msgid "Display Name"
 msgstr "Nombre mostrado"
 
 #. module: subjournal_report_xls
-#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_date_to
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal__date_to
 msgid "End of period"
 msgstr "Fin del Período"
 
@@ -85,7 +85,7 @@ msgid "First"
 msgstr "Primero"
 
 #. module: subjournal_report_xls
-#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_grouped
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal__grouped
 msgid "Grouped"
 msgstr "Agrupado"
 
@@ -134,7 +134,7 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: subjournal_report_xls
-#: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
+#: model_terms:ir.ui.view,arch_db:subjournal_report_xls.account_tax_subjournal_form
 msgid "Print Report"
 msgstr "Imprimir Reporte"
 
@@ -164,17 +164,17 @@ msgid "Sequence"
 msgstr "Secuencia"
 
 #. module: subjournal_report_xls
-#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_sort_by
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal__sort_by
 msgid "Sort Taxes by"
 msgstr "Ordenar Impuestos por"
 
 #. module: subjournal_report_xls
-#: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
+#: model_terms:ir.ui.view,arch_db:subjournal_report_xls.account_tax_subjournal_form
 msgid "Sorting"
 msgstr "Ordenamiento"
 
 #. module: subjournal_report_xls
-#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal_date_from
+#: model:ir.model.fields,field_description:subjournal_report_xls.field_account_tax_subjournal__date_from
 msgid "Start of period"
 msgstr "Comienzo del Período"
 
@@ -184,8 +184,7 @@ msgid "Tax Subjournal Report Configuration"
 msgstr "Configuración de subdiarios de impuestos"
 
 #. module: subjournal_report_xls
-#: model:ir.ui.menu,name:subjournal_report_xls.menu_account_tax_subjournal
-#: model:ir.ui.view,arch_db:subjournal_report_xls.view_account_tax_subjournal
+#: model_terms:ir.ui.view,arch_db:subjournal_report_xls.account_tax_subjournal_form
 msgid "Taxes Subjournal"
 msgstr "Subdiario de impuestos"
 
@@ -213,3 +212,8 @@ msgstr "report.report_xlsx.move_line_list_subj"
 #: model:ir.model,name:subjournal_report_xls.model_subjournal_report_taxcode_column
 msgid "subjournal.report.taxcode.column"
 msgstr "subjournal.report.taxcode.column"
+
+#. module: subjournal_report_xls
+#: model:ir.ui.menu,name:subjournal_report_xls.account_tax_subjournal_menu
+msgid "Subdiario de IVA"
+msgstr ""
