@@ -117,6 +117,7 @@
                                         <field name="bank_id"/>
                                         <field name="crossed"/>
                                         <field name="not_order"/>
+                                        <field name="check_format"/>
                                     </group>
                                     <group>
                                         <field name="receipt_date"/>
