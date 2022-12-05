@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="account_check_import_wizard_form" model="ir.ui.view">
+            <field name="name">account.check.import.wizard.form</field>
+            <field name="model">account.check.import</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="bank_account_id" class="oe_inline"/>
+                        </group>
+                        <group>
+                            <field name="bank_id" class="oe_inline"/>
+                            <field name="check_format" class="oe_inline"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="file" filename="filename" class="oe_inline"/>
+                            <field name="filename" class="oe_inline"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="import_file" string="Import" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="check_import_wizard_action" model="ir.actions.act_window">
+            <field name="name">Import Check</field>
+            <field name="res_model">account.check.import</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_check_import_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="third_check_import_wizard_menu"
+                  action="check_import_wizard_action"
+                  name="Import Third Checks"
+                  sequence="25"
+                  parent="menu_treasury_third_check_menu"
+        />
+
+    </data>
+</odoo>

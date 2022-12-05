@@ -288,7 +288,7 @@
             <field name="type">form</field>
             <field name="priority">10</field>
             <field name="arch" type="xml">
-                <form string="Third Checks">
+                <form string="Third Checks" create="false">
                     <header>
                         <button name="%(action_check_deposit)d" type='action' string='Deposit Check' states='wallet'
                                 class="oe_highlight"
@@ -315,6 +315,7 @@
                                 <field name="source_partner_id"/>
                                 <field name="destiny_partner_id"
                                        attrs="{'invisible': [('state', 'not in', ('delivered', 'rejected'))]}"/>
+                                <field name="check_format"/>
                             </group>
                             <group>
                                 <field name="receipt_date"/>
@@ -365,6 +366,10 @@
                             <field name="note" colspan="4" nolabel="1" placeholder="Additional Information..."/>
                         </group>
                     </sheet>
+                    <div class="oe_chatter" invisible="context.get('line_type', False)">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -523,16 +528,19 @@
         <menuitem id="menu_treasury_third_check_calendar_payment"
                   action="account_third_check_action_calendar_payment_date"
                   name="Calendar By Payment Date"
+                  sequence="10"
                   parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_issued"
                   action="account_third_check_action_calendar_issued_date"
                   name="Calendar By Issue Date"
+                  sequence="15"
                   parent="menu_treasury_third_check_menu"/>
 
         <menuitem id="menu_treasury_third_check_calendar_endorsement"
                   action="account_third_check_action_calendar_endorsement_date"
                   name="Calendar By Endorsement Date"
+                  sequence="20"
                   parent="menu_treasury_third_check_menu"/>
 
     </data>
