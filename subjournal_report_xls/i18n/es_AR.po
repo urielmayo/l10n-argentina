@@ -184,6 +184,7 @@ msgid "Tax Subjournal Report Configuration"
 msgstr "Configuración de subdiarios de impuestos"
 
 #. module: subjournal_report_xls
+#: model:ir.ui.menu,name:subjournal_report_xls.account_tax_subjournal_menu
 #: model_terms:ir.ui.view,arch_db:subjournal_report_xls.account_tax_subjournal_form
 msgid "Taxes Subjournal"
 msgstr "Subdiario de impuestos"
@@ -212,8 +213,3 @@ msgstr "report.report_xlsx.move_line_list_subj"
 #: model:ir.model,name:subjournal_report_xls.model_subjournal_report_taxcode_column
 msgid "subjournal.report.taxcode.column"
 msgstr "subjournal.report.taxcode.column"
-
-#. module: subjournal_report_xls
-#: model:ir.ui.menu,name:subjournal_report_xls.account_tax_subjournal_menu
-msgid "Subdiario de IVA"
-msgstr ""
