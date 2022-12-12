@@ -307,6 +307,8 @@
                                 <label for="number" string="Third Check"/>
                                 <field name="number" class="oe_inline" attrs="{'invisible': [('state','=','draft')]}"/>
                             </h1>
+                            <label for="echeq_number"/>
+                            <field name="echeq_number"/>
                         </div>
                         <group>
                             <group>
