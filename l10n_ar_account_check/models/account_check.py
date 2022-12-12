@@ -519,6 +519,7 @@ class AccountThirdCheck(models.Model):
     )
     check_issuing_type = fields.Selection(selection=[('own', 'Own'), ('third', 'Third')], string="Check owner")
     check_format = fields.Selection([('physical', 'Physical'), ('echeq', 'Echeq')], string='Format', default='physical')
+    echeq_number = fields.Char('N° ECHEQ', invisible=[('check_format', '!=', 'echeq')], help='Number assigned by the bank')
 
     @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
