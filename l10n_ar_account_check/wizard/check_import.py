@@ -56,127 +56,184 @@ class ThirdCheckImport(models.TransientModel):
         cell_type = sheet.cell_type(row, cell)
         cell_value = sheet.cell_value(row, cell)
 
-        if cell_type in [1, 2]:  # 2: select, 1: text, 0: empty
+        if cell_type in [1, 2]:  # 3: Excel date/time, 2: select, 1: text, 0: empty
             return cell_value
+        elif cell_type == 3:
+            value = xlrd.xldate.xldate_as_datetime(cell_value, datemode=0)
+            return value
         elif cell_type == 0:
             return None
 
         raise UserError(_('Formato de archivo inválido'))
 
+    def _search_bank(self, bank_code):
+        bank = self.env['res.bank'].search([
+            ('|'),
+            ('bic', '=', bank_code),
+            ('bic', '=', str(int(bank_code)))])
+        if not bank:
+            _logger.warning('No bank - skipping check...')
+            return False
+        else:
+            _logger.warning('Bank found')
+            return bank
+
+    def _search_check(self, number, bank):
+        _logger.warning('Searching existing check...')
+        ch = self.env['account.third.check'].search([
+            ('number', '=', number),
+            ('bank_id', '=', bank.id)
+        ])
+        return ch
+
+    def _preparing_check_vals(self, bank_import, bank, sheet, curr_row):
+        bank_account = False
+        if bank_import == 'bbva':
+            check_format = 'physical'
+            receipt_date = self._read_cell(sheet, curr_row, 0)
+            payment_date = self._read_cell(sheet, curr_row, 1)
+            deposit_slip = self._read_cell(sheet, curr_row, 2)
+            number = self._read_cell(sheet, curr_row, 3)
+            amount = self._read_cell(sheet, curr_row, 4)
+            deposit_bank = self._read_cell(sheet, curr_row, 9)  # res.partner.bank
+            partner_vat = self._read_cell(sheet, curr_row, 12)  # signatory_vat
+            partner_name = self._read_cell(sheet, curr_row, 13)
+            # bank_name = self._read_cell(sheet, curr_row, 15)  # banco girador
+            bank_branch = self._read_cell(sheet, curr_row, 16)
+            zip = self._read_cell(sheet, curr_row, 18)
+
+            # bank_account
+            _logger.warning('Searching bank account...')
+            dep_bank = re.sub("[CA/$-]|\s", '', deposit_bank)
+            _logger.warning(dep_bank)
+            bank_accounts = self.env['res.partner.bank'].search([])
+            bank_account = bank_accounts.filtered(lambda x: (dep_bank[:3] in x.acc_number)
+                                                            or (dep_bank[-4:-1] in x.acc_number))  # -_-
+            if bank_account:
+                _logger.warning('Bank account found')
+            else:
+                _logger.warning('Bank account not found')
+                bank_account = False
+
+            # dates
+            payment_date = datetime.strptime(payment_date, "%d/%m/%Y").date()
+            receipt_date = datetime.strptime(receipt_date, "%d/%m/%Y").date()
+            issue_date = receipt_date  # hardcode
+
+        if bank_import == 'macro':
+            check_format = 'echeq'
+            issue_date = self._read_cell(sheet, curr_row, 0)
+            payment_date = self._read_cell(sheet, curr_row, 1)
+            number = self._read_cell(sheet, curr_row, 2)
+            # name1 = self._read_cell(sheet, curr_row, 4)
+            amount = self._read_cell(sheet, curr_row, 5)
+            # vat1 = self._read_cell(sheet, curr_row, 6)
+            partner_name = self._read_cell(sheet, curr_row, 8)
+            partner_vat = self._read_cell(sheet, curr_row, 9)
+            # bank_name = self._read_cell(sheet, curr_row, 12)
+            deposit_slip = False
+            zip = False
+            bank_branch = False
+
+            # dates
+            payment_date = payment_date.date()
+            issue_date = issue_date.date()
+            receipt_date = issue_date  # hardcode
+
+        # search source_partner_id
+        partner = self.env['res.partner'].search([
+            ('|'),
+            ('vat', '=', str(int(partner_vat))),
+            ('name', '=', partner_name)
+        ])
+        if partner:
+            _logger.warning('Partner found')
+        else:
+            _logger.warning('Partner not found')
+            partner = False
+
+        vals = {
+            'number': str(int(number)),
+            'amount': float(amount),
+            'receipt_date': receipt_date,
+            'issue_date': issue_date,
+            'payment_date': payment_date,
+            'bank_id': bank.id,
+            'check_format': check_format,
+            'deposit_slip': str(int(deposit_slip)) if deposit_slip else False,
+            # 'check_issuing_type': 'own',  # ?
+            'deposit_bank_id': bank_account.id if bank_account else False,
+            'signatory_vat': str(int(partner_vat)) if partner_vat else False,
+            'source_partner_id': partner[0].id if partner else False,  # hardcode[0]
+            'bank_branch': bank_branch if bank_branch else False,
+            'zip': zip if zip else False,
+        }
+        return vals
+
     def import_file(self):
         path = self.save_file(self.filename, self.file)
         if path and (self.check_format == 'physical'):  # hardcode bbva
-            book = xlrd.open_workbook(path)
-            sheet = book.sheets()[0]
-
-            def summary(imported, not_imported, repeated, codes):
-                res = _('Summary:\nImported checks: %s\nNot imported: %s\nRepeated checks (not imported): %s'
-                        % (imported, not_imported, repeated))
-                if codes:
-                    res += _('\n\nNot found bank codes: %s' % ([str(x)+'\n' for x in codes if x]))
-                return res
-
-            imported = 0
-            not_imported = 0
-            repeated = 0
-            missed_bank_codes = []
-
-            for curr_row in range(6, sheet.nrows):
-                _logger.warning(curr_row)
-                receipt_date = self._read_cell(sheet, curr_row, 0)
-                payment_date = self._read_cell(sheet, curr_row, 1)
-                deposit_slip = self._read_cell(sheet, curr_row, 2)
-                number = self._read_cell(sheet, curr_row, 3)
-                amount = self._read_cell(sheet, curr_row, 4)
-                deposit_bank_id = self._read_cell(sheet, curr_row, 9)  # res.partner.bank
-                signatory_vat = self._read_cell(sheet, curr_row, 12)
-                source_partner_id = self._read_cell(sheet, curr_row, 13)
-                bank_code = self._read_cell(sheet, curr_row, 14)
-                bank_name = self._read_cell(sheet, curr_row, 15)  # banco girador
-                bank_branch = self._read_cell(sheet, curr_row, 16)
-                zip = self._read_cell(sheet, curr_row, 18)
-
-                _logger.warning('Searching check number...')
-
-                # bank
-                if bank_code:
-                    bank = self.env['res.bank'].search([
-                        ('|'),
-                        ('bic', '=', bank_code),
-                        ('bic', '=', str(int(bank_code)))])
-                if not bank:
-                    _logger.warning('No bank - skipping check...')
-                    not_imported += 1
-                    missed_bank_codes.append(bank_code)
-                    continue  # debug
-                    # raise UserError(_('There is no bank with that code:\n%s\n\n%s'
-                    #                   % (bank_code, summary(imported, not_imported, repeated, missed_bank_codes))))
-                _logger.warning('Bank found')
-                _logger.warning('Searching existing check...')
-
-                # check
-                ch = self.env['account.third.check'].search([
-                    ('number', '=', number),
-                    ('bank_id', '=', bank.id)
-                ])
-                if ch:
-                    _logger.warning('Check number found in the database - skipping...')
-                    repeated += 1
-                    continue
-                else:
-                    _logger.warning('Creating new check...')
-
-                    # bank_account
-                    _logger.warning('Searching bank account...')
-                    dep_bank = re.sub("[CA/$-]|\s", '', deposit_bank_id)
-                    _logger.warning(dep_bank)
-                    bank_accounts = self.env['res.partner.bank'].search([])
-                    bank_account = bank_accounts.filtered(lambda x: (dep_bank[:3] in x.acc_number)
-                                                          or (dep_bank[-4:-1] in x.acc_number))  # -_-
-                    if bank_account:
-                        _logger.warning('Bank account found')
-                    else:
-                        _logger.warning('Bank account not found')
-
-                    # source_partner_id
-                    partner = self.env['res.partner'].search([
-                        ('|'),
-                        ('vat', '=', str(int(signatory_vat))),
-                        ('name', '=', source_partner_id)
-                    ])
-                    if partner:
-                        _logger.warning('Partner found')
-                    else:
-                        _logger.warning('Partner not found')
-
-                    try:
-                        vals = {
-                            'number': str(int(number)),
-                            'amount': float(amount),
-                            'receipt_date': datetime.strptime(receipt_date, "%d/%m/%Y").date(),
-                            'issue_date': fields.Date.today(),  # hardcode
-                            'bank_id': bank.id,
-                            'payment_date': datetime.strptime(payment_date, "%d/%m/%Y").date(),
-                            'deposit_slip': str(int(deposit_slip)),
-                            # 'check_issuing_type': 'own',  # ?
-                            'deposit_bank_id': bank_account.id if bank_account else False,
-                            'signatory_vat': str(int(signatory_vat)) if signatory_vat else False,
-                            'source_partner_id': partner[0].id if partner else False,  # hardcode[0]
-                            'bank_branch': bank_branch if bank_branch else False,
-                            'zip': zip if zip else False,
-                        }
-                        ch = self.env['account.third.check'].create(vals)
-                    except:
-                        not_imported += 1
-                        _logger.warning('Value error - skipping...')
-                        continue
-                        # raise ValidationError(_('Value Error'))
-
-                    _logger.warning('Check successfully imported')
-                    imported += 1
-
-            self.env.user.notify_info(message=_(summary(imported, not_imported, repeated, missed_bank_codes)),
-                                      title='Finished', sticky=True)
-
+            bank_import = 'bbva'
+            first_row = 6
+            col_number = 3
+        elif path and (self.check_format == 'echeq'):  # hardcode macro
+            bank_import = 'macro'
+            first_row = 5
+            col_number = 2
         else:
             raise UserError(_('Check import is not available for this bank.'))
+
+        book = xlrd.open_workbook(path)
+        sheet = book.sheets()[0]
+
+        def summary(imported, not_imported, repeated, codes):
+            res = _('Summary:\nImported checks: %s\nNot imported: %s\nRepeated checks (not imported): %s'
+                    % (imported, not_imported, repeated))
+            if codes:
+                res += _('\n\nNot found bank codes: %s' % ([str(x)+'\n' for x in codes if x]))
+            return res
+
+        imported = 0
+        not_imported = 0
+        repeated = 0
+        missed_bank_codes = []
+
+        for curr_row in range(first_row, sheet.nrows):
+            _logger.warning(curr_row)
+            number = self._read_cell(sheet, curr_row, col_number)
+            bank_code = self._read_cell(sheet, curr_row, 14)
+            # check if it is a valid row:
+            try:
+                int(number)
+            except:
+                _logger.warning('End Of Table')
+                break
+
+            # bank
+            bank = self._search_bank(bank_code)
+            if not bank:
+                not_imported += 1
+                missed_bank_codes.append(bank_code)
+                continue
+
+            # check
+            ch = self._search_check(number, bank)
+            if ch:
+                repeated += 1
+                _logger.warning('Check number found in the database - skipping...')
+                continue
+            else:
+                vals = self._preparing_check_vals(bank_import, bank, sheet, curr_row)
+                try:
+                    _logger.warning('Creating new check...')
+                    self.env['account.third.check'].create(vals)
+                except:
+                    not_imported += 1
+                    _logger.warning('Value error - skipping...')
+                    continue
+
+                _logger.warning('Check successfully imported')
+                imported += 1
+
+        self.env.user.notify_info(message=_(summary(imported, not_imported, repeated, missed_bank_codes)),
+                                  title='Finished', sticky=True)
