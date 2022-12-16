@@ -43,7 +43,7 @@ msgid "Amount Exempt"
 msgstr "Importe Exento"
 
 #. module: l10n_ar_point_of_sale
-#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.view_pos_invoice_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.account_invoice_view_form
 msgid "Applied Taxes"
 msgstr "Impuestos aplicados"
 
@@ -111,15 +111,15 @@ msgid "Credit Note can only be cancelled in these states: %s!"
 msgstr "¡Una Nota de Crédito sólo puede ser cancelada en estos estados: %s!"
 
 #. module: l10n_ar_point_of_sale
-#: model:ir.ui.menu,name:l10n_ar_point_of_sale.menu_action_invoice_tree3
+#: model:ir.ui.menu,name:l10n_ar_point_of_sale.action_invoice_menu_tree3
 msgid "Customer Credit Notes"
-msgstr "Rectificativas de cliente"
+msgstr "Facturas rectificativas"
 
 #. module: l10n_ar_point_of_sale
-#: model:ir.actions.act_window,name:l10n_ar_point_of_sale.action_customer_debit_note_tree
-#: model:ir.ui.menu,name:l10n_ar_point_of_sale.menu_customer_debit_note
+#: model:ir.actions.act_window,name:l10n_ar_point_of_sale.account_invoice_action_debit_note
+#: model:ir.ui.menu,name:l10n_ar_point_of_sale.account_invoice_menu_debit_note
 msgid "Customer Debit Notes"
-msgstr "Nota de Débito a cliente"
+msgstr "Notas de Débito"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_invoice__is_debit_note
@@ -327,8 +327,8 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: l10n_ar_point_of_sale
-#: model:ir.actions.act_window,name:l10n_ar_point_of_sale.action_pos_ar_denomination_view_tree
-#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.view_pos_fiscal_position_form
+#: model:ir.actions.act_window,name:l10n_ar_point_of_sale.invoice_denomination_action
+#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.account_fiscal_position_view_from
 msgid "Invoice Denomination"
 msgstr "Denominación de la factura"
 
@@ -338,12 +338,12 @@ msgid "Invoice Tax"
 msgstr "Impuesto de factura"
 
 #. module: l10n_ar_point_of_sale
-#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.inv_den_view_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.invoice_denomination_view_form
 msgid "Invoice denomination"
 msgstr "Denominación de Factura"
 
 #. module: l10n_ar_point_of_sale
-#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.inv_den_view_tree
+#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.invoice_denomination_view_tree
 msgid "Invoice denominations"
 msgstr "Denominaciones de Factura"
 
@@ -552,10 +552,10 @@ msgid "Subtotal"
 msgstr "Subtotal"
 
 #. module: l10n_ar_point_of_sale
-#: model:ir.actions.act_window,name:l10n_ar_point_of_sale.action_supplier_debit_note_tree
-#: model:ir.ui.menu,name:l10n_ar_point_of_sale.menu_supplier_debit_note
+#: model:ir.actions.act_window,name:l10n_ar_point_of_sale.account_invoice_action_debit_note_supp
+#: model:ir.ui.menu,name:l10n_ar_point_of_sale.account_invoice_menu_dn_supp
 msgid "Supplier Debit Notes"
-msgstr "Nota de Débito a Proveedores."
+msgstr "Nota de Débito proveedor"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_account_fiscal_position__denom_supplier_id
@@ -564,9 +564,9 @@ msgid "Supplier Denomination"
 msgstr "Denominación de Proveedor"
 
 #. module: l10n_ar_point_of_sale
-#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.view_pos_invoice_supplier_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_point_of_sale.account_invoice_view_form_supplier
 msgid "Supported Taxes"
-msgstr "Impuestos soportados"
+msgstr "Retenciones soportadas"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model,name:l10n_ar_point_of_sale.model_account_tax
@@ -650,9 +650,9 @@ msgid "Vat Discriminated in Invoices"
 msgstr "CUIT discriminado para facturas"
 
 #. module: l10n_ar_point_of_sale
-#: model:ir.ui.menu,name:l10n_ar_point_of_sale.menu_action_invoice_tree4
+#: model:ir.ui.menu,name:l10n_ar_point_of_sale.account_invoice_menu_tree4
 msgid "Vendor Credit Notes"
-msgstr "Rectificativas de proveedor"
+msgstr "Factura rectificativa proveedor"
 
 #. module: l10n_ar_point_of_sale
 #: model:ir.model.fields,field_description:l10n_ar_point_of_sale.field_pos_ar__shop_id

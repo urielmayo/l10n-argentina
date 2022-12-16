@@ -61,9 +61,9 @@ msgid "CIF/NIF"
 msgstr "CUIT"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line_certificate_no
+#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line__certificate_no
 msgid "Certificate No."
-msgstr "N° de Certificado"
+msgstr "Certificado n°"
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.actions.act_window,help:l10n_ar_retentions_basic.retention_tax_line_action_tree_supported
@@ -213,9 +213,9 @@ msgid "Reference"
 msgstr "Referencia"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_retention_name
-#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line_name
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
+#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_retention__name
+#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_retention_tax_line__name
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Retention"
 msgstr "Retentción"
 
@@ -254,10 +254,10 @@ msgid "Retention Tax Supported"
 msgstr "Retenciones de impuestos soportadas"
 
 #. module: l10n_ar_retentions_basic
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Retention Type"
-msgstr "Tipo de retención"
+msgstr "Tipo Tipo Retención"
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.model.fields,help:l10n_ar_retentions_basic.field_retention_tax_line_retention_id
@@ -266,22 +266,22 @@ msgstr "Configuración de Retenciones usadas para este impuesto, donde todas las
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.actions.act_window,name:l10n_ar_retentions_basic.retention_retention_action_tree
-#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_account_payment_order_retention_ids
+#: model:ir.model.fields,field_description:l10n_ar_retentions_basic.field_account_payment_order__retention_ids
 #: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_retention_menu
 #: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_root_menu
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_filter
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_form
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_tree
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_filter
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_retention_view_tree
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_payment_order_receipt_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.view_vendor_payment_order_form
 msgid "Retentions"
 msgstr "Retenciones"
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_tax_line_menu_applied
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Retentions Applied"
-msgstr "Retenciones aplicadas"
+msgstr "Retención aplicada"
 
 #. module: l10n_ar_retentions_basic
 #: model:res.groups,name:l10n_ar_retentions_basic.group_retentions_manager
@@ -290,7 +290,7 @@ msgstr "Adm. de Retenciones"
 
 #. module: l10n_ar_retentions_basic
 #: model:ir.ui.menu,name:l10n_ar_retentions_basic.retention_tax_line_menu_supported
-#: model:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions_basic.retention_tax_line_view_search
 msgid "Retentions Supported"
 msgstr "Retenciones soportadas"
 

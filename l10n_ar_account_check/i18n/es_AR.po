@@ -687,7 +687,7 @@ msgstr "Cuenta de Destino"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__destiny_partner_id
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
 msgid "Destiny Partner"
-msgstr "Partner Destino"
+msgstr "Cliente Destino"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_issued_check__display_name
@@ -1432,3 +1432,8 @@ msgstr "Orden de Pago"
 msgid "or"
 msgstr "o"
 
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__type
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__type
+msgid "Check Type"
+msgstr "Tipo cheque"

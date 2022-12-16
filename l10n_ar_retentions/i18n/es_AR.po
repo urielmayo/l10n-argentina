@@ -98,7 +98,7 @@ msgid "Application"
 msgstr "Aplicación"
 
 #. module: l10n_ar_retentions
-#: model:ir.ui.view,arch_db:l10n_ar_retentions.view_account_position_retention_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions.view_account_position_retention_form
 msgid "Applied Retentions"
 msgstr "Retenciones aplicadas"
 
@@ -189,10 +189,10 @@ msgid "Created on"
 msgstr "Creado en"
 
 #. module: l10n_ar_retentions
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line_date_applied
-#: model:ir.ui.view,arch_db:l10n_ar_retentions.view_retention_tax_line_concept_search
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line__date_applied
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions.view_retention_tax_line_concept_search
 msgid "Date Applied"
-msgstr "Fecha de aplicación"
+msgstr "Fecha aplicación"
 
 #. module: l10n_ar_retentions
 #: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_activity_name
@@ -245,10 +245,10 @@ msgid "Exclusion Certificate"
 msgstr "Certificado de Exclusión"
 
 #. module: l10n_ar_retentions
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_retention_exclusion_date_certificate
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line_exclusion_date_certificate
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_retention__exclusion_date_certificate
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line__exclusion_date_certificate
 msgid "Exclusion General Resolution Date"
-msgstr "Fecha de Resolución General de Exclusión"
+msgstr "Exclusion General Fecha Resolución"
 
 #. module: l10n_ar_retentions
 #: model:ir.model,name:l10n_ar_retentions.model_account_fiscal_position
@@ -468,9 +468,9 @@ msgid "Partner"
 msgstr "Empresa"
 
 #. module: l10n_ar_retentions
-#: model:ir.ui.view,arch_db:l10n_ar_retentions.view_partner_retention_form
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions.view_partner_retention_form
 msgid "Partner Retentions"
-msgstr "Retenciones de la empresa"
+msgstr "Retenciones"
 
 #. module: l10n_ar_retentions
 #: selection:retention.tax.application,calculation_base:0
@@ -545,10 +545,10 @@ msgid "Regimen Simplificado"
 msgstr "Regimen Simplificado"
 
 #. module: l10n_ar_retentions
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_advance_retention_retention_id
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_retention_retention_id
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_application_retention_id
-#: model:ir.ui.view,arch_db:l10n_ar_retentions.view_retention_retention_form
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_advance_retention__retention_id
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_res_partner_retention__retention_id
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_application__retention_id
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions.view_retention_retention_form
 msgid "Retention"
 msgstr "Retentción"
 
@@ -646,8 +646,8 @@ msgid "Retention will be calculated over this amount."
 msgstr "La Rentención será aplicada sobre este valor."
 
 #. module: l10n_ar_retentions
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_account_fiscal_position_retention_ids
-#: model:ir.ui.view,arch_db:l10n_ar_retentions.view_partner_retention_form
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_account_fiscal_position__retention_ids
+#: model_terms:ir.ui.view,arch_db:l10n_ar_retentions.view_partner_retention_form
 msgid "Retentions"
 msgstr "Retenciones"
 
@@ -839,9 +839,9 @@ msgid "Type"
 msgstr "Tipo"
 
 #. module: l10n_ar_retentions
-#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line_unlinkable
+#: model:ir.model.fields,field_description:l10n_ar_retentions.field_retention_tax_line__unlinkable
 msgid "Unlinkable"
-msgstr "No eliminable"
+msgstr "Deshabilitar retención"
 
 #. module: l10n_ar_retentions
 #: model:ir.ui.view,arch_db:l10n_ar_retentions.view_retention_retention_form
