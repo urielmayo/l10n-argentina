@@ -67,31 +67,31 @@ class PadronMassUpdateFormosa(models.TransientModel):
         cr.execute(query, params)
 
         for res in cr.fetchall():
-            if res[6] == 'UPDATE':  # Change the amount of percentage
+            if res[5] == 'UPDATE':  # Change the amount of percentage
                 q = """
                 UPDATE res_partner_retention SET
                     percent=%(percent)s,
                     from_padron = True
-                WHERE id=%(id)s
+                WHERE partner_id=%(partner_id)s
                 """
                 q_params = {
                     'percent': res[1],
-                    'id': res[3],
+                    'partner_id': res[0],
                 }
                 self._cr.execute(q, q_params)
-            elif res[6] == 'DELETE':   # Set the percentage to -1
+            elif res[5] == 'DELETE':   # Set the percentage to -1
                 q = """
                 UPDATE res_partner_retention SET
                     percent=%(percent)s,
                     from_padron = True
-                WHERE id=%(id)s
+                WHERE partner_id=%(partner_id)s
                 """
                 q_params = {
                     'percent': -1,
-                    'id': res[3],
+                    'partner_id': res[0],
                 }
                 self._cr.execute(q, q_params)
-            elif res[6] == 'CREATE':  # Create the res.partner.retention
+            elif res[5] == 'CREATE':  # Create the res.partner.retention
                 q = """
                 INSERT INTO res_partner_retention (
                     partner_id,

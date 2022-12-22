@@ -390,11 +390,11 @@ class res_partner(models.Model):
             if not retent_ids:
                 return res
             padron_retent = ret_ids[0]
-            sit_iibb = self._compute_sit_iibb(padron_retent)
+            #sit_iibb = self._compute_sit_iibb(padron_retent)
             res = {
                 'retention_id': retent_ids[0].id,
                 'percent': padron_retent.percentage_retention,
-                'sit_iibb': sit_iibb,
+                #'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
         return res
