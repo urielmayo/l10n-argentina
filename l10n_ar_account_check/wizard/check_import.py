@@ -69,10 +69,7 @@ class ThirdCheckImport(models.TransientModel):
         raise UserError(_('Formato de archivo inválido'))
 
     def _search_bank(self, bank_code):
-        bank = self.env['res.bank'].search([
-            ('|'),
-            ('bic', '=', bank_code),
-            ('bic', '=', str(int(bank_code)))])
+        bank = self.env['res.bank'].search([('bic', 'like', int(bank_code))])
         if not bank:
             _logger.warning('No bank - skipping check...')
             return False
@@ -174,11 +171,11 @@ class ThirdCheckImport(models.TransientModel):
 
     def import_file(self):
         path = self.save_file(self.filename, self.file)
-        if path and (self.check_format == 'physical'):  # hardcode bbva
+        if path and (self.check_format == 'physical'):
             bank_import = 'bbva'
             first_row = 6
             col_number = 3
-        elif path and (self.check_format == 'echeq'):  # hardcode macro
+        elif path and (self.check_format == 'echeq'):
             bank_import = 'macro'
             first_row = 5
             col_number = 2
@@ -188,17 +185,14 @@ class ThirdCheckImport(models.TransientModel):
         book = xlrd.open_workbook(path)
         sheet = book.sheets()[0]
 
-        def summary(imported, not_imported, repeated, codes):
+        def summary(imported, not_imported, repeated):
             res = _('Summary:\nImported checks: %s\nNot imported: %s\nRepeated checks (not imported): %s'
                     % (imported, not_imported, repeated))
-            if codes:
-                res += _('\n\nNot found bank codes: %s' % ([str(x)+'\n' for x in codes if x]))
             return res
 
         imported = 0
         not_imported = 0
         repeated = 0
-        missed_bank_codes = []
 
         for curr_row in range(first_row, sheet.nrows):
             _logger.warning(curr_row)
@@ -215,8 +209,8 @@ class ThirdCheckImport(models.TransientModel):
             bank = self._search_bank(bank_code)
             if not bank:
                 not_imported += 1
-                missed_bank_codes.append(bank_code)
-                continue
+                msg = 'Bank code not found.\n\nCode: %s\nRow: %s\n' % (bank_code, curr_row+1)
+                raise UserError(_(msg))
 
             # check
             ch = self._search_check(number, bank)
@@ -237,5 +231,5 @@ class ThirdCheckImport(models.TransientModel):
                 _logger.warning('Check successfully imported')
                 imported += 1
 
-        self.env.user.notify_info(message=_(summary(imported, not_imported, repeated, missed_bank_codes)),
+        self.env.user.notify_info(message=_(summary(imported, not_imported, repeated)),
                                   title='Finished', sticky=True)
