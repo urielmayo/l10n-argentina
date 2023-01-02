@@ -19,7 +19,9 @@ class ThirdCheckImport(models.TransientModel):
     _name = 'account.check.import'
     _description = 'Third Check Import'
 
-    bank_account_id = fields.Many2one('res.partner.bank', 'Bank Account', required=True)
+    bank_account_id = fields.Many2one('res.partner.bank', 'Bank Account',
+                                      domain=lambda self: [('partner_id', '=', self.env.user.company_id.partner_id.id)],
+                                      required=True)
     filename = fields.Char('Filename')
     file = fields.Binary('File', filename='filename', required=True)
 
