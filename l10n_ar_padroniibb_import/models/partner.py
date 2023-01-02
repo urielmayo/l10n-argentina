@@ -393,7 +393,7 @@ class res_partner(models.Model):
             #sit_iibb = self._compute_sit_iibb(padron_retent)
             res = {
                 'retention_id': retent_ids[0].id,
-                'percent': padron_retent.percentage_retention,
+                'percent': padron_retent.ac_ret_28_97,
                 #'sit_iibb': sit_iibb,
                 'from_padron': True,
             }
@@ -438,10 +438,6 @@ class res_partner(models.Model):
                 perc_tucuman_co = self._check_padron_perception_tucuman_coeficiente(vat)
                 if perc_tucuman_co:
                     perceptions_list.append((0, 0, perc_tucuman_co))
-
-                perc_formosa = self._check_padron_perception_formosa(vat)
-                if perc_formosa:
-                    perceptions_list.append((0, 0, perc_formosa))
 
                 vals['perception_ids'] = perceptions_list
 
@@ -623,13 +619,6 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_tucuman_co['perception_ids'][0])
 
-                    perc_formosa = partner._check_padron_perception_formosa(vat)
-                    if perc_formosa:
-                        res_formosa = partner._update_perception_partner(
-                            perc_formosa)
-                        perception_ids_lst.append(
-                            res_formosa['perception_ids'][0])
-
                     if 'perception_ids' in vals:
                         real_comms = self._compute_allowed_padron_tax_commands(
                             vals['perception_ids'], perception_ids_lst)
@@ -647,7 +636,6 @@ class res_partner(models.Model):
                     vals.update({
                         'perception_ids': real_comms,
                     })
-
                 if supplier:
 
                     retention_ids_lst = []
