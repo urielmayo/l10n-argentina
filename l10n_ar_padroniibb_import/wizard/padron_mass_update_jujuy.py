@@ -97,7 +97,7 @@ class PadronMassUpdateJujuy(models.TransientModel):
                     percent,
                     perception_id,
                     from_padron
-                ) VALUES (3
+                ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
                     %(perception_id)s,
