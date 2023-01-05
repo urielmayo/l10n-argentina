@@ -33,6 +33,7 @@ class AccountInvoice(models.Model):
     internal_number = fields.Char(
         string='Invoice Number',
         size=32,
+        copy=False,
         readonly=True,
         states={'draft': [('readonly', False)]},
         help="Unique number of the invoice, computed automatically when "
@@ -68,14 +69,6 @@ class AccountInvoice(models.Model):
     )
     local = fields.Boolean(string='Local', default=True)
     dst_cuit_id = fields.Many2one('dst_cuit.codes', 'Country CUIT')
-    internal_number = fields.Char(
-        string="Internal Number",
-        default=False,
-        copy=False,
-        readonly=True,
-        help="Unique number of the invoice, computed automatically when "
-        "the invoice is created.",
-    )
 
     # DONE
     @api.multi

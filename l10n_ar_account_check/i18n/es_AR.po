@@ -6,14 +6,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 14:22+0000\n"
-"PO-Revision-Date: 2022-09-14 14:22+0000\n"
+"POT-Creation-Date: 2022-12-05 14:04+0000\n"
+"PO-Revision-Date: 2022-12-05 14:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/wizard/check_import.py:76
+#, python-format
+msgid "\n"
+"\n"
+"Not found bank codes: %s"
+msgstr "\n"
+"\n"
+"Códigos de banco no encontrados: %s"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_payment_order___used_issued_check_ids
@@ -75,6 +85,11 @@ msgstr "Acreditar Cheques"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__accredited
 msgid "Accredited"
 msgstr "Acreditado"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_needaction
+msgid "Action Needed"
+msgstr "Acción necesaria"
 
 #. module: l10n_ar_account_check
 #: model:ir.actions.act_window,name:l10n_ar_account_check.action_add_third_check
@@ -176,6 +191,7 @@ msgstr "Devolver a Cartera"
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_issued_check__bank_id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__bank_id
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__bank_id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__bank_id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__bank_id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__bank_id
@@ -186,6 +202,7 @@ msgstr "Banco"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__bank_account_id
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__bank_account_id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__bank_account_id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__account_bank_id
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_search
@@ -250,6 +267,7 @@ msgstr ""
 
 #. module: l10n_ar_account_check
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_check_deposit_form_view
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_check_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_returned_check_wizard_form
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.add_issued_checks_form_view
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.add_third_checks_form_view
@@ -335,13 +353,13 @@ msgid "Check Deposit"
 msgstr "Depósito de Cheque"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:594
+#: code:addons/l10n_ar_account_check/models/account_check.py:597
 #, python-format
 msgid "Check Error! Check has to                     be associated with a voucher"
 msgstr "Error! El cheque tiene que estar asociado a un pago"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:647
+#: code:addons/l10n_ar_account_check/models/account_check.py:650
 #, python-format
 msgid "Check Error! You cannot delete a third                     check that is not in Draft state [See %s]."
 msgstr "Error! No puede borrar un cheque de terceros que no esté en estado Borrador [Ver %s]."
@@ -353,7 +371,12 @@ msgid "Check Error! You cannot delete an issued check that is not in Draft state
 msgstr ""
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/checkbook.py:256
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__check_format
+msgid "Check Format"
+msgstr "Formato"
+
+#. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/models/checkbook.py:255
 #, python-format
 msgid "Check Limit"
 msgstr "Límite de cheques"
@@ -389,15 +412,22 @@ msgid "Check Type"
 msgstr "Tipo de cheque"
 
 #. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/wizard/check_import.py:182
+#, python-format
+msgid "Check import is not available for this bank."
+msgstr "La importación de cheques no está disponible para este banco."
+
+#. module: l10n_ar_account_check
 #: code:addons/l10n_ar_account_check/models/account_payment_order.py:183
 #, python-format
 msgid "Check number %s is postdated and has                         already been accredited!\n"
 "Please break the                         conciliation of that check first."
-msgstr ""
+msgstr "Cheque número % es diferido y ya fue acreditado!\n"
+"Por favor, primero rompa la conciliación de ese cheque."
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__check_issuing_type
-msgid "Check owner"
+msgid "Check type"
 msgstr "Propietario"
 
 #. module: l10n_ar_account_check
@@ -570,6 +600,7 @@ msgstr "Crear Chequeras"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__create_uid
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__create_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check__create_uid
@@ -593,6 +624,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__create_date
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__create_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check__create_date
@@ -773,6 +805,7 @@ msgstr "Partner Destino"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__display_name
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__display_name
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check__display_name
@@ -809,13 +842,15 @@ msgid "ERROR! There is no check                     configuration for this Compa
 msgstr "ERROR! No hay configuración de cheques para esta empresa!"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:544
+#: code:addons/l10n_ar_account_check/models/account_check.py:547
 #, python-format
 msgid "ERROR! There is no check configuration for this Company!"
 msgstr "ERROR! No hay configuración de cheques para esta empresa!"
 
 #. module: l10n_ar_account_check
+#: selection:account.check.import,check_format:0
 #: selection:account.checkbook,checkbook_type:0
+#: selection:account.third.check,check_format:0
 #: selection:wizard.create.check,checkbook_type:0
 msgid "Echeq"
 msgstr ""
@@ -837,7 +872,7 @@ msgid "Endorsement Date"
 msgstr "Fecha de Endoso"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/wizard/create_checkbook.py:46
+#: code:addons/l10n_ar_account_check/wizard/create_checkbook.py:47
 #, python-format
 msgid "Error creating Checkbook!\n"
 "End number cannot be lower than Start number"
@@ -908,6 +943,42 @@ msgid "Extended Filters"
 msgstr "Filtro avanzado"
 
 #. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__file
+msgid "File"
+msgstr "Archivo"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__filename
+msgid "Filename"
+msgstr "Nombre de archivo"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_channel_ids
+msgid "Followers (Channels)"
+msgstr ""
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__check_format
+msgid "Format"
+msgstr "Formato"
+
+#. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/wizard/check_import.py:64
+#, python-format
+msgid "Formato de archivo inválido"
+msgstr ""
+
+#. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_returned_check_report__check_qty
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_rejected_third_check_report__check_qty
 msgid "Found Checks"
@@ -923,13 +994,14 @@ msgstr "Generar Asiento de Rechazo"
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_issued_check_view_search
 #: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_checks_view_search
 msgid "Group By..."
-msgstr ""
+msgstr "Agrupar por..."
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_issued_check__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__id
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__id
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check__id
@@ -951,12 +1023,42 @@ msgid "ID"
 msgstr ""
 
 #. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__message_unread
+msgid "If checked new messages require your attention."
+msgstr ""
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: l10n_ar_account_check
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_checkbook__type
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_issued_check__type
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__type
 #: model:ir.model.fields,help:l10n_ar_account_check.field_wizard_create_check__type
 msgid "If common, checks only have issued_date. If post-dated they also have payment date"
 msgstr "Si un cheque es común, solo tendrá fecha de emisión. Si es diferido, también tendrá fecha de pago"
+
+#. module: l10n_ar_account_check
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_check_import_wizard_form
+msgid "Import"
+msgstr "Importar"
+
+#. module: l10n_ar_account_check
+#: model:ir.actions.act_window,name:l10n_ar_account_check.check_import_wizard_action
+msgid "Import Check"
+msgstr "Importar cheque"
+
+#. module: l10n_ar_account_check
+#: model:ir.ui.menu,name:l10n_ar_account_check.third_check_import_wizard_menu
+msgid "Import Third Checks"
+msgstr "Importar cheques de terceros"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_check_config__account_id
@@ -979,6 +1081,11 @@ msgstr "En caso de rechazo del cheque de tercero"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__invoice_id
 msgid "Invoice"
 msgstr "Factura"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_issued_check__issue_date
@@ -1048,6 +1155,7 @@ msgstr "Elemento del Diario"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit____last_update
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook____last_update
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check____last_update
@@ -1073,6 +1181,7 @@ msgstr "Última modificación en"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__write_uid
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__write_uid
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check__write_uid
@@ -1096,6 +1205,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_add_third_check__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_config__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_deposit__write_date
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_import__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_check_reject__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook__write_date
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_checkbook_check__write_date
@@ -1141,6 +1251,41 @@ msgstr "No a la Orden"
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_check_reject_issued_check__note
 msgid "Note"
 msgstr "Nota"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__echeq_number
+msgid "Number assigned by the bank"
+msgstr "Número asignado por el banco"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__message_has_error_counter
+msgid "Number of error"
+msgstr "Número de errores"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "Número de mensajes que requieren una acción"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__message_unread_counter
+msgid "Number of unread messages"
+msgstr "Número de mensajes sin leer"
+
+#. module: l10n_ar_account_check
+#: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_third_check__echeq_number
+msgid "N° ECHEQ"
+msgstr ""
 
 #. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_returned_check__note
@@ -1228,10 +1373,22 @@ msgid "Payment journal"
 msgstr "Diario de pago"
 
 #. module: l10n_ar_account_check
+#: model:ir.model.fields,help:l10n_ar_account_check.field_account_issued_check__replacement_payment_order_id
+msgid "Payment order whose check was returned and replaced by this one."
+msgstr ""
+
+#. module: l10n_ar_account_check
+#: model_terms:ir.ui.view,arch_db:l10n_ar_account_check.account_third_check_view_form
+msgid "Payments, Receipts and Debits"
+msgstr ""
+
+#. module: l10n_ar_account_check
+#: selection:account.check.import,check_format:0
 #: selection:account.checkbook,checkbook_type:0
+#: selection:account.third.check,check_format:0
 #: selection:wizard.create.check,checkbook_type:0
 msgid "Physical"
-msgstr "Normal"
+msgstr "Físico"
 
 #. module: l10n_ar_account_check
 #: code:addons/l10n_ar_account_check/wizard/check_reject.py:192
@@ -1433,11 +1590,6 @@ msgid "Returned Check Report"
 msgstr "Reporte Cheques devueltos"
 
 #. module: l10n_ar_account_check
-#: selection:account.returned.check.report,filter_by:0
-msgid "Returned Date"
-msgstr "Fecha de devolución"
-
-#. module: l10n_ar_account_check
 #: model:ir.model.fields,field_description:l10n_ar_account_check.field_account_invoice__reverse_widget
 msgid "Reverse Widget"
 msgstr ""
@@ -1528,13 +1680,25 @@ msgid "State"
 msgstr "Estado"
 
 #. module: l10n_ar_account_check
+#: code:addons/l10n_ar_account_check/wizard/check_import.py:74
+#, python-format
+msgid "Summary:\n"
+"Imported checks: %s\n"
+"Not imported: %s\n"
+"Repeated checks (not imported): %s"
+msgstr "Summary:\n"                                               |  msgid "Summary:\n"
+"Cheques importados: %s;"                                          |  "Imported checks: %s\n"
+"No importados: %s;"                                             |- "Not imported: %s\n"
+"Cheques repetidos (no importados): %s"
+
+#. module: l10n_ar_account_check
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_issued_check__currency_rate
 #: model:ir.model.fields,help:l10n_ar_account_check.field_account_third_check__currency_rate
 msgid "The specific rate that will be used, in         this voucher, between the selected currency         (in 'Payment Rate Currency' field)  and the         voucher currency."
 msgstr ""
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:673
+#: code:addons/l10n_ar_account_check/models/account_check.py:676
 #, python-format
 msgid "There are more than one voucher referenced to check %s."
 msgstr "Existen más de una orden de pago referenciada al cheque %s."
@@ -1546,7 +1710,7 @@ msgid "There is no check configuration for this Company!"
 msgstr "No hay configuraciones de cheque para esta compañía!"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:623
+#: code:addons/l10n_ar_account_check/models/account_check.py:626
 #, python-format
 msgid "There is no reference for account move. Imposible to go back to wallet."
 msgstr "No existe la referencia del asiento contable. Imposible devolver a cartera."
@@ -1564,22 +1728,27 @@ msgid "Third Check"
 msgstr "Cheque de Tercero"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:570
+#: code:addons/l10n_ar_account_check/models/account_check.py:573
 #, python-format
 msgid "Third Check "
 msgstr "Cheque de Tercero "
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:657
+#: code:addons/l10n_ar_account_check/models/account_check.py:660
 #, python-format
 msgid "Third Check Error! You cannot cancel                     check if it is not in Draft or in Wallet"
 msgstr "Error! No puede cancelar el cheque si no es está en Borrador o en Cartera"
 
 #. module: l10n_ar_account_check
-#: code:addons/l10n_ar_account_check/models/account_check.py:631
+#: code:addons/l10n_ar_account_check/models/account_check.py:634
 #, python-format
 msgid "Third Check Error! You cannot return to                     wallet a check if it is not in Delivered state"
 msgstr "Error! No puede devolver a la cartera un cheque si no está en estado Entregado"
+
+#. module: l10n_ar_account_check
+#: model:ir.model,name:l10n_ar_account_check.model_account_check_import
+msgid "Third Check Import"
+msgstr "Importador de cheques de terceros"
 
 #. module: l10n_ar_account_check
 #: model:ir.model,name:l10n_ar_account_check.model_account_check_reject
