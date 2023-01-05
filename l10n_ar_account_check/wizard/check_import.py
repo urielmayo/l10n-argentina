@@ -31,14 +31,15 @@ class ThirdCheckImport(models.TransientModel):
 
     @api.depends('bank_account_id')
     def _compute_check_format(self):
-        if self.bank_account_id:
-            self.bank_id = self.bank_account_id.bank_id.id
-            if 'bbva' in self.bank_id.name.lower():
-                self.check_format = 'physical'
-            elif 'macro' in self.bank_id.name.lower():
-                self.check_format = 'echeq'
-            else:
-                self.check_format = ''
+        for rec in self:
+            if rec.bank_account_id:
+                rec.bank_id = rec.bank_account_id.bank_id.id
+                if 'bbva' in rec.bank_id.name.lower():
+                    rec.check_format = 'physical'
+                elif 'macro' in rec.bank_id.name.lower():
+                    rec.check_format = 'echeq'
+                else:
+                    rec.check_format = ''
 
     def save_file(self, name, value):
         name, extension = os.path.splitext(name)
@@ -209,7 +210,8 @@ class ThirdCheckImport(models.TransientModel):
             bank = self._search_bank(bank_code)
             if not bank:
                 not_imported += 1
-                msg = 'Bank code not found.\n\nCode: %s\nRow: %s\n' % (bank_code, curr_row+1)
+                msg = 'Bank code not found.\n\nCode: %s\nRow: %s\n\n%s' % (bank_code, curr_row+1,
+                                                                           summary(imported, not_imported, repeated))
                 raise UserError(_(msg))
 
             # check
