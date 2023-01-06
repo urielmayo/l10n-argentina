@@ -22,6 +22,7 @@ class PadronMassUpdate(models.TransientModel):
     @api.model
     def _update_retention_arba(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -127,6 +128,7 @@ class PadronMassUpdate(models.TransientModel):
         local_record = self.env.ref(
             'l10n_ar_point_of_sale.iibb_situation_local')
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -219,6 +221,7 @@ class PadronMassUpdate(models.TransientModel):
     @api.model
     def _update_retention_agip(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -321,6 +324,7 @@ class PadronMassUpdate(models.TransientModel):
     @api.model
     def _update_perception_agip(self, perception):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -422,6 +426,7 @@ class PadronMassUpdate(models.TransientModel):
     @api.model
     def _update_retention_agip_rp(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -524,6 +529,7 @@ class PadronMassUpdate(models.TransientModel):
     @api.model
     def _update_perception_agip_rp(self, perception):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT

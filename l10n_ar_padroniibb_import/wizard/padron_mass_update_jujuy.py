@@ -20,6 +20,7 @@ class PadronMassUpdateJujuy(models.TransientModel):
     @api.model
     def _update_perception_jujuy(self, perception):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -118,6 +119,7 @@ class PadronMassUpdateJujuy(models.TransientModel):
     @api.model
     def _update_retention_jujuy(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT

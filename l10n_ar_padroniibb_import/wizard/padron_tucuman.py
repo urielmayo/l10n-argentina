@@ -105,6 +105,7 @@ class PadronImport(models.Model):
                     _logger.info('[TUCUMAN] Acreditan - Copiando a tabla definitiva')
                     cursor.execute(query)
                     cursor.execute("DROP TABLE IF EXISTS temp_import")
+                    cursor.commit()
                 except Exception:
                     cursor.rollback()
                     _logger.warning('[TUCUMAN]ERROR: Rollback')
@@ -148,6 +149,7 @@ class PadronImport(models.Model):
                     _logger.info('[TUCUMAN] Coeficiente - Copiando a tabla definitiva')
                     cursor.execute(query)
                     cursor.execute("DROP TABLE IF EXISTS temp_import")
+                    cursor.commit()
                 except Exception:
                     cursor.rollback()
                     _logger.warning('[TUCUMAN]ERROR: Rollback')

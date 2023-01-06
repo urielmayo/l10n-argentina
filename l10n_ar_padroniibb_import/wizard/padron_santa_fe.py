@@ -106,6 +106,7 @@ class PadronImport(models.Model):
             cursor.execute("DELETE FROM padron_santa_fe_percentages")
             cursor.execute(query)
             cursor.execute("DROP TABLE IF EXISTS temp_import")
+            cursor.commit()
         except Exception:
             cursor.rollback()
             _logger.warning('[SANTA_FE] ERROR: Rollback')

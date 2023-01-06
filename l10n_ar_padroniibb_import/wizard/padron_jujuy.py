@@ -109,6 +109,7 @@ class PadronImport(models.Model):
             cursor.execute("DELETE FROM padron_jujuy_percentages")
             cursor.execute(query)
             cursor.execute("DROP TABLE IF EXISTS temp_import")
+            cursor.commit()
         except Exception:
             cursor.rollback()
             _logger.warning('[JUJUY] ERROR: Rollback')

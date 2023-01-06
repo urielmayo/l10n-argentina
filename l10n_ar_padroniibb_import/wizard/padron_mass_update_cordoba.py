@@ -20,6 +20,7 @@ class PadronMassUpdateCordoba(models.TransientModel):
     @api.model
     def _update_perception_cordoba(self, perception):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT

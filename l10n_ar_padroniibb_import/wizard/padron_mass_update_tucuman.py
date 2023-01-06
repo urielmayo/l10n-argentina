@@ -22,6 +22,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
     @api.model
     def _update_retention_tucuman_ac(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -127,6 +128,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
         local_record = self.env.ref(
             'l10n_ar_point_of_sale.iibb_situation_local')
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -219,6 +221,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
     @api.model
     def _update_retention_tucuman_co(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -320,6 +323,7 @@ class PadronMassUpdateTucuman(models.TransientModel):
     @api.model
     def _update_perception_tucuman_co(self, perception):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
