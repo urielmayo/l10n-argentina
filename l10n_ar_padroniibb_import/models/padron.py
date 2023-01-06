@@ -4,6 +4,33 @@
 ##############################################################################
 
 from odoo import models, fields
+from odoo.exceptions import ValidationError
+
+class TemplatePadron(models.Model):
+
+    def unlink(self):
+        for record in self:
+            query_retention = """
+                DELETE FROM res_partner_retention
+                WHERE partner_id IN (SELECT id FROM res_partner WHERE vat = %s)
+                AND from_padron = True
+            """
+
+            query_perception = """
+                DELETE FROM res_partner_perception
+                WHERE partner_id IN (SELECT id FROM res_partner WHERE vat = %s)
+                AND from_padron = True
+            """
+
+            try:
+                self.env.cr.execute(query_retention, (record.vat,))
+                self.env.cr.execute(query_perception, (record.vat,))
+                self.env.cr.commit()
+            except Exception as e:
+                raise ValidationError(e)
+
+        return super(TemplatePadron, self).unlink()
+
 
 class AgipRetentionGroup(models.Model):
     _name = 'agip.retention.group'
@@ -29,7 +56,7 @@ class AgipPerceptionGroupRP(models.Model):
     _inherit = 'agip.perception.group'
     _description = 'Group number of Perception'
 
-class AgipRetentions(models.Model):
+class AgipRetentions(TemplatePadron):
     """
     This model represent the agip csv file that defines percentage
     of retentions and perceptions
@@ -64,7 +91,7 @@ class AgipRetentionsRP(models.Model):
         'agip.perception.group.rp', 'Perception Group')
 
 
-class ArbaPerceptions(models.Model):
+class ArbaPerceptions(TemplatePadron):
     """
     This model represent de ARBA csv file that
     defines percentage of perceptions
@@ -79,7 +106,7 @@ class ArbaPerceptions(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
 
 
-class ArbaRetentions(models.Model):
+class ArbaRetentions(TemplatePadron):
     """
     This model represent de ARBA csv file that
     defines percentage of retention
@@ -93,7 +120,7 @@ class ArbaRetentions(models.Model):
     percentage_retention = fields.Float('Percentage of retention')
     multilateral = fields.Boolean('Is multilateral?')
 
-class SantaFePerceptions(models.Model):
+class SantaFePerceptions(TemplatePadron):
     """
     This model represent the santa fe csv file that defines percentage
     of retentions and perceptions
@@ -110,7 +137,7 @@ class SantaFePerceptions(models.Model):
     name_partner = fields.Text('Company name')
 
 
-class JujuyRetentions(models.Model):
+class JujuyRetentions(TemplatePadron):
     """
     This model represent the agip csv file that defines percentage
     of retentions and perceptions
@@ -126,7 +153,7 @@ class JujuyRetentions(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
     name_partner = fields.Text('Company name')
 
-class TucumanPercentages(models.Model):
+class TucumanPercentages(TemplatePadron):
 
     _name = 'padron.tucuman_acreditan'
     _description = 'Definition of percentages of taxes by customer'
@@ -139,7 +166,7 @@ class TucumanPercentages(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
     coeficiente = fields.Float("Coeficiente")
 
-class TucumanCoefiecient(models.Model):
+class TucumanCoefiecient(TemplatePadron):
 
     _name = 'padron.tucuman_coeficiente'
     _description = 'Definition of percentages of taxes by customer'
@@ -152,7 +179,7 @@ class TucumanCoefiecient(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
     coeficiente = fields.Float("Coeficiente")
 
-class CordobaPerceptions(models.Model):
+class CordobaPerceptions(TemplatePadron):
     """
     This model represent de ARBA csv file that
     defines percentage of perceptions
@@ -168,7 +195,7 @@ class CordobaPerceptions(models.Model):
     multilateral = fields.Boolean('Is multilateral?')
     name_partner = fields.Text('Company name')
 
-class FormosaPadron(models.Model):
+class FormosaPadron(TemplatePadron):
     _name = 'padron.formosa'
     _description = 'Definition of percentages of taxes by customer'
 

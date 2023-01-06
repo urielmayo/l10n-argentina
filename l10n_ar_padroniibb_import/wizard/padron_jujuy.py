@@ -102,8 +102,8 @@ class PadronImport(models.Model):
             1,
             vat,
             TO_DATE(from_date, 'YYYYMM'),
-            TO_NUMBER(percentage_perception, '999.99')/100,
-            TO_NUMBER(percentage_retention, '999.99')/100
+            TO_NUMBER(percentage_perception, '999.99'),
+            TO_NUMBER(percentage_retention, '999.99')
             FROM temp_import
             """
             cursor.execute("DELETE FROM padron_jujuy_percentages")
