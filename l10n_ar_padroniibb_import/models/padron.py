@@ -7,6 +7,7 @@ from odoo import models, fields
 from odoo.exceptions import ValidationError
 
 class TemplatePadron(models.Model):
+    _name = 'padron.template'
 
     def unlink(self):
         for record in self:
