@@ -28,6 +28,7 @@
         "account",
         "l10n_ar_account_payment_order",
         "l10n_ar_point_of_sale",
+        'mail',
         'report_xlsx',
         'web_notify',
     ],
@@ -52,6 +53,7 @@
         'wizard/report_returned_view.xml',
         'report/report_returned_check_view.xml',
         'report/report_rejected_third_check_view.xml',
+        'wizard/check_import_view.xml'
     ],
     'qweb': [
         'static/src/xml/reverse_payment.xml',

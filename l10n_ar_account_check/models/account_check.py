@@ -129,6 +129,7 @@ class AccountIssuedCheck(models.Model):
         compute='_compute_amount_currency',
         string='Amount Currency',
     )
+    echeq_number = fields.Char('N° ECHEQ', help='Number assigned by the bank')
 
     @api.depends('account_bank_id')
     def _compute_journal_id(self):
@@ -408,6 +409,7 @@ class AccountThirdCheck(models.Model):
     Account Third Check
     """
     _name = 'account.third.check'
+    _inherit = ['mail.thread']
     _description = 'Third Checks'
     _rec_name = 'number'
 
@@ -517,6 +519,8 @@ class AccountThirdCheck(models.Model):
         string='Amount Currency',
     )
     check_issuing_type = fields.Selection(selection=[('own', 'Own'), ('third', 'Third')], string="Check owner")
+    check_format = fields.Selection([('physical', 'Physical'), ('echeq', 'Echeq')], string='Format', default='physical')
+    echeq_number = fields.Char('N° ECHEQ', help='Number assigned by the bank')
 
     @api.depends('amount', 'currency_rate')
     def _compute_amount_currency(self):
