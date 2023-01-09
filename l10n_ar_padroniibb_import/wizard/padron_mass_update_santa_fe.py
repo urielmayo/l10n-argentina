@@ -20,6 +20,7 @@ class PadronMassUpdateSantaFe(models.TransientModel):
     @api.model
     def _update_perception_santa_fe(self, perception):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT
@@ -118,6 +119,7 @@ class PadronMassUpdateSantaFe(models.TransientModel):
     @api.model
     def _update_retention_santa_fe(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT

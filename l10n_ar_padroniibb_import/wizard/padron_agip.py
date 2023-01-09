@@ -99,6 +99,7 @@ class PadronImport(models.Model):
                     cursor.execute("DELETE FROM padron_agip_percentages")
                     cursor.execute(query)
                     cursor.execute("DROP TABLE IF EXISTS temp_import")
+                    cursor.commit()
                 except Exception:
                     cursor.rollback()
                     _logger.warning('[AGIP] ERROR: Rollback')
@@ -156,6 +157,7 @@ class PadronImport(models.Model):
                     cursor.execute("DELETE FROM padron_agip_percentages_rp")
                     cursor.execute(query)
                     cursor.execute("DROP TABLE IF EXISTS temp_import")
+                    cursor.commit()
                 except Exception:
                     cursor.rollback()
                     _logger.warning('[AGIP] ERROR: Rollback')

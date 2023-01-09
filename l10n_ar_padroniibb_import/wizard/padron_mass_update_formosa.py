@@ -20,6 +20,7 @@ class PadronMassUpdateFormosa(models.TransientModel):
     @api.model
     def _update_retention_formosa(self, retention):
         cr = self.env.cr
+        cr.commit()
         query = """
         WITH padron AS (
             SELECT

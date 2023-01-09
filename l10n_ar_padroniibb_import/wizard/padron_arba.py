@@ -95,6 +95,7 @@ class PadronImport(models.Model):
                     _logger.info('[ARBA] Ret - Copiando a tabla definitiva')
                     cursor.execute(query)
                     cursor.execute("DROP TABLE IF EXISTS temp_import")
+                    cursor.commit()
                 except Exception:
                     cursor.rollback()
                     _logger.warning('[ARBA]ERROR: Rollback')
@@ -134,6 +135,7 @@ class PadronImport(models.Model):
                     _logger.info('[ARBA] Per - Copiando a tabla definitiva')
                     cursor.execute(query)
                     cursor.execute("DROP TABLE IF EXISTS temp_import")
+                    cursor.commit()
                 except Exception:
                     cursor.rollback()
                     _logger.warning('[ARBA]ERROR: Rollback')
