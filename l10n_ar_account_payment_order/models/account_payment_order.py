@@ -135,9 +135,9 @@ class AccountPaymentOrder(models.Model):
         comodel_name='res.company', string='Company',
         default=lambda s: s._get_default_company(),
         required=True, readonly=True)
-    company_currency = fields.Many2one(related='company_id.currency_id',
-                                        string='Moneda principal')
-
+    company_currency = fields.Many2one(
+        related='company_id.currency_id',
+        string='Moneda principal')
     pre_line = fields.Boolean(string='Previous Payments ?')
     payment_mode_line_ids = fields.One2many(
         comodel_name='account.payment.mode.line',
@@ -210,7 +210,7 @@ class AccountPaymentOrder(models.Model):
     period_id = fields.Many2one(
         string="Period", comodel_name="date.period",
         compute='_compute_period', store=True, required=False)
-
+    online_transfer = fields.Boolean(string='On-Line Transfer')
     message = fields.Char()
 
     @api.model
