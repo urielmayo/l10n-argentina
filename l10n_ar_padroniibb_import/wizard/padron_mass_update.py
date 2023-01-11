@@ -27,7 +27,7 @@ class PadronMassUpdate(models.TransientModel):
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage p_percentage,
+                par.percentage_retention p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
                 JOIN padron_arba_retention par ON par.vat=rp.vat
@@ -133,7 +133,7 @@ class PadronMassUpdate(models.TransientModel):
         WITH padron AS (
             SELECT
                 rp.id p_partner_id,
-                par.percentage p_percentage,
+                par.percentage_perception p_percentage,
                 par.multilateral p_multilateral
             FROM res_partner rp
                 JOIN padron_arba_perception par ON par.vat=rp.vat
