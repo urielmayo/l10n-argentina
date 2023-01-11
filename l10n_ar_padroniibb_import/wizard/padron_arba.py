@@ -76,7 +76,7 @@ class PadronImport(models.Model):
                     query = """
                     INSERT INTO padron_arba_retention
                     (create_uid, create_date, write_date, write_uid,
-                    vat, percentage, from_date, to_date, multilateral)
+                    vat, percentage_retention, from_date, to_date, multilateral)
                     SELECT 1 as create_uid,
                     to_date(create_date,'DDMMYYYY'),
                     current_date,
@@ -116,7 +116,7 @@ class PadronImport(models.Model):
                     query = """
                     INSERT INTO padron_arba_perception
                     (create_uid, create_date, write_date, write_uid,
-                    vat, percentage, from_date, to_date, multilateral)
+                    vat, percentage_perception, from_date, to_date, multilateral)
                     SELECT 1 as create_uid,
                     to_date(create_date,'DDMMYYYY'),
                     current_date,
