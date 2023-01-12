@@ -403,7 +403,9 @@ class PerceptionPerception(models.Model):
             # TODO: compute no crea percepciones,
             # por ende  al llamar a _compute_perception_invoice_taxes
             # no genera ningun ait nuevo
-            perc_lines += perc.compute(partner_perc, **kwargs)
+            result = perc.compute(partner_perc, **kwargs)
+            if result is not None:
+                perc_lines += result
         return perc_lines
 
 
