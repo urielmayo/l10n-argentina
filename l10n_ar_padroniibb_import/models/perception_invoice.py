@@ -13,11 +13,15 @@ class PerceptionPerception(models.Model):
         perc = super(PerceptionPerception, self).create_perceptions_from_partner(partner, date, **kwargs)
 
         if partner.perception_ids.filtered(lambda r: r.perception_id.from_register == 'agip_rp'):   #if partner have a perception from agip_rp
-            return
+            return perc
 
         caba_cm05 = partner.cm05.filtered(lambda r: r.province_id.jurisdiction_code == '901')   # check if partner have a cm05 of Ciudad Autonoma de Buenos Aires
         if not caba_cm05:
-            return
+            return perc
+
+        invoice = kwargs['invoice']
+        if not invoice.address_shipping_id.state_id.jurisdiction_code == '901': #if the sale is not made in Ciudad Autonoma de Buenos Aires
+            return perc
 
         agip_rp = self.env['perception.perception'].search([('type_tax_use', '=', 'sale'),('from_register', '=', 'agip_rp')])
 
@@ -27,7 +31,7 @@ class PerceptionPerception(models.Model):
             tax = agip_rp.gi_application_ids.filtered(lambda r: r.sit_iibb.name != 'No Inscripto')[0]
 
         if not tax:
-            return
+            return perc
 
         perception_tax_line = {
             'perception': agip_rp.id,
@@ -35,7 +39,7 @@ class PerceptionPerception(models.Model):
             'excluded_percent': 0,
             'percent': tax.percent,
             'sit_iibb': tax.sit_iibb,
-            'from_padron': False,
+            'from_padron': True, # to secure being added to invoice
         }
 
         res = agip_rp.compute(perception_tax_line, **kwargs)
