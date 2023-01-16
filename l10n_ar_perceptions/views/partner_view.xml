@@ -13,7 +13,7 @@
                     <field name="nro_insc_iibb"/>
                 </xpath>
                 <page name="accounting_disabled" position="after">
-                    <page string="Perceptions">
+                    <page string="Perceptions" attrs="{'invisible': [('customer', '=', False)]}">
                         <group colspan="4" col="4">
                             <group colspan="4">
                                 <field colspan="2" name="perception_ids" nolabel="1">
