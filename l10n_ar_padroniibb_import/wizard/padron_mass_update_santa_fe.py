@@ -67,7 +67,6 @@ class PadronMassUpdateSantaFe(models.TransientModel):
         params = (perception.id, )
         cr.execute(query, params)
         for res in cr.fetchall():
-            print(res)
             if res[6] == 'UPDATE':  # Change the amount of percentage
                 q = """
                 UPDATE res_partner_perception SET
