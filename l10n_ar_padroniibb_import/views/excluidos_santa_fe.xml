@@ -13,13 +13,12 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Padrón Santa Fe">
-                    <field name="from_date" />
-                    <field name="to_date" />
                     <field name="name_partner" invisible="1" />
                     <field name="vat" />
+                    <field name="from_date" />
+                    <field name="to_date" />
                     <field name="percentage_perception" string="Alicuota" />
                     <field name="multilateral" />
-                    <field name="name_partner" />
                 </tree>
             </field>
         </record>

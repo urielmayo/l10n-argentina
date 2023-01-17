@@ -96,7 +96,7 @@ class PadronImport(models.Model):
             query = """
             INSERT INTO padron_santa_fe_percentages
             (create_uid, write_uid,
-            vat, percentage)
+            vat, percentage_perception)
             SELECT 1 as create_uid,
             1,
             vat,
