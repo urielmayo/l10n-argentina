@@ -71,11 +71,13 @@ class PadronMassUpdateSantaFe(models.TransientModel):
                 q = """
                 UPDATE res_partner_perception SET
                     percent=%(percent)s,
+                    excluded_percent=%(excluded)s,
                     from_padron = True
                 WHERE id=%(id)s
                 """
                 q_params = {
                     'percent': res[1],
+                    'excluded': 100-res[1],
                     'id': res[3],
                 }
                 self._cr.execute(q, q_params)
@@ -96,16 +98,19 @@ class PadronMassUpdateSantaFe(models.TransientModel):
                 INSERT INTO res_partner_perception (
                     partner_id,
                     percent,
+                    excluded_percent,
                     perception_id,
                     from_padron
-                ) VALUES (3
+                ) VALUES (
                     %(partner_id)s,
                     %(percent)s,
+                    %(excluded)s,
                     %(perception_id)s,
                     True
                 )"""
                 q_params = {
                     'percent': res[1],
+                    'excluded': 100-res[1],
                     'partner_id': res[0],
                     'perception_id': perception.id,
                 }

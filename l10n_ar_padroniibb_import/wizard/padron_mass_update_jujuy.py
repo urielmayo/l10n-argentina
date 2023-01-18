@@ -220,19 +220,9 @@ class PadronMassUpdateJujuy(models.TransientModel):
 
     @api.multi
     def action_update_jujuy(self):
-        perception_obj = self.env['perception.perception']
         retention_obj = self.env['retention.retention']
 
         if self.jujuy:
-            # Actualizamos Percepciones
-            percep_jujuy = perception_obj._get_perception_from_jujuy()
-            if not percep_jujuy:
-                raise ValidationError(
-                    _("Perception Error!\n") +
-                    _("There is no perception configured to update " +
-                      "from Padron JUJUY"))
-            self._update_perception_jujuy(percep_jujuy[0])
-
             retent_jujuy = retention_obj._get_retention_from_jujuy()
             if not retent_jujuy:
                 raise ValidationError(
