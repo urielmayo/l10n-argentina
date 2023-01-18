@@ -694,6 +694,11 @@ class res_partner(models.Model):
                 if comm[1] not in old_perceps:
                     keep_percep_comms.append(comm)
             real_comms = keep_percep_comms + old_comms
+
+        for per in perception_ids_lst:
+            if per[0] == 0 and per[1] == 0 and per not in real_comms:
+                real_comms.append(per)
+        
         vals.update({
             'perception_ids': real_comms,
         })
@@ -724,6 +729,13 @@ class res_partner(models.Model):
             'retention_ids': real_comms,
         })
         return vals
+
+    @api.multi
+    def unlink(self):
+        for partner in self:
+            self.env['res.partner.perception'].search([('partner_id', '=', partner.id)]).unlink()
+            self.env['res.partner.retention'].search([('partner_id', '=', partner.id)]).unlink()
+        return super(res_partner, self).unlink()
 
 
 class res_partner_perception(models.Model):
