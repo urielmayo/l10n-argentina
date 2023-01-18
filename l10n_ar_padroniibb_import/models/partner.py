@@ -531,36 +531,47 @@ class res_partner(models.Model):
             res['perception_ids'] = [(1, per_id.id, perception)]
         return res
 
+    @api.model
+    def get_partner_change_data(self, vals, partner):
+        vat_changed = False
+        if 'vat' in vals and vals['vat']:
+            vat = vals['vat']
+            old_vat = partner.read(['vat'])[0]['vat']
+            if vat != old_vat:
+                vat_changed = True
+        else:
+            vat = partner.read(['vat'])[0]['vat']
+
+        if 'customer' in vals and vals['customer']:
+            customer = vals['customer']
+        else:
+            customer = partner.read(['customer'])[0]['customer']
+
+        if 'supplier' in vals and vals['supplier']:
+            supplier = vals['supplier']
+        else:
+            supplier = partner.read(['supplier'])[0]['supplier']
+
+        return {
+            'vat': vat,
+            'customer': customer,
+            'supplier': supplier,
+            'vat_changed': vat_changed
+        }
+    
     @api.multi
     def write(self, vals):
         for partner in self:
-            vat_changed = False
-            if 'vat' in vals and vals['vat']:
-                vat = vals['vat']
-                old_vat = partner.read(['vat'])[0]['vat']
-                if vat != old_vat:
-                    vat_changed = True
-            else:
-                vat = partner.read(['vat'])[0]['vat']
-
-            if 'customer' in vals and vals['customer']:
-                customer = vals['customer']
-            else:
-                customer = partner.read(['customer'])[0]['customer']
-
-            if 'supplier' in vals and vals['supplier']:
-                supplier = vals['supplier']
-            else:
-                supplier = partner.read(['supplier'])[0]['supplier']
-
+            partner_data = self.get_partner_change_data(vals, partner)
+            vat = partner_data['vat']
             # TODO: Hay como un problema entre este metodo
             # y la actualizacion masiva
             # Tenemos que corregirlo de alguna manera,
             # por ahora el workaround es que si se escribe las perception_ids
             # no se hace el chequeo en el padron
             # porque suponemos que viene de la actualizacion masiva
-            if vat:
-                if customer:
+            if partner_data['vat']:
+                if partner_data['customer']:
 
                     perception_ids_lst = []
                     perc_arba = partner._check_padron_perception_arba(vat)
@@ -618,25 +629,10 @@ class res_partner(models.Model):
                             perc_tucuman_co)
                         perception_ids_lst.append(
                             res_tucuman_co['perception_ids'][0])
+                            
+                    vals = self.update_perceptions(vals, partner, partner_data, perception_ids_lst)
 
-                    if 'perception_ids' in vals:
-                        real_comms = self._compute_allowed_padron_tax_commands(
-                            vals['perception_ids'], perception_ids_lst)
-                    else:
-                        real_comms = perception_ids_lst
-                    if vat_changed:
-                        old_perceps = partner.read(
-                            ['perception_ids'])[0]['perception_ids']
-                        old_comms = [(2, x, False) for x in old_perceps]
-                        keep_percep_comms = []
-                        for comm in perception_ids_lst:
-                            if comm[1] not in old_perceps:
-                                keep_percep_comms.append(comm)
-                        real_comms = keep_percep_comms + old_comms
-                    vals.update({
-                        'perception_ids': real_comms,
-                    })
-                if supplier:
+                if partner_data['supplier']:
 
                     retention_ids_lst = []
                     ret_arba = partner._check_padron_retention_arba(vat)
@@ -679,24 +675,50 @@ class res_partner(models.Model):
                         res_formosa = partner._update_retention_partner(ret_formosa)
                         retention_ids_lst.append(res_formosa['retention_ids'][0])
 
-                    if 'retention_ids' in vals:
-                        real_comms = self._compute_allowed_padron_tax_commands(
-                            vals['retention_ids'], retention_ids_lst)
-                    else:
-                        real_comms = []
-                    if vat_changed:
-                        old_retent = partner.read(
-                            ['retention_ids'])[0]['retention_ids']
-                        old_comms = [(2, x, False) for x in old_retent]
-                        keep_retent_comms = []
-                        for comm in retention_ids_lst:
-                            if comm[1] not in old_retent:
-                                keep_retent_comms.append(comm)
-                        real_comms = keep_retent_comms + old_comms
-                    vals.update({
-                        'retention_ids': real_comms,
-                    })
+                    vals = self.update_retentions(vals, partner, partner_data, retention_ids_lst)
+
         return super(res_partner, self).write(vals)
+    
+    def update_perceptions(self, vals, partner, partner_data, perception_ids_lst):
+        if 'perception_ids' in vals:
+            real_comms = self._compute_allowed_padron_tax_commands(
+                vals['perception_ids'], perception_ids_lst)
+        else:
+            real_comms = perception_ids_lst
+        if partner_data['vat_changed']:
+            old_perceps = partner.read(
+                ['perception_ids'])[0]['perception_ids']
+            old_comms = [(2, x, False) for x in old_perceps]
+            keep_percep_comms = []
+            for comm in perception_ids_lst:
+                if comm[1] not in old_perceps:
+                    keep_percep_comms.append(comm)
+            real_comms = keep_percep_comms + old_comms
+        vals.update({
+            'perception_ids': real_comms,
+        })
+        return vals
+
+
+    def update_retentions(self, vals, partner, partner_data, retention_ids_lst):
+        if 'retention_ids' in vals:
+            real_comms = self._compute_allowed_padron_tax_commands(
+                vals['retention_ids'], retention_ids_lst)
+        else:
+            real_comms = []
+        if partner_data['vat_changed']:
+            old_retent = partner.read(
+                ['retention_ids'])[0]['retention_ids']
+            old_comms = [(2, x, False) for x in old_retent]
+            keep_retent_comms = []
+            for comm in retention_ids_lst:
+                if comm[1] not in old_retent:
+                    keep_retent_comms.append(comm)
+            real_comms = keep_retent_comms + old_comms
+        vals.update({
+            'retention_ids': real_comms,
+        })
+        return vals
 
 
 class res_partner_perception(models.Model):
