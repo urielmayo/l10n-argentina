@@ -715,6 +715,11 @@ class res_partner(models.Model):
                 if comm[1] not in old_retent:
                     keep_retent_comms.append(comm)
             real_comms = keep_retent_comms + old_comms
+        
+        for ret in retention_ids_lst:
+            if ret[0] == 0 and ret[1] == 0 and ret not in real_comms:
+                real_comms.append(ret)
+
         vals.update({
             'retention_ids': real_comms,
         })
