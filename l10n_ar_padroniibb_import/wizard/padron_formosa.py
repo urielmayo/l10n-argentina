@@ -116,12 +116,12 @@ class PadronImport(models.Model):
                     category_description,
                     to_number(ac_ret_28_97, '999.99'),
                     to_number(ac_per_23_14, '999.99'),
-                    to_date(date_ret_28_97, 'YYYYMMDD'),
-                    to_date(date_per_23_14, 'YYYYMMDD'),
+                    to_date(date_ret_28_97, 'YYYY/MM/DD'),
+                    to_date(date_per_23_14, 'YYYY/MM/DD'),
                     to_number(ac_per_33_99, '999.99'),
                     to_number(ac_per_27_00, '999.99'),
-                    to_date(date_per_33_99, 'YYYYMMDD'),
-                    to_date(date_per_27_00, 'YYYYMMDD'),
+                    to_date(date_per_33_99, 'YYYY/MM/DD'),
+                    to_date(date_per_27_00, 'YYYY/MM/DD'),
                     regime,
                     (CASE
                         WHEN exent = 'SI'
@@ -157,6 +157,17 @@ class PadronImport(models.Model):
         new_file_path = tempfile.mkstemp()[1]
         with open(filename, "r", encoding='latin1') as old_file:
             with open(new_file_path, "w", encoding='latin1') as new_file:
-                for line in old_file.readlines():
-                    new_file.write(line)
+                # the | simbol is the separator in this padron and
+                # there are lines that have a | in the middle of the name
+                # so checking how many | are in each line you could know
+                # if line needs to be fixed
+                for line in old_file:
+                    fields = line.strip().split("|")
+                    if len(fields) > 15:
+                        fields[1] += fields[2]
+                        del fields[2]
+                        new_line = "|".join(fields)
+                        new_file.write(new_line + "\n")
+                    else:
+                        new_file.write(line)
         return new_file_path
