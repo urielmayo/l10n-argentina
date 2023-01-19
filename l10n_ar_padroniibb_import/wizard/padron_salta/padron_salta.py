@@ -44,37 +44,25 @@ class PadronImport(models.Model):
     _inherit = "padron.import"
 
     @api.model
-    def import_909_file(self, out_path, files):
-        _logger.info('[FORMOSA] Inicio de importacion')
+    def import_917_file(self, out_path, files):
+        _logger.info('[SALTA] Inicio de importacion')
         dsn_pg_splitted = get_dsn_pg(self.env.cr)
-        _logger.info('[FORMOSA] Files extracted: ' + str(len(files)))
+        _logger.info('[SALTA] Files extracted: ' + str(len(files)))
         if len(files) != 1:
             raise ValidationError(
                 _("Expected only one file compressed, got: %d") %
                 len(files))
 
-        txt_path = self.correct_padron_formosa(files[0])
+        txt_path = self.correct_padron_salta(files[0])
         dbname = self.env.cr.dbname
         cursor = registry(dbname).cursor()  # Get a new cursor
         try:
-            _logger.info('[FORMOSA] Creando tabla temporal')
+            _logger.info('[SALTA] Creando tabla temporal')
             create_q = """
             CREATE TABLE temp_import(
                 vat varchar(11),
-                denomination varchar(200),
-                period varchar,
-                category varchar(20),
-                category_description varchar(18),
-                ac_ret_28_97 varchar,
-                ac_per_23_14 varchar,
-                date_ret_28_97 varchar(10),
-                date_per_23_14 varchar(10),
-                ac_per_33_99 varchar,
-                ac_per_27_00 varchar,
-                date_per_33_99 varchar(10),
-                date_per_27_00 varchar(10),
-                regime varchar(80),
-                exent varchar(2)
+                name_partner varchar(100),
+                percentage_perception varchar(6)
             )
             """
             cursor.execute("DROP TABLE IF EXISTS temp_import")
@@ -86,10 +74,10 @@ class PadronImport(models.Model):
         else:
             cursor.commit()
 
-        _logger.info('[FORMOSA] Copiando del csv a tabla temporal')
+        _logger.info('[SALTA] Copiando del txt a tabla temporal')
         psql_args_list = [
             "psql",
-            "--command=\copy temp_import(vat, denomination, period, category, category_description, ac_ret_28_97, ac_per_23_14, date_ret_28_97, date_per_23_14, ac_per_33_99, ac_per_27_00, date_per_33_99, date_per_27_00, regime, exent) FROM " + txt_path + " WITH DELIMITER '|' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
+            "--command=\copy temp_import(vat, name_partner, percentage_perception) FROM " + txt_path + " WITH DELIMITER '	' NULL '' CSV QUOTE E'\b' ENCODING 'latin1'"  # noqa
         ]
         psql_args_list[1:1] = dsn_pg_splitted
         retcode = call(psql_args_list, stderr=STDOUT)
@@ -97,66 +85,51 @@ class PadronImport(models.Model):
             "Call to psql subprocess copy command returned: " + str(retcode)
 
         try:
-            # TODO: Creacion de los grupos de retenciones y percepciones
-            _logger.info('[FORMOSA] Verificando grupos')
+            _logger.info('[SALTA] Verificando grupos')
 
-            _logger.info('[FORMOSA] Copiando de tabla temporal a definitiva')
+            _logger.info('[SALTA] Copiando de tabla temporal a definitiva')
             query = """
-            INSERT INTO padron_formosa
+            INSERT INTO padron_salta
             (create_uid, create_date, write_date, write_uid,
-            vat, denomination, period, category, category_description, ac_ret_28_97, ac_per_23_14, date_ret_28_97, date_per_23_14, ac_per_33_99, ac_per_27_00, date_per_33_99, date_per_27_00, regime, exent)
+            vat, name_partner, percentage_perception)
             SELECT 1 as create_uid,
                     current_date,
                     current_date,
                     1,
                     vat,
-                    denomination,
-                    period,
-                    category,
-                    category_description,
-                    to_number(ac_ret_28_97, '999.99'),
-                    to_number(ac_per_23_14, '999.99'),
-                    to_date(date_ret_28_97, 'YYYYMMDD'),
-                    to_date(date_per_23_14, 'YYYYMMDD'),
-                    to_number(ac_per_33_99, '999.99'),
-                    to_number(ac_per_27_00, '999.99'),
-                    to_date(date_per_33_99, 'YYYYMMDD'),
-                    to_date(date_per_27_00, 'YYYYMMDD'),
-                    regime,
-                    (CASE
-                        WHEN exent = 'SI'
-                        THEN True ELSE False
-                    END) as exent
+                    name_partner,
+                    to_number(percentage_perception, '9.9999')*100
                     FROM temp_import
             """
-            cursor.execute("DELETE FROM padron_formosa")
+            cursor.execute("DELETE FROM padron_salta")
             cursor.execute(query)
             cursor.execute("DROP TABLE IF EXISTS temp_import")
             cursor.commit()
         except Exception:
             cursor.rollback()
-            _logger.warning('[FORMOSA] ERROR: Rollback')
+            _logger.warning('[SALTA] ERROR: Rollback')
         else:
             # Mass Update
-            mass_wiz_obj = self.env['padron.mass.update.formosa']
+            mass_wiz_obj = self.env['padron.mass.update.salta']
             wiz = mass_wiz_obj.create({
-                'formosa': True,
+                'salta': True,
             })
-            # TODO
-            wiz.action_update_formosa()
+
+            wiz.action_update_salta()
 
             cursor.commit()
-            _logger.info('[FORMOSA] SUCCESS: Fin de carga de padron de formosa')
+            _logger.info('[SALTA] SUCCESS: Fin de carga de padron de salta')
 
         finally:
-            rmtree(out_path)  # Delete temp folder
+            rmtree(out_path) # Delete temp folder
             cursor.close()
         return True
 
-    def correct_padron_formosa(self, filename):
+    def correct_padron_salta(self, filename):
         new_file_path = tempfile.mkstemp()[1]
         with open(filename, "r", encoding='latin1') as old_file:
             with open(new_file_path, "w", encoding='latin1') as new_file:
+                next(old_file) #the first line has the column name so need to be avoided
                 for line in old_file.readlines():
                     new_file.write(line)
         return new_file_path
