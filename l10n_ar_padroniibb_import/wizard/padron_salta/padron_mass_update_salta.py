@@ -125,7 +125,6 @@ class PadronMassUpdateSalta(models.TransientModel):
         if self.salta:
             # Actualizamos Percepciones
             percept_salta = perception_obj._get_perception_from_salta()
-            print(percept_salta)
             if not percept_salta:
                 raise ValidationError(
                     _("Perception Error!\n") +
