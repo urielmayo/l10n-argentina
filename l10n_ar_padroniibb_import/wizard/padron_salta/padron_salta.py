@@ -98,7 +98,7 @@ class PadronImport(models.Model):
                     1,
                     vat,
                     name_partner,
-                    to_number(percentage_perception, '9.9999')*100
+                    to_number(percentage_perception, '9.9999')
                     FROM temp_import
             """
             cursor.execute("DELETE FROM padron_salta")
