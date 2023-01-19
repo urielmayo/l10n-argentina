@@ -67,12 +67,12 @@ class PadronImport(models.Model):
                 category_description varchar(18),
                 ac_ret_28_97 varchar,
                 ac_per_23_14 varchar,
-                date_ret_28_97 varchar(8),
-                date_per_23_14 varchar(8),
+                date_ret_28_97 varchar(10),
+                date_per_23_14 varchar(10),
                 ac_per_33_99 varchar,
                 ac_per_27_00 varchar,
-                date_per_33_99 varchar(8),
-                date_per_27_00 varchar(8),
+                date_per_33_99 varchar(10),
+                date_per_27_00 varchar(10),
                 regime varchar(80),
                 exent varchar(2)
             )
