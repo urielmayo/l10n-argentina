@@ -181,11 +181,11 @@ class PadronImport(models.Model):
         files_path = []
         for rec_data in data_files:
             file = b64decode(rec_data.file)
-            file = file.decode()
+            file = file.decode(encoding='latin1')
             file_name = rec_data.file_name
             file_path = out_path + "/" + file_name
 
-            with open(file_path, "w+") as f:
+            with open(file_path, "w+", encoding='latin1') as f:
                 f.write(file)
 
             files_path.append(file_path)
