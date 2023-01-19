@@ -17,3 +17,6 @@ from . import padron_mass_update_cordoba # noqa
 from . import padron_mass_update_tucuman # noqa
 from . import padron_formosa # noqa
 from . import padron_mass_update_formosa # noqa
+
+from .padron_salta import padron_salta
+from .padron_salta import padron_mass_update_salta

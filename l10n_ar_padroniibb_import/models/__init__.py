@@ -8,3 +8,8 @@ from . import partner  # noqa
 from . import perception  # noqa
 from . import retention  # noqa
 from . import cm05  # noqa
+
+
+from .padron_salta import padron
+from .padron_salta import partner
+from .padron_salta import perception

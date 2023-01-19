@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Padron Excluidos Formosa -->
+        <!-- <menuitem id="padron_salta_root_menu" name="Padrón Salta" parent="padrones_root_menu" sequence="10" /> -->
+
+        <!-- Padron AGIP -->
+        <record model="ir.ui.view" id="view_padron_salta_tree">
+            <field name="name">padron.salta.tree</field>
+            <field name="model">padron.salta</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Padrón Salta">
+                    <field name="vat" />
+                    <field name="name_partner" string='Company name'/>
+                    <field name="percentage_perception" string='Percentage of perception'/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_padron_salta_search" model="ir.ui.view">
+            <field name="name">padron.salta.search</field>
+            <field name="model">padron.salta</field>
+            <field name="arch" type="xml">
+                <search string="Padrón Salta">
+                    <field name="vat" filter_domain="['|', ('vat', 'like', self), ('vat', 'ilike', self)]" />
+                </search>
+            </field>
+        </record>
+
+        <record id="action_padron_salta" model="ir.actions.act_window">
+            <field name="name">Padron Salta</field>
+            <field name="res_model">padron.salta</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_padron_salta_tree" />
+            <field name="search_view_id" ref="view_padron_salta_search" />
+        </record>
+
+        <menuitem id="padron_salta_menu" action="action_padron_salta" parent="padrones_root_menu" sequence="10" />
+
+    </data>
+</odoo>
