@@ -698,10 +698,18 @@ class res_partner(models.Model):
         for per in perception_ids_lst:
             if per[0] == 0 and per[1] == 0 and per not in real_comms:
                 real_comms.append(per)
-        
+
+        unique_perceptions = []
+        perception_ids = vals['perception_ids'] if 'perception_ids' in vals and vals['perception_ids'] else []
+        # check if perception_id are repeated and just add one of each perception
+        for new_per in real_comms:
+            if new_per[2]['perception_id'] not in [all_per[2]['perception_id'] for all_per in perception_ids]:
+                unique_perceptions.append(new_per)
+
         vals.update({
-            'perception_ids': real_comms,
+            'perception_ids': unique_perceptions,
         })
+
         return vals
 
 
@@ -725,9 +733,17 @@ class res_partner(models.Model):
             if ret[0] == 0 and ret[1] == 0 and ret not in real_comms:
                 real_comms.append(ret)
 
+        unique_retentions = []
+        retention_ids = vals['retention_ids'] if 'retention_ids' in vals and vals['retention_ids'] else []
+        # check if retention are repeated and just add one of each retention
+        for new_ret in real_comms:
+            if new_ret[2]['retention_id'] not in [all_ret[2]['retention_id'] for all_ret in retention_ids]:
+                unique_retentions.append(new_ret)
+
         vals.update({
-            'retention_ids': real_comms,
+            'retention_ids': unique_retentions,
         })
+
         return vals
 
     @api.multi
