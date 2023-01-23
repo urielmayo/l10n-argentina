@@ -630,6 +630,13 @@ class res_partner(models.Model):
                         perception_ids_lst.append(
                             res_tucuman_co['perception_ids'][0])
                             
+                    perc_salta = partner._check_padron_perception_salta(vat)
+                    if perc_salta:
+                        res_salta = partner._update_perception_partner(
+                            perc_salta)
+                        perception_ids_lst.append(
+                            res_salta['perception_ids'][0])
+
                     vals = self.update_perceptions(vals, partner, partner_data, perception_ids_lst)
 
                 if partner_data['supplier']:
