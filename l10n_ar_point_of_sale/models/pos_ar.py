@@ -95,6 +95,14 @@ class PosAr(models.Model):
                 raise ValidationError(_("Error! The PoS is duplicated"))
 
     @api.multi
+    def write(self, vals):
+        if self.env['account.invoice'].search_count([('pos_ar_id', '=', self.id)]) > 0:
+            raise ValidationError(_(
+                "You cannot change as POS name when is already in use"
+            ))
+        return super(PosAr, self).write(vals)
+
+    @api.multi
     def unlink(self):
         affected_models = [
             'account.invoice',
