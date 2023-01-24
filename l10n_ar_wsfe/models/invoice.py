@@ -365,6 +365,7 @@ class AccountInvoice(models.Model):
             max(to_number(substring(internal_number from '[0-9]{8}$'), '99999999'))
         from account_invoice
         where internal_number ~ '^[0-9]{4,5}-[0-9]{8}$'
+            and substring(internal_number, 1, %(pos_name_len)s) = %(pos_name)s
             and pos_ar_id=%(pos_id)s
             and state in %(states)s
             and type=%(inv_type)s
@@ -375,6 +376,8 @@ class AccountInvoice(models.Model):
         fiscal_filter = "and fiscal_type_id {fiscal_type}".format(fiscal_type=fiscal_type)
         query += fiscal_filter
         params = {
+            'pos_name_len': len(invoice.pos_ar_id.name),
+            'pos_name': invoice.pos_ar_id.name,
             'pos_id': invoice.pos_ar_id.id,
             'states': ('open', 'paid', 'cancel',),
             'inv_type': invoice.type,
