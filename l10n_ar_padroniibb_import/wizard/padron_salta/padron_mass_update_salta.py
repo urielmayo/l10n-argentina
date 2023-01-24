@@ -73,11 +73,12 @@ class PadronMassUpdateSalta(models.TransientModel):
                 UPDATE res_partner_perception SET
                     percent=%(percent)s,
                     from_padron = True
-                WHERE partner_id=%(partner_id)s
+                WHERE id=%(id)s
                 """
                 q_params = {
                     'percent': res[1],
                     'partner_id': res[0],
+                    'id': res[2],
                 }
                 self._cr.execute(q, q_params)
             elif res[5] == 'DELETE':   # Set the percentage to -1
@@ -85,11 +86,12 @@ class PadronMassUpdateSalta(models.TransientModel):
                 UPDATE res_partner_perception SET
                     percent=%(percent)s,
                     from_padron = True
-                WHERE partner_id=%(partner_id)s
+                WHERE id=%(id)s
                 """
                 q_params = {
                     'percent': -1,
                     'partner_id': res[0],
+                    'id': res[2],
                 }
                 self._cr.execute(q, q_params)
             elif res[5] == 'CREATE':  # Create the res.partner.perception
