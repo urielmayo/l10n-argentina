@@ -44,4 +44,8 @@ def convert_references(cr):
 def migrate(cr, version):
     _logger.warning('Before this version, the l10n was using their own states. Duplicating the base ones.')
     _logger.warning('After this version, the l10n will be using the base states.')
-    convert_references(cr)
+    cr.execute("select * from ir_model_data where name ~* '.*state_ar.*'")
+    if cr.rowcount > 24:
+        convert_references(cr)
+    else:
+        _logger.warning('Aparently the migration is not needed')
