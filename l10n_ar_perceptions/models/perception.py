@@ -247,14 +247,14 @@ class PerceptionPerception(models.Model):
                   " the Account %s") % (self.name, activity_name,
                                         concept_name, account.name))
 
-            if len(taxapps) > 1:
-                raise ValidationError(
-                    _("Perception Error!\n") +
-                    _("There is more than one Perception Application (%s) " +
-                      "configured that corresponds to\nActivity: %s \n" +
-                      "Concept: %s\n for the Account %s") % (
-                          self.name, activity_name, concept_name,
-                          account.name))
+        if len(taxapps) > 1:
+            raise ValidationError(
+                _("Perception Error!\n") +
+                _("There is more than one Perception Application (%s) " +
+                    "configured that corresponds to\nActivity: %s \n" +
+                    "Concept: %s\n for the Account %s") % (
+                        self.name, activity_name, concept_name,
+                        account.name))
         return taxapps
 
     @api.model
